@@ -8,22 +8,26 @@ import {ThemeContext} from 'styled-components';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 
 import Home from '../screens/Home';
-import {Text, View} from 'react-native';
+import Search from '../screens/Search';
+import Details from '../screens/Details';
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Search = () => {
+function SearchStack() {
   return (
-    <View>
-      <Text>Testando</Text>
-    </View>
+    <Stack.Navigator headerMode="none">
+      <Stack.Screen name="Buscar" component={Search} />
+      <Stack.Screen name="Details" component={Details} />
+    </Stack.Navigator>
   );
-};
+}
 
 const Routes: React.FC = () => {
-  const {fifthText, secundary, secundaryBackground} = useContext(ThemeContext);
+  const {fifthText, text, secundaryBackground} = useContext(ThemeContext);
 
   return (
     <NavigationContainer
@@ -32,7 +36,7 @@ const Routes: React.FC = () => {
         colors: {
           background: secundaryBackground,
           border: fifthText,
-          text: secundary,
+          text: text,
           card: secundaryBackground,
           notification: fifthText,
           primary: fifthText,
@@ -60,7 +64,7 @@ const Routes: React.FC = () => {
           },
         })}>
         <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Buscar" component={Search} />
+        <Tab.Screen name="Buscar" component={SearchStack} />
       </Tab.Navigator>
     </NavigationContainer>
   );
