@@ -1,15 +1,18 @@
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import type VideoType from '../interfaces/VideoType';
 import ytdl from 'react-native-ytdl';
 import TrackPlayer from 'react-native-track-player';
 
 type PlayerType = {
   play: (video: VideoType) => Promise<void>;
+  track: TrackPlayer.Track | null;
 };
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
 const PlayerProvider: React.FC = ({children}) => {
+  const [track, setTrack] = useState<TrackPlayer.Track | null>(null);
+
   useEffect(() => {
     async function setup() {
       await TrackPlayer.setupPlayer();
@@ -21,11 +24,18 @@ const PlayerProvider: React.FC = ({children}) => {
           TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
           TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
           TrackPlayer.CAPABILITY_STOP,
+          TrackPlayer.CAPABILITY_SEEK_TO,
         ],
         compactCapabilities: [
           TrackPlayer.CAPABILITY_PLAY,
           TrackPlayer.CAPABILITY_PAUSE,
+          TrackPlayer.CAPABILITY_SEEK_TO,
         ],
+      });
+      TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+        const gettingTrack = await TrackPlayer.getTrack(data.nextTrack);
+        console.log(gettingTrack);
+        setTrack(gettingTrack);
       });
     }
     setup();
@@ -49,6 +59,7 @@ const PlayerProvider: React.FC = ({children}) => {
     <PlayerContext.Provider
       value={{
         play,
+        track,
       }}>
       {children}
     </PlayerContext.Provider>

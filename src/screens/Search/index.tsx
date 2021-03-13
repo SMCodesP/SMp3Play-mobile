@@ -6,7 +6,7 @@ import {ThemeContext} from 'styled-components';
 import {Jiro} from 'react-native-textinput-effects';
 import axios from 'axios';
 
-import {ContainerInput, LoadingIndicator} from './styles';
+import {ContainerInput, LoadingIndicator, Title} from './styles';
 
 import Video from '../../components/Video';
 import GlobalContainer from '../../components/GlobalContainer';
@@ -18,6 +18,8 @@ const Search: React.FC = ({navigation}) => {
   const [videos, setVideos] = useState<VideoType[]>([]);
 
   const handleQuery = async () => {
+    if (query.length === 0) return;
+
     setLoading(true);
 
     try {
@@ -38,6 +40,7 @@ const Search: React.FC = ({navigation}) => {
 
   return (
     <GlobalContainer>
+      {videos.length === 0 && <Title>Pesquise por uma música.</Title>}
       <ContainerInput>
         <Jiro
           label={'Pesquise sua música'}

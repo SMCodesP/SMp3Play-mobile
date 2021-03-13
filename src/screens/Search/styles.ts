@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 
 export const ContainerInput = styled.View`
   width: 100%;
-  padding: 15px;
+  padding: 5px 15px 15px 15px;
 `;
 
 export const InputSearch = styled.TextInput`
@@ -23,4 +23,12 @@ export const InputSearch = styled.TextInput`
 
 export const LoadingIndicator = styled.ActivityIndicator`
   margin-top: 25px;
+`;
+
+export const Title = styled.Text`
+  color: ${({theme}) => theme.text};
+  font-weight: bold;
+  margin: 0 20px;
+  margin-top: 10px;
+  font-size: 32px;
 `;

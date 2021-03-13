@@ -37,3 +37,16 @@ export const Artwork = styled.Image`
   opacity: 0.75;
   margin-right: 5px;
 `;
+
+export const ProgessContainer = styled.View`
+  height: 1px;
+  width: 100%;
+  margin-top: 10px;
+  flex-direction: row;
+`;
+export const ProgessBackground = styled.View`
+  background: grey;
+`;
+export const ProgessSneek = styled.View`
+  background: ${({theme}) => theme.fifthText};
+`;

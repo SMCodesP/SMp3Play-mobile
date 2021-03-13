@@ -26,6 +26,31 @@ function SearchStack() {
   );
 }
 
+function Base() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName = 'home';
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Buscar') {
+            iconName = 'magnify';
+          }
+
+          return (
+            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          );
+        },
+      })}>
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Buscar" component={SearchStack} />
+    </Tab.Navigator>
+  );
+}
+
 const Routes: React.FC = () => {
   const {fifthText, text, secundaryBackground} = useContext(ThemeContext);
 
@@ -42,30 +67,7 @@ const Routes: React.FC = () => {
           primary: fifthText,
         },
       }}>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName = 'home';
-
-            if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Buscar') {
-              iconName = 'magnify';
-            }
-
-            return (
-              <MaterialCommunityIcons
-                name={iconName}
-                size={size}
-                color={color}
-              />
-            );
-          },
-        })}>
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Buscar" component={SearchStack} />
-      </Tab.Navigator>
+      <Base />
     </NavigationContainer>
   );
 };
