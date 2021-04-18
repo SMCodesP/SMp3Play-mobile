@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import {rgba} from 'polished';
 
 export const Container = styled.View`
   width: 100%;
@@ -49,4 +50,29 @@ export const ProgessBackground = styled.View`
 `;
 export const ProgessSneek = styled.View`
   background: ${({theme}) => theme.fifthText};
+`;
+
+export const TrackItem = styled.View<{
+  active: boolean;
+}>`
+  background: ${({theme, active}) =>
+    active ? rgba(theme.secundary, 0.5) : rgba(theme.secundary, 0.2)};
+  width: 90%;
+  margin: 5px 0;
+  border-radius: 10px;
+  align-self: center;
+  padding: 8px 15px 15px 8px;
+`;
+
+export const SongName = styled.Text`
+  color: ${({theme}) => theme.text};
+  font-size: 16px;
+`;
+
+export const TrackStatus = styled.Text`
+  color: ${({theme}) => theme.text};
+  align-self: flex-end;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: bold;
 `;

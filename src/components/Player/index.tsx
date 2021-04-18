@@ -1,16 +1,7 @@
-import React, {useRef, useState, memo} from 'react';
-import TrackPlayer, {
-  usePlaybackState,
-  useTrackPlayerProgress,
-} from 'react-native-track-player';
-import {
-  View,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Dimensions,
-} from 'react-native';
+import React, {useRef, memo} from 'react';
+import TrackPlayer, {usePlaybackState, State} from 'react-native-track-player';
+import {View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Modalize} from 'react-native-modalize';
 
 import {
   Container,
@@ -23,52 +14,45 @@ import {
   ProgessSneek,
 } from './styles';
 import {usePlayer} from '../../contexts/player';
-import PlayerFull from '../PlayerFull';
+
+import Modal from './Modal';
 
 function ProgressBar() {
-  const progress = useTrackPlayerProgress();
+  const {position, duration} = usePlayer();
 
   return (
     <ProgessContainer>
-      <ProgessSneek style={{flex: progress.position}} />
+      <ProgessSneek style={{flex: position}} />
       <ProgessBackground
         style={{
-          flex: progress.duration - progress.position,
+          flex: duration - position,
         }}
       />
     </ProgessContainer>
   );
 }
 
-const {height: initialHeight} = Dimensions.get('window');
-
 const Player: React.FC = () => {
   const playbackState = usePlaybackState();
   const {track} = usePlayer();
-  const modalizeRef = useRef(null);
-  const [height, setHeight] = useState(initialHeight);
 
-  console.log(initialHeight / 1.63);
+  const modalizeRef = useRef(null);
 
   const onOpen = () => {
-    modalizeRef.current?.open();
+    (modalizeRef.current as any).open();
   };
 
-  const handleLayout = ({layout}) => {
-    setHeight(layout.height);
-  };
-
-  return !!track ? (
+  return track ? (
     <>
       <ProgressBar />
       <TouchableWithoutFeedback onPress={onOpen}>
         <Container>
           <Artwork
             style={{alignSelf: 'center'}}
-            source={{uri: track.artwork}}
+            source={{uri: String(track.artwork || '')}}
           />
           <View style={{flex: 1}}>
-            <Title>{track.title.substr(0, 15)}</Title>
+            <Title>{track.title?.substr(0, 20) || ''}</Title>
             <Authorname>{track.artist}</Authorname>
             <ContainerOptions>
               <TouchableOpacity onPress={skipToPrevious}>
@@ -81,17 +65,13 @@ const Player: React.FC = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  playbackState === TrackPlayer.STATE_PAUSED
+                  playbackState === State.Paused
                     ? await TrackPlayer.play()
                     : await TrackPlayer.pause();
                 }}>
                 <FontAwesome5
                   style={{padding: 5}}
-                  name={
-                    playbackState === TrackPlayer.STATE_PAUSED
-                      ? 'play'
-                      : 'pause'
-                  }
+                  name={playbackState === State.Paused ? 'play' : 'pause'}
                   color="#fafafa"
                   size={20}
                 />
@@ -109,12 +89,7 @@ const Player: React.FC = () => {
         </Container>
       </TouchableWithoutFeedback>
 
-      <Modalize
-        ref={modalizeRef}
-        snapPoint={initialHeight > 530 ? 530 : initialHeight}
-        onLayout={handleLayout}>
-        <PlayerFull style={{height}} />
-      </Modalize>
+      <Modal modalizeRef={modalizeRef} />
     </>
   ) : (
     <View />

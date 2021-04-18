@@ -1,17 +1,47 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import type VideoType from '../interfaces/VideoType';
 import ytdl from 'react-native-ytdl';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, {
+  useProgress,
+  useTrackPlayerEvents,
+  Track,
+  Capability,
+  Event,
+} from 'react-native-track-player';
+
+import 'react-native-get-random-values';
+import {v4 as uuidv4} from 'uuid';
 
 type PlayerType = {
   play: (video: VideoType) => Promise<void>;
-  track: TrackPlayer.Track | null;
+  track: Track | null;
+  position: number;
+  duration: number;
+  queue: Track[];
 };
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
 const PlayerProvider: React.FC = ({children}) => {
-  const [track, setTrack] = useState<TrackPlayer.Track | null>(null);
+  const [track, setTrack] = useState<Track | null>(null);
+  const {position, duration} = useProgress(500);
+  const [queue, setQueue] = useState<Track[]>([]);
+
+  useTrackPlayerEvents(
+    [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded, Event.PlaybackState],
+    async (handler) => {
+      if (handler.type === Event.PlaybackTrackChanged) {
+        if (handler.nextTrack) {
+          const gettingTrack = await TrackPlayer.getTrack(handler.nextTrack);
+          setTrack(gettingTrack);
+        }
+      }
+      if (handler.type === Event.PlaybackQueueEnded) {
+        setTrack(null);
+      }
+      setQueue(await TrackPlayer.getQueue());
+    },
+  );
 
   useEffect(() => {
     async function setup() {
@@ -19,26 +49,25 @@ const PlayerProvider: React.FC = ({children}) => {
       TrackPlayer.updateOptions({
         stopWithApp: true,
         capabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-          TrackPlayer.CAPABILITY_STOP,
-          TrackPlayer.CAPABILITY_SEEK_TO,
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+          Capability.SeekTo,
         ],
         compactCapabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SEEK_TO,
+          Capability.Play,
+          Capability.Pause,
+          Capability.SeekTo,
         ],
       });
-      TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-        const gettingTrack = await TrackPlayer.getTrack(data.nextTrack);
-        console.log(gettingTrack);
-        setTrack(gettingTrack);
-      });
+      setQueue(await TrackPlayer.getQueue());
     }
     setup();
+    return () => {
+      setQueue([]);
+    };
   }, []);
 
   const play: PlayerType['play'] = async (video) => {
@@ -47,11 +76,12 @@ const PlayerProvider: React.FC = ({children}) => {
       url: urls[0].url,
       artist: video.author.name,
       title: video.title,
-      id: video.videoId,
+      id: uuidv4(),
       artwork: video.image,
       description: video.description,
       date: video.timestamp,
     });
+    setQueue(await TrackPlayer.getQueue());
     TrackPlayer.play();
   };
 
@@ -60,6 +90,9 @@ const PlayerProvider: React.FC = ({children}) => {
       value={{
         play,
         track,
+        position,
+        duration,
+        queue,
       }}>
       {children}
     </PlayerContext.Provider>

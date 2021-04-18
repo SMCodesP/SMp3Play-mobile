@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 import React, {useContext} from 'react';
 import TrackPlayer from 'react-native-track-player';
 
@@ -21,11 +22,7 @@ function formatTime(seconds: number) {
         .replace(/\b(\d)\b/g, '0$1');
 }
 
-export default function TrackStatus({
-  positionDisplay,
-  duration,
-  setPositionDisplay,
-}: any) {
+export default function TrackStatus({positionDisplay, duration}: any) {
   const theme = useContext(ThemeContext);
 
   return (
@@ -40,18 +37,14 @@ export default function TrackStatus({
           maximumTrackTintColor={theme.primary}
           step={1}
           disabled={false}
-          onValueChange={(val) => {
-            TrackPlayer.pause();
-            console.log('Change: ' + val);
-          }}
+          onTouchMove={async () => await TrackPlayer.pause()}
           onSlidingComplete={async (val) => {
-            setPositionDisplay(val);
             await TrackPlayer.seekTo(val);
-            TrackPlayer.play();
+            await TrackPlayer.play();
             console.log('Complet: ' + val);
           }}
           value={positionDisplay}
-          style={{width: '75%', height: 25}}
+          style={{width: '75%', height: 45}}
         />
         <Duration>{formatTime(duration)}</Duration>
       </Container>

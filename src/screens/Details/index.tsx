@@ -1,16 +1,19 @@
 import React, {useContext} from 'react';
 import VideoType from '../../interfaces/VideoType';
 
-import {TouchableOpacity, ImageBackground, Text, Linking} from 'react-native';
+import {TouchableOpacity, ImageBackground, Text, View} from 'react-native';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ThemeContext} from 'styled-components';
+import TrackPlayer from 'react-native-track-player';
+
 import {
   ContainerImage,
   ContainerHeader,
   Title,
   ContainerAuthor,
   AuthorName,
-  YTButton,
+  ButtonAdd,
   ContainerBody,
 } from './styles';
 import {usePlayer} from '../../contexts/player';
@@ -32,11 +35,16 @@ const Details: React.FC<{
   const theme = useContext(ThemeContext);
   const {play} = usePlayer();
 
+  const handlePlay = () => {
+    TrackPlayer.destroy();
+    play(video);
+  };
+
   return (
     <GlobalContainer>
       <ImageBackground
         source={{uri: video.image}}
-        style={{flex: 1, height: 230}}>
+        style={{flex: 1, height: 300}}>
         <ContainerImage>
           <ContainerHeader>
             <TouchableOpacity
@@ -59,36 +67,28 @@ const Details: React.FC<{
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={() => play(video)}>
-              {/* <Play> */}
+              onPress={handlePlay}>
               <MaterialCommunityIcons
                 name="play-circle"
                 size={56}
                 color={theme.primary}
               />
-              {/* </Play> */}
             </TouchableOpacity>
           </ContainerAuthor>
         </ContainerImage>
         <ContainerBody>
-          <TouchableOpacity
-            style={{
-              width: '65%',
-            }}
-            onPress={() => {
-              Linking.openURL(`vnd.youtube://video/${video.videoId}`);
-            }}>
-            <YTButton>
+          <ButtonAdd onPress={() => play(video)}>
+            <View accessible>
               <Text
                 style={{
-                  color: '#ffffff',
+                  color: '#f8f8f2',
                   fontWeight: 'bold',
-                  fontSize: 16,
+                  fontSize: 18,
                 }}>
-                Assistir no YouTube
+                Adicionar à fila
               </Text>
-            </YTButton>
-          </TouchableOpacity>
+            </View>
+          </ButtonAdd>
         </ContainerBody>
       </ImageBackground>
     </GlobalContainer>

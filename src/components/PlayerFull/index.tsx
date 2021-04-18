@@ -1,11 +1,8 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {usePlayer} from '../../contexts/player';
 import LinearGradient from 'react-native-linear-gradient';
-import TrackPlayer, {
-  usePlaybackState,
-  useTrackPlayerProgress,
-} from 'react-native-track-player';
+import TrackPlayer, {usePlaybackState, State} from 'react-native-track-player';
 
 import {ThemeContext} from 'styled-components';
 
@@ -21,22 +18,13 @@ import TrackStatus from '../TrackStatus';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 
-const PlayerFull: React.FC<{
-  style: StyleProp<ViewStyle>;
-}> = ({style}) => {
+const PlayerFull: React.FunctionComponent = () => {
   const theme = useContext(ThemeContext);
   const playbackState = usePlaybackState();
-  const {track} = usePlayer();
+  const {track, position, duration} = usePlayer();
   const navigation = useNavigation();
-
-  const {position, duration} = useTrackPlayerProgress();
-  const [positionDisplay, setPositionDisplay] = useState(position);
-
-  useEffect(() => {
-    setPositionDisplay(position);
-  }, [position]);
 
   useEffect(() => {
     if (!track) {
@@ -45,7 +33,7 @@ const PlayerFull: React.FC<{
   }, [track, navigation]);
 
   return (
-    <Container style={style}>
+    <Container>
       <LinearGradient
         colors={[theme.secundary, theme.background]}
         style={{flex: 1}}>
@@ -56,7 +44,7 @@ const PlayerFull: React.FC<{
             shadowColor: 'red',
             shadowOffset: {height: 0, width: 0},
           }}
-          source={{uri: track?.artwork}}
+          source={{uri: String(track?.artwork || '') || ''}}
           resizeMode="contain"
         />
         <ContainerAuthor>
@@ -64,15 +52,15 @@ const PlayerFull: React.FC<{
           <Title>{track?.title}</Title>
         </ContainerAuthor>
         <TrackStatus
-          positionDisplay={positionDisplay}
+          positionDisplay={position}
           duration={duration}
           position={position}
-          setPositionDisplay={setPositionDisplay}
+          setPositionDisplay={(int: number) => TrackPlayer.seekTo(int)}
         />
         <Controller>
           <TouchableOpacity
             onPress={async () => {
-              setPositionDisplay(position - 10);
+              // setPositionDisplay(position - 10);
               await TrackPlayer.seekTo(position - 10);
             }}>
             <MaterialIcons name="replay-10" color="#fafafa" size={30} />
@@ -82,15 +70,13 @@ const PlayerFull: React.FC<{
           </TouchableOpacity>
           <TouchableOpacity
             onPress={async () => {
-              playbackState === TrackPlayer.STATE_PAUSED
+              playbackState === State.Paused
                 ? await TrackPlayer.play()
                 : await TrackPlayer.pause();
             }}>
             <FontAwesome5
               name={
-                playbackState === TrackPlayer.STATE_PAUSED
-                  ? 'play-circle'
-                  : 'pause-circle'
+                playbackState === State.Paused ? 'play-circle' : 'pause-circle'
               }
               color="#fafafa"
               size={50}
@@ -101,7 +87,6 @@ const PlayerFull: React.FC<{
           </TouchableOpacity>
           <TouchableOpacity
             onPress={async () => {
-              setPositionDisplay(position + 10);
               await TrackPlayer.seekTo(position + 10);
             }}>
             <MaterialIcons name="forward-10" color="#fafafa" size={30} />
