@@ -1,9 +1,11 @@
 import React, {useContext} from 'react';
 import VideoType from '../../interfaces/VideoType';
 
-import {TouchableOpacity, ImageBackground, Text, View} from 'react-native';
+import {TouchableOpacity, ImageBackground, Text} from 'react-native';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 import {ThemeContext} from 'styled-components';
 import TrackPlayer from 'react-native-track-player';
 
@@ -15,6 +17,7 @@ import {
   AuthorName,
   ButtonAdd,
   ContainerBody,
+  ContainerButton,
 } from './styles';
 import {usePlayer} from '../../contexts/player';
 import GlobalContainer from '../../components/GlobalContainer';
@@ -54,7 +57,7 @@ const Details: React.FC<{
               <MaterialCommunityIcons
                 name="arrow-left"
                 size={28}
-                color={theme.text}
+                color={theme.foreground}
               />
             </TouchableOpacity>
             <Title>{video.title.substr(0, 26).trim()}...</Title>
@@ -71,23 +74,43 @@ const Details: React.FC<{
               <MaterialCommunityIcons
                 name="play-circle"
                 size={56}
-                color={theme.primary}
+                color={theme.pink}
               />
             </TouchableOpacity>
           </ContainerAuthor>
         </ContainerImage>
         <ContainerBody>
           <ButtonAdd onPress={() => play(video)}>
-            <View accessible>
+            <ContainerButton accessible>
+              <MaterialIcons name="add" size={32} color={theme.foreground} />
               <Text
                 style={{
-                  color: '#f8f8f2',
+                  color: theme.foreground,
                   fontWeight: 'bold',
                   fontSize: 18,
+                  marginLeft: 20,
                 }}>
                 Adicionar à fila
               </Text>
-            </View>
+            </ContainerButton>
+          </ButtonAdd>
+          <ButtonAdd onPress={() => play(video)}>
+            <ContainerButton accessible>
+              <MaterialIcons
+                name="playlist-add"
+                size={32}
+                color={theme.foreground}
+              />
+              <Text
+                style={{
+                  color: theme.foreground,
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  marginLeft: 20,
+                }}>
+                Adicionar à playlist
+              </Text>
+            </ContainerButton>
           </ButtonAdd>
         </ContainerBody>
       </ImageBackground>

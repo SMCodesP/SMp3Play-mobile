@@ -17,15 +17,6 @@ import Details from '../screens/Details';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function SearchStack() {
-  return (
-    <Stack.Navigator headerMode="none">
-      <Stack.Screen name="Buscar" component={Search} />
-      <Stack.Screen name="Details" component={Details} />
-    </Stack.Navigator>
-  );
-}
-
 function Base() {
   return (
     <Tab.Navigator
@@ -46,28 +37,37 @@ function Base() {
         },
       })}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Buscar" component={SearchStack} />
+      <Tab.Screen name="Buscar" component={Search} />
     </Tab.Navigator>
   );
 }
 
+function BaseStack() {
+  return (
+    <Stack.Navigator headerMode="none">
+      <Stack.Screen name="Base" component={Base} />
+      <Stack.Screen name="Details" component={Details} />
+    </Stack.Navigator>
+  );
+}
+
 const Routes: React.FC = () => {
-  const {fifthText, text, secundaryBackground} = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   return (
     <NavigationContainer
       theme={{
         dark: true,
         colors: {
-          background: secundaryBackground,
-          border: fifthText,
-          text: text,
-          card: secundaryBackground,
-          notification: fifthText,
-          primary: fifthText,
+          background: theme.comment,
+          border: theme.pink,
+          text: theme.text,
+          card: theme.comment,
+          notification: theme.red,
+          primary: theme.purple,
         },
       }}>
-      <Base />
+      <BaseStack />
     </NavigationContainer>
   );
 };

@@ -4,15 +4,12 @@ import {Animated, View} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {ThemeContext} from 'styled-components/native';
 
-import TrackPlayer from 'react-native-track-player';
+import {usePlayer} from '../../../contexts/player';
 
-import PlayerFull from '../PlayerFull';
-
-import {TrackItem, SongName, TrackStatus} from './styles';
-import {usePlayer} from '../../contexts/player';
+import {Title} from '../styles';
 
 const Modal = ({modalizeRef}: {modalizeRef: React.MutableRefObject<null>}) => {
-  const {track, queue} = usePlayer();
+  const {queue} = usePlayer();
   const theme = useContext(ThemeContext);
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -21,22 +18,10 @@ const Modal = ({modalizeRef}: {modalizeRef: React.MutableRefObject<null>}) => {
     <Modalize
       ref={modalizeRef}
       snapPoint={530}
-      HeaderComponent={<PlayerFull />}
+      HeaderComponent={() => <Title>Suas playlists</Title>}
       flatListProps={{
         data: queue,
-        renderItem: ({item}) =>
-          track?.id === item.id ? (
-            <TrackItem active={true}>
-              <SongName>{item.title}</SongName>
-              <TrackStatus>tocando</TrackStatus>
-            </TrackItem>
-          ) : (
-            <TrackItem onPress={() => TrackPlayer.skip(item.id)} active={false}>
-              <View accessible>
-                <SongName>{item.title}</SongName>
-              </View>
-            </TrackItem>
-          ),
+        renderItem: () => <View />,
         style: {
           backgroundColor: theme.background,
         },

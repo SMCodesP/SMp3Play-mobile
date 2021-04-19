@@ -12,6 +12,6 @@ export const VideoImage = styled.Image`
 `;
 
 export const Title = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   padding: 0 8px;
 `;

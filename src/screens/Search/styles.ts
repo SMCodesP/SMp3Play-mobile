@@ -6,7 +6,7 @@ export const ContainerInput = styled.View`
 `;
 
 export const InputSearch = styled.TextInput`
-  background: ${({theme}) => theme.secundaryBackground};
+  background: ${({theme}) => theme.comment};
   border-top-right-radius: 25px;
   border-bottom-left-radius: 25px;
 
@@ -14,7 +14,7 @@ export const InputSearch = styled.TextInput`
   border-top-left-radius: 5px;
   margin: 15px;
   padding: 8px 20px;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
 
   &:focus {
     border-bottom: 2px solid red;
@@ -26,7 +26,7 @@ export const LoadingIndicator = styled.ActivityIndicator`
 `;
 
 export const Title = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   font-weight: bold;
   margin: 0 20px;
   margin-top: 10px;

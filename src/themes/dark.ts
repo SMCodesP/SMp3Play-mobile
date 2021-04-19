@@ -1,15 +1,18 @@
 export default {
-  primary: '#957FEF',
   secundary: '#6272a4',
 
-  background: '#282a36',
-  secundaryBackground: '#44475a',
+  background: '#191622',
+  currentLine: '#44475a',
+  selection: '#41414D',
+  foreground: '#E1E1E6',
+  comment: '#483C67',
+  cyan: '#78D1E1',
+  green: '#67E480',
+  orange: '#E89E64',
+  pink: '#FF79C6',
+  purple: '#988BC7',
+  red: '#E96379',
+  yellow: '#E7DE79',
 
   text: '#f8f8f2',
-  secundaryText: '#bd93f9',
-  tertiaryText: '#f1fa8c',
-  fifthText: '#ff79c6',
-  inverseText: '#333333',
-
-  light: '#fafafa',
 };

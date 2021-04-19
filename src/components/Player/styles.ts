@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import {RectButton} from 'react-native-gesture-handler';
 import {rgba} from 'polished';
 
 export const Container = styled.View`
@@ -6,7 +7,7 @@ export const Container = styled.View`
   height: 85px;
   background: ${({theme}) => theme.background};
   border-top-width: 1px;
-  border-top-color: ${({theme}) => theme.secundaryBackground};
+  border-top-color: ${({theme}) => theme.comment};
   padding: 0 15px;
   flex-direction: row;
 `;
@@ -19,13 +20,13 @@ export const ContainerOptions = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   font-size: 16px;
   font-weight: bold;
 `;
 
 export const Authorname = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   opacity: 0.7;
   font-size: 11px;
 `;
@@ -49,14 +50,14 @@ export const ProgessBackground = styled.View`
   background: grey;
 `;
 export const ProgessSneek = styled.View`
-  background: ${({theme}) => theme.fifthText};
+  background: ${({theme}) => theme.pink};
 `;
 
-export const TrackItem = styled.View<{
+export const TrackItem = styled(RectButton)<{
   active: boolean;
 }>`
   background: ${({theme, active}) =>
-    active ? rgba(theme.secundary, 0.5) : rgba(theme.secundary, 0.2)};
+    active ? rgba(theme.currentLine, 0.5) : rgba(theme.currentLine, 0.2)};
   width: 90%;
   margin: 5px 0;
   border-radius: 10px;
@@ -65,12 +66,12 @@ export const TrackItem = styled.View<{
 `;
 
 export const SongName = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   font-size: 16px;
 `;
 
 export const TrackStatus = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   align-self: flex-end;
   text-transform: uppercase;
   font-size: 10px;

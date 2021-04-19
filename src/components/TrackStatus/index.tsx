@@ -32,16 +32,15 @@ export default function TrackStatus({positionDisplay, duration}: any) {
         <Slider
           minimumValue={0}
           maximumValue={duration}
-          thumbTintColor={theme.fifthText}
-          minimumTrackTintColor={theme.fifthText}
-          maximumTrackTintColor={theme.primary}
+          thumbTintColor={theme.pink}
+          minimumTrackTintColor={theme.pink}
+          maximumTrackTintColor={theme.purple}
           step={1}
           disabled={false}
           onTouchMove={async () => await TrackPlayer.pause()}
           onSlidingComplete={async (val) => {
             await TrackPlayer.seekTo(val);
             await TrackPlayer.play();
-            console.log('Complet: ' + val);
           }}
           value={positionDisplay}
           style={{width: '75%', height: 45}}

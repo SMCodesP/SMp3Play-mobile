@@ -2,18 +2,21 @@ import 'styled-components';
 
 declare module 'styled-components' {
   export interface DefaultTheme {
-    primary: string;
     secundary: string;
 
     background: string;
-    secundaryBackground: string;
+    currentLine: string;
+    selection: string;
+    foreground: string;
+    comment: string;
+    cyan: string;
+    green: string;
+    orange: string;
+    pink: string;
+    purple: string;
+    red: string;
+    yellow: string;
 
     text: string;
-    secundaryText: string;
-    tertiaryText: string;
-    fifthText: string;
-    inverseText: string;
-
-    light: string;
   }
 }

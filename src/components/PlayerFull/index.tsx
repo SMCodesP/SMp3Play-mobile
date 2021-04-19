@@ -35,15 +35,9 @@ const PlayerFull: React.FunctionComponent = () => {
   return (
     <Container>
       <LinearGradient
-        colors={[theme.secundary, theme.background]}
+        colors={[theme.currentLine, theme.background]}
         style={{flex: 1}}>
         <Artwork
-          style={{
-            shadowOpacity: 0.75,
-            shadowRadius: 5,
-            shadowColor: 'red',
-            shadowOffset: {height: 0, width: 0},
-          }}
           source={{uri: String(track?.artwork || '') || ''}}
           resizeMode="contain"
         />
@@ -60,7 +54,6 @@ const PlayerFull: React.FunctionComponent = () => {
         <Controller>
           <TouchableOpacity
             onPress={async () => {
-              // setPositionDisplay(position - 10);
               await TrackPlayer.seekTo(position - 10);
             }}>
             <MaterialIcons name="replay-10" color="#fafafa" size={30} />

@@ -11,14 +11,16 @@ import {ContainerInput, LoadingIndicator, Title} from './styles';
 import Video from '../../components/Video';
 import GlobalContainer from '../../components/GlobalContainer';
 
-const Search: React.FC = ({navigation}) => {
+const Search: React.FC = ({navigation}: any) => {
   const theme = useContext(ThemeContext);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [videos, setVideos] = useState<VideoType[]>([]);
 
   const handleQuery = async () => {
-    if (query.length === 0) return;
+    if (query.length === 0) {
+      return;
+    }
 
     setLoading(true);
 
@@ -44,16 +46,16 @@ const Search: React.FC = ({navigation}) => {
       <ContainerInput>
         <Jiro
           label={'Pesquise sua música'}
-          borderColor={theme.secundaryBackground}
+          borderColor={theme.comment}
           inputPadding={16}
           onChangeText={setQuery}
           onSubmitEditing={handleQuery}
           value={query}
-          inputStyle={{color: 'white'}}
+          inputStyle={{color: theme.foreground}}
         />
       </ContainerInput>
       {loading ? (
-        <LoadingIndicator color={theme.fifthText} size="large" />
+        <LoadingIndicator color={theme.pink} size="large" />
       ) : (
         <FlatList
           data={videos}

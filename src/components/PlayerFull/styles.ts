@@ -21,14 +21,14 @@ export const ContainerAuthor = styled.View`
 `;
 
 export const Authorname = styled.Text`
-  color: ${({theme}) => theme.secundaryText};
+  color: ${({theme}) => theme.purple};
   opacity: 0.9;
   font-size: 12px;
   font-weight: bold;
 `;
 
 export const Title = styled.Text`
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.foreground};
   font-size: 19px;
   font-weight: bold;
   margin: 0;

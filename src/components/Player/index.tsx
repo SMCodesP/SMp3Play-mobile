@@ -2,6 +2,7 @@ import React, {useRef, memo} from 'react';
 import TrackPlayer, {usePlaybackState, State} from 'react-native-track-player';
 import {View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {Portal} from 'react-native-portalize';
 
 import {
   Container,
@@ -89,7 +90,9 @@ const Player: React.FC = () => {
         </Container>
       </TouchableWithoutFeedback>
 
-      <Modal modalizeRef={modalizeRef} />
+      <Portal>
+        <Modal modalizeRef={modalizeRef} />
+      </Portal>
     </>
   ) : (
     <View />
