@@ -46,7 +46,7 @@ export const ContainerBody = styled.View`
 
 export const YTButton = styled.View`
   height: 40px;
-  background-color: #ff0000;
+  background-color: ${({theme}) => theme.comment};
   border-radius: 5px;
   justify-content: center;
   align-items: center;

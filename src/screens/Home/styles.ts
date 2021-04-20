@@ -65,7 +65,7 @@ export const TextCreatePlaylist = styled.Text`
 `;
 
 export const ContainerPlaylist = styled.View`
-  background: red;
+  background: ${({theme}) => theme.comment};
   margin: 10px 0;
   position: relative;
 `;

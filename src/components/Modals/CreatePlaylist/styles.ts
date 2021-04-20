@@ -26,7 +26,8 @@ export const ContainerVideos = styled.View`
 `;
 
 export const ContainerButton = styled.View`
-  padding: 10px 10%;
+  padding: 3px 10%;
+  border-radius: 10px;
 `;
 
 export const ButtonConfirm = styled(RectButton)`
@@ -38,9 +39,10 @@ export const ButtonConfirm = styled(RectButton)`
 `;
 
 export const ButtonText = styled.Text`
-  color: ${({theme}) => theme.foreground};
+  color: ${({theme}) => theme.text};
   font-size: 18px;
   font-weight: bold;
+  border-radius: 10px;
 `;
 
 export const VideoContainer = styled.View`
@@ -54,7 +56,7 @@ export const VideoContainer = styled.View`
 export const Artwork = styled.ImageBackground`
   width: 300px;
   height: 168px;
-  margin: 0 2.5px;
+  margin: 5px;
   align-self: center;
 `;
 

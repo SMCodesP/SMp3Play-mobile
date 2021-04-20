@@ -9,6 +9,8 @@ import RadioForm, {
   RadioButton,
   RadioButtonInput,
 } from 'react-native-simple-radio-button';
+import {rgba, lighten} from 'polished'
+import {RectButton} from 'react-native-gesture-handler';
 
 import {Jiro} from 'react-native-textinput-effects';
 
@@ -85,7 +87,7 @@ const Modal = forwardRef((_, ref: any) => {
         }: {
           data: VideoType[];
         } = await axios.get(
-          `https://sm-p3-play-api.vercel.app/api/videos/search?q=${querySearch}&limit=3`,
+          `https://sm-p3-play-api.vercel.app/api/videos/search?q=${querySearch}&limit=2`,
         );
         setVideos(data);
       } catch (error) {
@@ -110,12 +112,25 @@ const Modal = forwardRef((_, ref: any) => {
     setPlaylist(map.has(video.videoId) ? rm() : add());
   };
 
+  const reset = () => {
+    setName('');
+    setQuery('');
+    setVideos([]);
+    setPlaylist(new Map());
+  };
+
   const confirmCreate = () => {
-    ref.current.close();
-    if (name.length !== 0) {
+    if (name.length === 0) {
       return;
     }
+    reset();
+    ref.current.close();
     createPlaylist(name, Array.from(playlist.values()));
+  };
+
+  const handleCancel = () => {
+    reset();
+    ref.current.close();
   };
 
   return (
@@ -191,12 +206,31 @@ const Modal = forwardRef((_, ref: any) => {
         <ContainerButton>
           <ButtonConfirm
             style={{
-              opacity: name.length !== 0 ? 1 : 0.5,
+              backgroundColor: name.length !== 0 ? theme.comment : rgba(theme.comment, 0.5),
+              opacity: name.length !== 0 ? 1 : 0.75,
             }}
             enabled={name.length !== 0}
-            onPress={confirmCreate}>
+            rippleColor={lighten(0.5, theme.comment)}
+            onPress={confirmCreate}
+          >
             <ButtonText>Criar</ButtonText>
           </ButtonConfirm>
+        </ContainerButton>
+        <ContainerButton>
+          <RectButton
+            style={{
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              borderRadius: 10
+            }}
+            rippleColor={rgba(theme.red, 0.1)}
+            onPress={handleCancel}
+          >
+            <ButtonText style={{
+              color: theme.red,
+              alignSelf: 'center'
+            }}>Cancelar</ButtonText>
+          </RectButton>
         </ContainerButton>
       </ContainerVideos>
     </Modalize>
