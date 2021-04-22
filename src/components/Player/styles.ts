@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler';
-import {rgba} from 'polished';
+import {darken} from 'polished';
+import {Animated} from 'react-native';
 
 export const Container = styled.View`
   width: 100%;
@@ -56,11 +57,12 @@ export const ProgessSneek = styled.View`
 export const TrackItem = styled(RectButton)<{
   active: boolean;
 }>`
+  flex: 1;
   background: ${({theme, active}) =>
-    active ? rgba(theme.currentLine, 0.5) : rgba(theme.currentLine, 0.2)};
-  width: 90%;
-  margin: 5px 0;
+    active ? theme.currentLine : darken(0.1, theme.currentLine)};
   border-radius: 10px;
+  margin: 5px 10px;
+  height: 75px;
   align-self: center;
   padding: 8px 15px 15px 8px;
 `;
@@ -76,4 +78,24 @@ export const TrackStatus = styled.Text`
   text-transform: uppercase;
   font-size: 10px;
   font-weight: bold;
+`;
+
+export const ButtonRemoveSong = styled(RectButton)`
+  background: ${({theme}) => theme.red};
+`;
+
+export const ContainerRemoveSong = styled(Animated.View)`
+  padding: 0 15px;
+  flex: 1;
+  margin: 5px 0;
+  border-radius: 10px;
+  background: ${({theme}) => theme.red};
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DeleteText = styled.Text`
+  color: ${({theme}) => darken(0.2, theme.red)};
+  font-weight: bold;
+  font-size: 16px;
 `;

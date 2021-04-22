@@ -21,6 +21,7 @@ type PlayerType = {
   queue: Track[];
   history: VideoType[];
   playlists: Playlist[];
+  updateQueue: () => Promise<void>;
 };
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
@@ -80,6 +81,11 @@ const PlayerProvider: React.FC = ({children}) => {
       setQueue([]);
     };
   }, []);
+
+  const updateQueue = async () => {
+    console.log('update');
+    setQueue(await TrackPlayer.getQueue());
+  };
 
   const createPlaylist: PlayerType['createPlaylist'] = async (
     name,
@@ -150,6 +156,7 @@ const PlayerProvider: React.FC = ({children}) => {
         history,
         createPlaylist,
         playlists,
+        updateQueue,
       }}>
       {children}
     </PlayerContext.Provider>

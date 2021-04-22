@@ -1,4 +1,4 @@
-import React, {useRef, memo} from 'react';
+import React, {useRef} from 'react';
 import TrackPlayer, {usePlaybackState, State} from 'react-native-track-player';
 import {View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -111,4 +111,4 @@ async function skipToPrevious() {
   } catch (_) {}
 }
 
-export default memo(Player);
+export default Player;
