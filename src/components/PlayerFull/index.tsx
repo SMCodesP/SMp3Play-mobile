@@ -23,7 +23,7 @@ import {TouchableOpacity} from 'react-native';
 const PlayerFull: React.FunctionComponent = () => {
   const theme = useContext(ThemeContext);
   const playbackState = usePlaybackState();
-  const {track, position, duration} = usePlayer();
+  const {track, position, duration, nextSong, previousSong} = usePlayer();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -53,20 +53,18 @@ const PlayerFull: React.FunctionComponent = () => {
         />
         <Controller>
           <TouchableOpacity
-            onPress={async () => {
-              await TrackPlayer.seekTo(position - 10);
-            }}>
+            onPressOut={() => TrackPlayer.seekTo(position - 10)}>
             <MaterialIcons name="replay-10" color="#fafafa" size={30} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={skipToPrevious}>
+          <TouchableOpacity onPressOut={previousSong}>
             <FontAwesome5 name="step-backward" color="#fafafa" size={36} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={async () => {
-              playbackState === State.Paused
-                ? await TrackPlayer.play()
-                : await TrackPlayer.pause();
-            }}>
+            onPressOut={
+              playbackState === State.Playing
+                ? TrackPlayer.play
+                : TrackPlayer.pause
+            }>
             <FontAwesome5
               name={
                 playbackState === State.Paused ? 'play-circle' : 'pause-circle'
@@ -75,13 +73,11 @@ const PlayerFull: React.FunctionComponent = () => {
               size={50}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={skipToNext}>
+          <TouchableOpacity onPressOut={nextSong}>
             <FontAwesome5 name="step-forward" color="#fafafa" size={36} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={async () => {
-              await TrackPlayer.seekTo(position + 10);
-            }}>
+            onPressOut={() => TrackPlayer.seekTo(position + 10)}>
             <MaterialIcons name="forward-10" color="#fafafa" size={30} />
           </TouchableOpacity>
         </Controller>
@@ -89,17 +85,5 @@ const PlayerFull: React.FunctionComponent = () => {
     </Container>
   );
 };
-
-async function skipToNext() {
-  try {
-    await TrackPlayer.skipToNext();
-  } catch (_) {}
-}
-
-async function skipToPrevious() {
-  try {
-    await TrackPlayer.skipToPrevious();
-  } catch (_) {}
-}
 
 export default PlayerFull;

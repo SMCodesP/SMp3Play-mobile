@@ -24,4 +24,5 @@ export default interface VideoType {
   views: number;
   author: Author;
   src?: string;
+  uuid?: string;
 }

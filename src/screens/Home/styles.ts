@@ -66,14 +66,14 @@ export const TextCreatePlaylist = styled.Text`
 
 export const ContainerPlaylist = styled.View`
   background: ${({theme}) => theme.comment};
-  margin: 10px 0;
+  margin: 5px 0;
   position: relative;
 `;
 
 export const ShadowPlaylist = styled(RectButton)`
   width: 100%;
   height: 200px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
   padding: 5px 15px;
 `;
 

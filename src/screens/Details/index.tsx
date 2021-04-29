@@ -1,13 +1,13 @@
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import VideoType from '../../interfaces/VideoType';
 
-import {TouchableOpacity, ImageBackground, Text} from 'react-native';
+import {TouchableOpacity, ImageBackground} from 'react-native';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {ThemeContext} from 'styled-components';
 import TrackPlayer from 'react-native-track-player';
+import {Portal} from 'react-native-portalize';
 
 import {
   ContainerImage,
@@ -15,12 +15,13 @@ import {
   Title,
   ContainerAuthor,
   AuthorName,
-  ButtonAdd,
   ContainerBody,
-  ContainerButton,
 } from './styles';
 import {usePlayer} from '../../contexts/player';
+
+import ModalPlaylists from '../../components/Modals/ModalPlaylists';
 import GlobalContainer from '../../components/GlobalContainer';
+import DefaultButton from '../../components/DefaultButton';
 
 const Details: React.FC<{
   route: {
@@ -41,6 +42,12 @@ const Details: React.FC<{
   const handlePlay = () => {
     TrackPlayer.destroy();
     play(video);
+  };
+
+  const modalizeRef = useRef(null);
+
+  const open = () => {
+    (modalizeRef.current as any).open();
   };
 
   return (
@@ -80,40 +87,23 @@ const Details: React.FC<{
           </ContainerAuthor>
         </ContainerImage>
         <ContainerBody>
-          <ButtonAdd onPress={() => play(video)}>
-            <ContainerButton accessible>
-              <MaterialIcons name="add" size={32} color={theme.foreground} />
-              <Text
-                style={{
-                  color: theme.foreground,
-                  fontWeight: 'bold',
-                  fontSize: 18,
-                  marginLeft: 20,
-                }}>
-                Adicionar à fila
-              </Text>
-            </ContainerButton>
-          </ButtonAdd>
-          <ButtonAdd onPress={() => play(video)}>
-            <ContainerButton accessible>
-              <MaterialIcons
-                name="playlist-add"
-                size={32}
-                color={theme.foreground}
-              />
-              <Text
-                style={{
-                  color: theme.foreground,
-                  fontWeight: 'bold',
-                  fontSize: 18,
-                  marginLeft: 20,
-                }}>
-                Adicionar à playlist
-              </Text>
-            </ContainerButton>
-          </ButtonAdd>
+          <DefaultButton
+            buttonStyle={{marginVertical: 7.5, marginHorizontal: 15}}
+            icon="add"
+            onPress={() => play(video)}>
+            Adicionar à fila
+          </DefaultButton>
+          <DefaultButton
+            buttonStyle={{marginVertical: 7.5, marginHorizontal: 15}}
+            icon="playlist-add"
+            onPress={open}>
+            Adicionar à playlist
+          </DefaultButton>
         </ContainerBody>
       </ImageBackground>
+      <Portal>
+        <ModalPlaylists song={video} modalizeRef={modalizeRef} />
+      </Portal>
     </GlobalContainer>
   );
 };

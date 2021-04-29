@@ -88,11 +88,14 @@ const Home: React.FC = ({navigation}: any) => {
         style={{
           width: '95%',
           alignSelf: 'center',
+          flex: 1,
         }}>
         <PlaylistsCreate />
         <FlatList
           style={{
             width: '100%',
+            marginTop: 10,
+            flex: 1,
           }}
           data={playlists}
           keyExtractor={(item) => item.id}
@@ -111,7 +114,12 @@ const Home: React.FC = ({navigation}: any) => {
                   />
                 )}
               />
-              <ShadowPlaylist>
+              <ShadowPlaylist
+                onPress={() =>
+                  navigation.navigate('Playlist', {
+                    playlistId: item.id,
+                  })
+                }>
                 <PlaylistFooterName>{item.name}</PlaylistFooterName>
               </ShadowPlaylist>
             </ContainerPlaylist>

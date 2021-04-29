@@ -17,6 +17,7 @@ import {
 import {usePlayer} from '../../contexts/player';
 
 import Modal from './Modal';
+import ModalPlaylist from './ModalPlaylist';
 
 function ProgressBar() {
   const {position, duration} = usePlayer();
@@ -35,7 +36,7 @@ function ProgressBar() {
 
 const Player: React.FC = () => {
   const playbackState = usePlaybackState();
-  const {track} = usePlayer();
+  const {track, playingPlaylist, previousSong, nextSong} = usePlayer();
 
   const modalizeRef = useRef(null);
 
@@ -56,34 +57,23 @@ const Player: React.FC = () => {
             <Title>{track.title?.substr(0, 20) || ''}</Title>
             <Authorname>{track.artist}</Authorname>
             <ContainerOptions>
-              <TouchableOpacity onPress={skipToPrevious}>
-                <FontAwesome5
-                  style={{padding: 5}}
-                  name="step-backward"
-                  color="#fafafa"
-                  size={20}
-                />
+              <TouchableOpacity onPressOut={previousSong}>
+                <FontAwesome5 name="step-backward" color="#fafafa" size={20} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={async () => {
+                onPressOut={
                   playbackState === State.Paused
-                    ? await TrackPlayer.play()
-                    : await TrackPlayer.pause();
-                }}>
+                    ? TrackPlayer.play
+                    : TrackPlayer.pause
+                }>
                 <FontAwesome5
-                  style={{padding: 5}}
                   name={playbackState === State.Paused ? 'play' : 'pause'}
                   color="#fafafa"
                   size={20}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={skipToNext}>
-                <FontAwesome5
-                  style={{padding: 5}}
-                  name="step-forward"
-                  color="#fafafa"
-                  size={20}
-                />
+              <TouchableOpacity onPressOut={nextSong}>
+                <FontAwesome5 name="step-forward" color="#fafafa" size={20} />
               </TouchableOpacity>
             </ContainerOptions>
           </View>
@@ -91,24 +81,16 @@ const Player: React.FC = () => {
       </TouchableWithoutFeedback>
 
       <Portal>
-        <Modal modalizeRef={modalizeRef} />
+        {playingPlaylist ? (
+          <ModalPlaylist modalizeRef={modalizeRef} />
+        ) : (
+          <Modal modalizeRef={modalizeRef} />
+        )}
       </Portal>
     </>
   ) : (
     <View />
   );
 };
-
-async function skipToNext() {
-  try {
-    await TrackPlayer.skipToNext();
-  } catch (_) {}
-}
-
-async function skipToPrevious() {
-  try {
-    await TrackPlayer.skipToPrevious();
-  } catch (_) {}
-}
 
 export default Player;

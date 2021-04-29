@@ -13,6 +13,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Home from '../screens/Home';
 import Search from '../screens/Search';
 import Details from '../screens/Details';
+import Playlist from '../screens/Playlist';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,6 +48,7 @@ function BaseStack() {
     <Stack.Navigator headerMode="none">
       <Stack.Screen name="Base" component={Base} />
       <Stack.Screen name="Details" component={Details} />
+      <Stack.Screen name="Playlist" component={Playlist} />
     </Stack.Navigator>
   );
 }

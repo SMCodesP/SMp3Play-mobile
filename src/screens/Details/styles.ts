@@ -1,9 +1,4 @@
-import {RectButton} from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-
-// padding-left: 10px;
-// padding-right: 10px;
-// padding: 10px 15px;
 
 export const ContainerImage = styled.View`
   height: 300px;
@@ -42,28 +37,4 @@ export const AuthorName = styled.Text`
 
 export const ContainerBody = styled.View`
   margin: 50px 10px;
-`;
-
-export const YTButton = styled.View`
-  height: 40px;
-  background-color: ${({theme}) => theme.comment};
-  border-radius: 5px;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const ButtonAdd = styled(RectButton)`
-  background: ${({theme}) => theme.comment};
-  border-radius: 10px;
-  justify-content: center;
-  align-items: center;
-  margin: 10px 0;
-`;
-
-export const ContainerButton = styled.View`
-  flex-direction: row;
-  width: 100%;
-  padding: 15px 0;
-  align-items: center;
-  justify-content: center;
 `;

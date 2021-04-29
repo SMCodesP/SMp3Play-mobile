@@ -9,8 +9,9 @@ import RadioForm, {
   RadioButton,
   RadioButtonInput,
 } from 'react-native-simple-radio-button';
-import {rgba, lighten} from 'polished'
+import {rgba, lighten} from 'polished';
 import {RectButton} from 'react-native-gesture-handler';
+import {v4 as uuidv4} from 'uuid';
 
 import {Jiro} from 'react-native-textinput-effects';
 
@@ -103,7 +104,10 @@ const Modal = forwardRef((_, ref: any) => {
   const handlePlaylist = (video: VideoType) => {
     const map = new Map(playlist);
     const add = () => {
-      return map.set(video.videoId, video);
+      return map.set(video.videoId, {
+        ...video,
+        uuid: uuidv4(),
+      } as any);
     };
     const rm = () => {
       map.delete(video.videoId);
@@ -206,13 +210,13 @@ const Modal = forwardRef((_, ref: any) => {
         <ContainerButton>
           <ButtonConfirm
             style={{
-              backgroundColor: name.length !== 0 ? theme.comment : rgba(theme.comment, 0.5),
+              backgroundColor:
+                name.length !== 0 ? theme.comment : rgba(theme.comment, 0.5),
               opacity: name.length !== 0 ? 1 : 0.75,
             }}
             enabled={name.length !== 0}
             rippleColor={lighten(0.5, theme.comment)}
-            onPress={confirmCreate}
-          >
+            onPress={confirmCreate}>
             <ButtonText>Criar</ButtonText>
           </ButtonConfirm>
         </ContainerButton>
@@ -221,15 +225,17 @@ const Modal = forwardRef((_, ref: any) => {
             style={{
               paddingHorizontal: 10,
               paddingVertical: 10,
-              borderRadius: 10
+              borderRadius: 10,
             }}
             rippleColor={rgba(theme.red, 0.1)}
-            onPress={handleCancel}
-          >
-            <ButtonText style={{
-              color: theme.red,
-              alignSelf: 'center'
-            }}>Cancelar</ButtonText>
+            onPress={handleCancel}>
+            <ButtonText
+              style={{
+                color: theme.red,
+                alignSelf: 'center',
+              }}>
+              Cancelar
+            </ButtonText>
           </RectButton>
         </ContainerButton>
       </ContainerVideos>

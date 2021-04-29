@@ -44,7 +44,6 @@ export const Artwork = styled.Image`
 export const ProgessContainer = styled.View`
   height: 1px;
   width: 100%;
-  margin-top: 10px;
   flex-direction: row;
 `;
 export const ProgessBackground = styled.View`
