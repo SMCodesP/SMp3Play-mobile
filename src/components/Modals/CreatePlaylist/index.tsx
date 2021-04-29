@@ -190,6 +190,7 @@ const Modal = forwardRef((_, ref: any) => {
       <ContainerVideos>
         <FlatList
           data={videos}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.videoId}
           renderItem={({item}) => (
             <Artwork

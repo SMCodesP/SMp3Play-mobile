@@ -62,6 +62,7 @@ const Home: React.FC = ({navigation}: any) => {
           ListEmptyComponent={HistoryEmpty}
           keyExtractor={(item) => String(item.videoId)}
           horizontal={true}
+          showsHorizontalScrollIndicator={false}
           renderItem={({item}) => (
             <Artwork
               resizeMode="contain"
@@ -100,9 +101,11 @@ const Home: React.FC = ({navigation}: any) => {
           data={playlists}
           keyExtractor={(item) => item.id}
           horizontal={false}
+          showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <ContainerPlaylist>
               <ListPlaylist
+                showsVerticalScrollIndicator={false}
                 numColumns={2}
                 data={item.videos.slice(0, 4)}
                 keyExtractor={(itemVideo: any) => itemVideo.videoId}

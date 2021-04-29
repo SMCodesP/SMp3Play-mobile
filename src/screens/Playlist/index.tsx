@@ -104,6 +104,7 @@ const Playlist: React.FC<{
       </ContainerHeader>
       <ContainerPlaylist>
         <ListPlaylist
+          showsVerticalScrollIndicator={false}
           numColumns={2}
           data={playlist.videos.slice(0, 4)}
           keyExtractor={(itemVideo: any) => itemVideo.videoId}
@@ -134,6 +135,7 @@ const Playlist: React.FC<{
             flex: 1,
           }}
           data={playlist.videos}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(itemVideo: any) => itemVideo.uuid}
           renderItem={({item}) => (
             <Swipeable

@@ -59,6 +59,7 @@ const Search: React.FC = ({navigation}: any) => {
       ) : (
         <FlatList
           data={videos}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(video) => video.videoId}
           renderItem={({item}) => (
             <Video video={item} navigation={navigation} />
