@@ -6,7 +6,6 @@ import {TouchableOpacity, ImageBackground} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {ThemeContext} from 'styled-components';
-import TrackPlayer from 'react-native-track-player';
 import {Portal} from 'react-native-portalize';
 
 import {
@@ -40,8 +39,7 @@ const Details: React.FC<{
   const {play} = usePlayer();
 
   const handlePlay = () => {
-    TrackPlayer.destroy();
-    play(video);
+    play(video, true);
   };
 
   const modalizeRef = useRef(null);

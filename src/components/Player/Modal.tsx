@@ -49,11 +49,39 @@ const Modal = ({modalizeRef}: {modalizeRef: React.MutableRefObject<null>}) => {
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
+  const modalStyles: any = {
+    modalStyle: {
+      backgroundColor: theme.background,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      marginHorizontal: 10,
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    handleStyle: {
+      width: 75,
+      height: 6,
+      borderRadius: 6,
+      marginBottom: 50,
+      backgroundColor: theme.comment,
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    childrenStyle: {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  };
+
   return (
     <Modalize
       ref={modalizeRef}
       snapPoint={530}
       HeaderComponent={<PlayerFull />}
+      {...modalStyles}
       flatListProps={{
         data: queue,
         renderItem: ({item}) =>

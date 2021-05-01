@@ -27,8 +27,8 @@ export const Title = styled.Text`
 `;
 
 export const Authorname = styled.Text`
-  color: ${({theme}) => theme.foreground};
-  opacity: 0.7;
+  color: ${({theme}) => theme.comment};
+  font-weight: bold;
   font-size: 11px;
 `;
 
@@ -97,4 +97,12 @@ export const DeleteText = styled.Text`
   color: ${({theme}) => darken(0.2, theme.red)};
   font-weight: bold;
   font-size: 16px;
+`;
+
+export const TitleLoadingQueue = styled.Text`
+  color: ${({theme}) => theme.foreground};
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 25px;
 `;

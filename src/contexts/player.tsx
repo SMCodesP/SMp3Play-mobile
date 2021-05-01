@@ -15,7 +15,7 @@ import {useDebouncedCallback} from 'use-debounce';
 import Playlist from '../interfaces/Playlist';
 
 type PlayerType = {
-  play: (video: VideoType, insertBeforeId?: string) => Promise<void>;
+  play: (video: VideoType, clear?: boolean) => Promise<void>;
   createPlaylist: (name: string, initialVideos?: VideoType[]) => Promise<void>;
   track: Track | null;
   position: number;
@@ -31,15 +31,17 @@ type PlayerType = {
   removeSongFromPlaylist: (playlistId: string, songId: string) => void;
   addSongIntoPlaylist: (playlistId: string, song: VideoType) => void;
   removePlaylist: (playlistId: string) => void;
+  skipTo: (id: string) => void;
 };
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
 const PlayerProvider: React.FC = ({children}) => {
   const [track, setTrack] = useState<Track | null>(null);
-  const {position, duration} = useProgress(500);
+  const {position, duration} = useProgress();
   const [queue, setQueue] = useState<Track[]>([]);
   const [history, setHistory] = useState<VideoType[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(true);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [playingPlaylist, setPlayingPlaylist] = useState<Playlist | null>(null);
 
@@ -65,6 +67,7 @@ const PlayerProvider: React.FC = ({children}) => {
       setQueue(await TrackPlayer.getQueue());
       const jsonValue = await AsyncStorage.getItem('@history');
       setHistory(jsonValue != null ? JSON.parse(jsonValue) || [] : []);
+      setLoadingHistory(false);
       const playlistJsonValue = await AsyncStorage.getItem('@playlists');
       setPlaylists(
         playlistJsonValue != null ? JSON.parse(playlistJsonValue) || [] : [],
@@ -82,21 +85,38 @@ const PlayerProvider: React.FC = ({children}) => {
     }
   }, [playlists]);
 
+  useEffect(() => {
+    if (!loadingHistory) {
+      AsyncStorage.setItem('@history', JSON.stringify(history));
+    }
+  }, [history, loadingHistory]);
+
   const handleEvent = useDebouncedCallback(
     async (data) => {
       if (data.type === Event.PlaybackTrackChanged) {
-        setTrack(queue.find(({id}) => data.nextTrack === id) || null);
+        const nextTrack = queue.find(({id}) => data.nextTrack === id);
+        if (nextTrack) {
+          setHistory((oldHistory) => {
+            const newHistory = [
+              ...new Map(
+                [
+                  {
+                    ...nextTrack.extra,
+                    videoId: nextTrack.extra.videoId,
+                  },
+                  ...oldHistory,
+                ].map((item) => [item.videoId, item]),
+              ).values(),
+            ];
+            return newHistory;
+          });
+        }
+        setTrack(nextTrack || null);
       }
       if (data.type === Event.PlaybackQueueEnded) {
-        setTrack(() => {
-          setQueue((oldQueue) => {
-            if (oldQueue.length > 0) {
-              TrackPlayer.destroy();
-            }
-            return [];
-          });
-          return null;
-        });
+        await TrackPlayer.destroy();
+        setTrack(null);
+        setQueue([]);
         setPlayingPlaylist(null);
       }
     },
@@ -116,18 +136,27 @@ const PlayerProvider: React.FC = ({children}) => {
 
   const playPlaylist: PlayerType['playPlaylist'] = async (playlist) => {
     TrackPlayer.destroy();
-    setTrack({
+    const primarySong = {
+      url: (await ytdl(playlist.videos[0].url, {quality: 'lowestaudio'}))[0]
+        .url,
       artist: playlist.videos[0].author.name,
       title: playlist.videos[0].title,
-      id: playlist.videos[0].uuid,
+      id: playlist.videos[0].uuid || playlist.videos[0].videoId,
       artwork: playlist.videos[0].image,
       description: playlist.videos[0].description,
       date: playlist.videos[0].timestamp,
-    } as any);
+      extra: playlist.videos[0],
+    };
+    setTrack(primarySong);
+    setQueue([primarySong]);
+    await TrackPlayer.add(primarySong);
     await TrackPlayer.play();
-    for (const video of playlist.videos) {
-      const urls = await ytdl(video.url, {quality: 'highestaudio'});
-      await TrackPlayer.add({
+    setPlayingPlaylist(playlist);
+    for (const video of playlist.videos.filter(
+      (_video, index) => index !== 0,
+    )) {
+      const urls = await ytdl(video.url, {quality: 'lowestaudio'});
+      const newTrack: any = {
         url: urls[0].url,
         artist: video.author.name,
         title: video.title,
@@ -135,19 +164,10 @@ const PlayerProvider: React.FC = ({children}) => {
         artwork: video.image,
         description: video.description,
         date: video.timestamp,
-      } as any);
-      setQueue((oldState) => [
-        ...oldState,
-        {
-          url: urls[0].url,
-          artist: video.author.name,
-          title: video.title,
-          id: video.uuid,
-          artwork: video.image,
-          description: video.description,
-          date: video.timestamp,
-        } as any,
-      ]);
+        extra: playlist.videos[0],
+      };
+      await TrackPlayer.add(newTrack);
+      setQueue((oldState) => [...oldState, newTrack]);
     }
   };
 
@@ -174,6 +194,14 @@ const PlayerProvider: React.FC = ({children}) => {
       setTrack(next);
     }
     await TrackPlayer.skipToNext();
+  };
+
+  const skipTo: PlayerType['skipTo'] = async (id: string) => {
+    if (queue.some((value) => value.id === id)) {
+      setTrack(queue.find((value) => value.id === id) || null);
+      await TrackPlayer.skip(id);
+      setTrack(queue.find((value) => value.id === id) || null);
+    }
   };
 
   const previousSong = async () => {
@@ -242,47 +270,34 @@ const PlayerProvider: React.FC = ({children}) => {
     );
   };
 
-  const play: PlayerType['play'] = async (video, insertBeforeId) => {
-    const urls = await ytdl(video.url, {quality: 'highestaudio'});
-    if (insertBeforeId) {
-      await TrackPlayer.add(
-        {
-          url: urls[0].url,
-          artist: video.author.name,
-          title: video.title,
-          id: video.uuid || uuidv4(),
-          artwork: video.image,
-          description: video.description,
-          date: video.timestamp,
-        },
-        insertBeforeId,
-      );
+  const play: PlayerType['play'] = async (video, clear = false) => {
+    if (clear) {
+      setQueue([]);
+      TrackPlayer.destroy();
+    }
+    const urls = await ytdl(video.url, {quality: 'lowestaudio'});
+    const newTrack = {
+      url: urls[0].url,
+      artist: video.author.name,
+      title: video.title,
+      id: video.uuid || uuidv4(),
+      artwork: video.image,
+      description: video.description,
+      date: video.timestamp,
+      extra: video,
+    };
+    await TrackPlayer.add(newTrack);
+    if (clear) {
+      setTrack(newTrack);
     } else {
-      await TrackPlayer.add({
-        url: urls[0].url,
-        artist: video.author.name,
-        title: video.title,
-        id: video.uuid || uuidv4(),
-        artwork: video.image,
-        description: video.description,
-        date: video.timestamp,
+      setTrack((oldTrack) => {
+        if (!oldTrack) {
+          return newTrack;
+        }
+        return oldTrack;
       });
     }
-    setTrack((oldTrack) => {
-      if (!oldTrack) {
-        return {
-          url: urls[0].url,
-          artist: video.author.name,
-          title: video.title,
-          id: uuidv4(),
-          artwork: video.image,
-          description: video.description,
-          date: video.timestamp,
-        };
-      }
-      return oldTrack;
-    });
-    setQueue(await TrackPlayer.getQueue());
+    setQueue((oldQueue) => [...oldQueue, newTrack]);
     await TrackPlayer.play();
     return;
   };
@@ -306,6 +321,7 @@ const PlayerProvider: React.FC = ({children}) => {
         removeSongFromPlaylist,
         addSongIntoPlaylist,
         removePlaylist,
+        skipTo,
       }}>
       {children}
     </PlayerContext.Provider>

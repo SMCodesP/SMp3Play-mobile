@@ -36,7 +36,7 @@ const PlayerFull: React.FunctionComponent = () => {
     <Container>
       <LinearGradient
         colors={[theme.currentLine, theme.background]}
-        style={{flex: 1}}>
+        style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}}>
         <Artwork
           source={{uri: String(track?.artwork || '') || ''}}
           resizeMode="contain"
@@ -61,7 +61,7 @@ const PlayerFull: React.FunctionComponent = () => {
           </TouchableOpacity>
           <TouchableOpacity
             onPressOut={
-              playbackState === State.Playing
+              playbackState === State.Paused
                 ? TrackPlayer.play
                 : TrackPlayer.pause
             }>

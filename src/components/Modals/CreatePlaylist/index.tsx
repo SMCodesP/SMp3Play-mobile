@@ -178,7 +178,7 @@ const Modal = forwardRef((_, ref: any) => {
           label={'Procure por novas músicas'}
           borderColor={theme.comment}
           inputPadding={10}
-          onSubmitEditing={handleQuery}
+          onSubmitEditing={() => handleQuery(query)}
           onChangeText={(e) => {
             setQuery(e);
             handleQuery(e);

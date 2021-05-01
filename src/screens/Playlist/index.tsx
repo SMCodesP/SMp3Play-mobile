@@ -13,7 +13,6 @@ import {usePlayer} from '../../contexts/player';
 import GlobalContainer from '../../components/GlobalContainer';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import TrackPlayer from 'react-native-track-player';
 
 import {PlaylistItemImage, ListPlaylist, ShadowPlaylist} from '../Home/styles';
 import {ContainerHeader, Title} from '../Details/styles';
@@ -80,8 +79,7 @@ const Playlist: React.FC<{
   }
 
   const handlePlay = (video: any) => {
-    TrackPlayer.destroy();
-    play(video);
+    play(video, true);
   };
 
   return (

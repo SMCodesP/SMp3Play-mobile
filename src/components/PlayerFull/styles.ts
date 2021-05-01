@@ -4,6 +4,8 @@ import styled from 'styled-components/native';
 export const Container = styled.View`
   height: 500px;
   background: ${({theme}) => theme.background};
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 `;
 
 export const Artwork = styled.Image`
