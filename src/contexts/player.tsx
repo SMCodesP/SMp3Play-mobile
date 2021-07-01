@@ -1,7 +1,6 @@
 import 'react-native-get-random-values';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import type VideoType from '../interfaces/VideoType';
-import ytdl from 'react-native-ytdl';
 import TrackPlayer, {
   useProgress,
   Track,
@@ -136,39 +135,21 @@ const PlayerProvider: React.FC = ({children}) => {
 
   const playPlaylist: PlayerType['playPlaylist'] = async (playlist) => {
     TrackPlayer.destroy();
-    const primarySong = {
-      url: (await ytdl(playlist.videos[0].url, {quality: 'highestaudio'}))[0]
-        .url,
-      artist: playlist.videos[0].author.name,
-      title: playlist.videos[0].title,
-      id: playlist.videos[0].uuid || playlist.videos[0].videoId,
-      artwork: playlist.videos[0].image,
-      description: playlist.videos[0].description,
-      date: playlist.videos[0].timestamp,
+    const songs: any[] = playlist.videos.map((video) => ({
+      url: `https://sm-p3-play-api.vercel.app/api/song/${video.videoId}`,
+      artist: video.author.name,
+      title: video.title,
+      id: video.uuid,
+      artwork: video.image,
+      description: video.description,
+      date: video.timestamp,
       extra: playlist.videos[0],
-    };
-    setTrack(primarySong);
-    setQueue([primarySong]);
-    await TrackPlayer.add(primarySong);
-    await TrackPlayer.play();
+    }));
+    setQueue(songs);
+    setTrack(songs[0]);
     setPlayingPlaylist(playlist);
-    for (const video of playlist.videos.filter(
-      (_video, index) => index !== 0,
-    )) {
-      const urls = await ytdl(video.url, {quality: 'highestaudio'});
-      const newTrack: any = {
-        url: urls[0].url,
-        artist: video.author.name,
-        title: video.title,
-        id: video.uuid,
-        artwork: video.image,
-        description: video.description,
-        date: video.timestamp,
-        extra: playlist.videos[0],
-      };
-      await TrackPlayer.add(newTrack);
-      setQueue((oldState) => [...oldState, newTrack]);
-    }
+    await TrackPlayer.add(songs);
+    await TrackPlayer.play();
   };
 
   const removeSongFromPlaylist: PlayerType['removeSongFromPlaylist'] = (
@@ -272,12 +253,12 @@ const PlayerProvider: React.FC = ({children}) => {
 
   const play: PlayerType['play'] = async (video, clear = false) => {
     if (clear) {
+      setPlayingPlaylist(null);
       setQueue([]);
       TrackPlayer.destroy();
     }
-    const urls = await ytdl(video.url, {quality: 'highestaudio'});
     const newTrack = {
-      url: urls[0].url,
+      url: `https://sm-p3-play-api.vercel.app/api/song/${video.videoId}`,
       artist: video.author.name,
       title: video.title,
       id: video.uuid || uuidv4(),
@@ -286,7 +267,7 @@ const PlayerProvider: React.FC = ({children}) => {
       date: video.timestamp,
       extra: video,
     };
-    await TrackPlayer.add(newTrack);
+    setQueue((oldQueue) => [...oldQueue, newTrack]);
     if (clear) {
       setTrack(newTrack);
     } else {
@@ -297,7 +278,7 @@ const PlayerProvider: React.FC = ({children}) => {
         return oldTrack;
       });
     }
-    setQueue((oldQueue) => [...oldQueue, newTrack]);
+    await TrackPlayer.add(newTrack);
     await TrackPlayer.play();
     return;
   };
