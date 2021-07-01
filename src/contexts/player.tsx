@@ -137,7 +137,7 @@ const PlayerProvider: React.FC = ({children}) => {
   const playPlaylist: PlayerType['playPlaylist'] = async (playlist) => {
     TrackPlayer.destroy();
     const primarySong = {
-      url: (await ytdl(playlist.videos[0].url, {quality: 'lowestaudio'}))[0]
+      url: (await ytdl(playlist.videos[0].url, {quality: 'highestaudio'}))[0]
         .url,
       artist: playlist.videos[0].author.name,
       title: playlist.videos[0].title,
@@ -155,7 +155,7 @@ const PlayerProvider: React.FC = ({children}) => {
     for (const video of playlist.videos.filter(
       (_video, index) => index !== 0,
     )) {
-      const urls = await ytdl(video.url, {quality: 'lowestaudio'});
+      const urls = await ytdl(video.url, {quality: 'highestaudio'});
       const newTrack: any = {
         url: urls[0].url,
         artist: video.author.name,
@@ -275,7 +275,7 @@ const PlayerProvider: React.FC = ({children}) => {
       setQueue([]);
       TrackPlayer.destroy();
     }
-    const urls = await ytdl(video.url, {quality: 'lowestaudio'});
+    const urls = await ytdl(video.url, {quality: 'highestaudio'});
     const newTrack = {
       url: urls[0].url,
       artist: video.author.name,
