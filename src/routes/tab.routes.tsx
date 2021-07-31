@@ -3,9 +3,10 @@ import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { BlurView } from 'expo-blur'
+import { BlurView } from '@react-native-community/blur'
 
-import {Home} from '../screens/home'
+import { HomeStackRoutes, SearchStackRoutes } from "./stack.routes";
+
 import colors from "../styles/colors";
 
 const AppTab = createBottomTabNavigator();
@@ -19,29 +20,33 @@ export const TabRoutes: React.FC = () => {
         labelPosition: "below-icon",
         showLabel: false,
         style: {
-          height: 50,
-          backgroundColor: 'transparent',          
+          height: 45,
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
-        },
+          elevation: 0,
+        }
       }}
-      tabBar={(props) => (
+      tabBar={(props) => {
+        return (
         <BlurView
           style={{
             position: 'absolute',
-            bottom: 0,
             left: 0,
             right: 0,
+            bottom: 0,
           }}
-          tint="dark"
-          intensity={80}
+          blurType="dark"
+          blurAmount={8}
+          blurRadius={20}
+          overlayColor="transparent"
         >
           <BottomTabBar {...props} />
         </BlurView>
-      )}
+      )}}
     >
       <AppTab.Screen
         name="Início"
-        component={Home}
+        component={HomeStackRoutes}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons
@@ -54,7 +59,7 @@ export const TabRoutes: React.FC = () => {
       />
       <AppTab.Screen
         name="Pesquisar"
-        component={Home}
+        component={SearchStackRoutes}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons
