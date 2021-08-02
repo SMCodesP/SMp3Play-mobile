@@ -32,6 +32,18 @@ const BottomTab: React.FC<{
   const bottomTabPosY = useSharedValue(0);
   const { track } = usePlayer();
 
+  const close = () => {
+    playerPosY.value = withSpring(WINDOW_HEIGHT);
+    bottomTabPosY.value = withTiming(0, {
+      duration: 500,
+    });
+  };
+
+  const open = () => {
+    playerPosY.value = withSpring(0);
+    bottomTabPosY.value = withSpring(110);
+  };
+
   const onGestureEvent = useAnimatedGestureHandler({
     onStart(_event, ctx: any) {
       ctx.playerPosY = playerPosY.value;
@@ -42,7 +54,7 @@ const BottomTab: React.FC<{
       bottomTabPosY.value = ctx.bottomTabPosY + Math.abs(event.translationY);
     },
     onEnd(event) {
-      if (event.absoluteY <= (WINDOW_HEIGHT / 100) * 75) {
+      if (event.velocityY <= -2500 || (event.absoluteY <= (WINDOW_HEIGHT / 100) * 75)) {
         playerPosY.value = withSpring(0);
         bottomTabPosY.value = withSpring(110);
       } else {
@@ -69,18 +81,6 @@ const BottomTab: React.FC<{
       },
     ],
   }));
-
-  const close = () => {
-    playerPosY.value = withSpring(WINDOW_HEIGHT);
-    bottomTabPosY.value = withTiming(0, {
-      duration: 1000,
-    });
-  };
-
-  const open = () => {
-    playerPosY.value = withSpring(0);
-    bottomTabPosY.value = withSpring(110);
-  };
 
   useEffect(() => {
     if (!track) {

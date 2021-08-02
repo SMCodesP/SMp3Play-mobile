@@ -12,6 +12,7 @@ import { usePlayer } from "../../../contexts/player";
 
 import colors from "../../../styles/colors";
 import fonts from "../../../styles/fonts";
+import TouchableScalable from "../../TouchableScalable";
 
 interface CardVideoProps {
   item: Track;
@@ -39,28 +40,28 @@ export const CardVideoPlaying: React.FC<CardVideoProps> = ({ index, item: track 
   }
 
   return (
-    <TouchableOpacity 
-      onPressIn={() => pressed.value = true}
-      onPressOut={() => pressed.value = false} onPress={handleSkip}
+    <TouchableScalable
+      duration={25}
+      scaleTo={0.95}
+      style={styles.containerGeral}
+      onPress={handleSkip}
     >
-      <Animated.View style={[styles.containerGeral, animatedStyle]}>
-        <FastImage
-          style={styles.thumbnail}
-          // imageStyle={{ borderRadius: 12 }}
-          source={{ uri: String(track.artwork) }}
-        >
-          <View style={styles.container}>
-            {currentTrack?.id === track.id && <Text style={styles.playing}>Tocando</Text>}
-            <View style={styles.containerTitle}>
-              <Text style={styles.title}>
-                {String(track.title).substring(0, 50).trim() +
-                  (String(track.title).length > 50 ? "..." : "")}
-              </Text>
-            </View>
+      <FastImage
+        style={styles.thumbnail}
+        // imageStyle={{ borderRadius: 12 }}
+        source={{ uri: String(track.artwork) }}
+      >
+        <View style={styles.container}>
+          {currentTrack?.id === track.id && <Text style={styles.playing}>Tocando</Text>}
+          <View style={styles.containerTitle}>
+            <Text style={styles.title}>
+              {String(track.title).substring(0, 50).trim() +
+                (String(track.title).length > 50 ? "..." : "")}
+            </Text>
           </View>
-        </FastImage>
-      </Animated.View>
-    </TouchableOpacity>
+        </View>
+      </FastImage>
+    </TouchableScalable>
   );
 };
 

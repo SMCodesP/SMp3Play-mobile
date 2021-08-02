@@ -29,7 +29,11 @@ const PlayerProvider: React.FC = ({children}) => {
 
   useEffect(() => {
     ;(async () => {
-      setRepeating(RepeatMode.Queue === await TrackPlayer.getRepeatMode());
+      const repeatingStored = Number(await AsyncStorage.getItem('@repeating') || '0');
+      console.log(await AsyncStorage.getItem('@repeating'))
+      console.log(repeatingStored)
+      setRepeating(repeatingStored ? true : false);
+      await TrackPlayer.setRepeatMode(repeatingStored ? RepeatMode.Queue : RepeatMode.Off)
       await refreshHistory();
     })();
   }, []);
@@ -46,6 +50,8 @@ const PlayerProvider: React.FC = ({children}) => {
   }
   
   const toggleRepeat = useCallback(async () => {
+    console.log(String(Number(!repeating)))
+    await AsyncStorage.setItem('@repeating', String(Number(!repeating)));
     await TrackPlayer.setRepeatMode(!repeating ? RepeatMode.Queue : RepeatMode.Off)
     setRepeating(!repeating)
     return;
@@ -57,13 +63,13 @@ const PlayerProvider: React.FC = ({children}) => {
       if (data.type === Event.PlaybackTrackChanged && (data.nextTrack !== undefined && data.nextTrack !== null)) {
         const nextTrack = await TrackPlayer.getTrack(data.nextTrack);
         setTrack(nextTrack || null);
-        const currentTrack = await TrackPlayer.getCurrentTrack();
       }
       if (data.type === Event.PlaybackQueueEnded) {
         setTrack(null);
       }
-      await refreshHistory()
       await refreshQueue()
+      await TrackPlayer.setRepeatMode(repeating ? RepeatMode.Queue : RepeatMode.Off)
+      await refreshHistory()
     }
   )
 

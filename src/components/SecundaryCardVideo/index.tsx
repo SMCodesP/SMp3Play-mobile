@@ -10,6 +10,7 @@ import FastImage from 'react-native-fast-image'
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
+import TouchableScalable from "../TouchableScalable";
 
 interface CardVideoProps {
   navigation?: any;
@@ -17,14 +18,18 @@ interface CardVideoProps {
 }
 
 const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
+  const handleNavigation = () => {
+    navigation.navigate("Details", {
+      video,
+    });
+  }
+
   return (
-    <TouchableOpacity
+    <TouchableScalable
+      duration={25}
+      scaleTo={0.95}
       style={styles.containerGeral}
-      onPress={() => {
-        navigation.navigate("Details", {
-          video,
-        });
-      }}
+      onPress={handleNavigation}
     >
       <FastImage
         style={styles.thumbnail}
@@ -38,7 +43,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
           </Text>
         </View>
       </FastImage>
-    </TouchableOpacity>
+    </TouchableScalable>
   );
 };
 

@@ -8,13 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { RectButton, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { RectButton } from "react-native-gesture-handler";
 import { AntDesign, Feather as Icon } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
-import Animated, { useSharedValue, useDerivedValue, withSpring, useAnimatedStyle, interpolate, Extrapolate, withTiming } from 'react-native-reanimated'
 
 import colors from "../../styles/colors";
-import { transparentize, darken } from "polished";
+import { transparentize } from "polished";
 import TextTicker from "react-native-text-ticker";
 import { usePlayer } from "../../contexts/player";
 import fonts from "../../styles/fonts";
@@ -25,6 +24,8 @@ import TrackPlayer, {
 } from "react-native-track-player";
 import Seek from './Seek'
 import { CardVideoPlaying } from "./CardVideoPlaying";
+import TouchableScalable from "../TouchableScalable";
+import { msToHMS } from "../../utils/msToMHS";
 
 const { width } = Dimensions.get("window");
 
@@ -44,20 +45,6 @@ const Player = ({ onPress }: PlayerProps) => {
   const pause = async () => {
     await TrackPlayer.play();
   };
-
-  const pressed = useSharedValue(false);
-  const progress = useDerivedValue(() =>
-    pressed.value ? withTiming(0.925, { duration: 50 }) : withTiming(1, { duration: 50 })
-  )
-  // const progress = useDerivedValue(() =>
-  //   pressed.value ? 0.95 : 1
-  // )
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: progress.value }
-    ],
-  }))
   
   return (
     <SafeAreaView style={styles.root}>
@@ -109,6 +96,10 @@ const Player = ({ onPress }: PlayerProps) => {
           value={position}
           duration={duration}
         />
+        <View style={styles.containerTime}>
+          <Text style={styles.time}>{msToHMS(position)}</Text>
+          <Text style={styles.time}>{msToHMS(duration)}</Text>
+        </View>
         <View style={styles.controls}>
           <TouchableOpacity>
             <Icon
@@ -124,21 +115,18 @@ const Player = ({ onPress }: PlayerProps) => {
               size={46}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPressIn={() => pressed.value = true}
-            onPressOut={() => pressed.value = false}
+          <TouchableScalable
+            duration={50}
+            scaleTo={0.925}
             onPress={playbackState === State.Paused ? pause : play}
-            activeOpacity={0.75}
+            activeOpacity={0.5}
           >
-          {/* <TouchableOpacity onPressOut={playbackState === State.Paused ? pause : play}> */}
-            <Animated.View style={animatedStyle}>
-              <AntDesign
-                name={playbackState === State.Paused ? "play" : "pausecircle"}
-                color={colors.foreground}
-                size={60}
-              />
-            </Animated.View>
-          </TouchableOpacity>
+            <AntDesign
+              name={playbackState === State.Paused ? "play" : "pausecircle"}
+              color={colors.foreground}
+              size={60}
+            />
+          </TouchableScalable>
           <TouchableOpacity>
             <AntDesign name="stepforward" color={colors.foreground} size={46} />
           </TouchableOpacity>
@@ -220,13 +208,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
   },
-  slider: {
-    // backgroundColor: transparentize(0.5, colors.foreground),
-    width: width - 32,
-    borderRadius: 2,
-    height: 4,
-    marginVertical: 16,
-  },
   ball: {
     width: 5,
     height: 5,
@@ -237,6 +218,14 @@ const styles = StyleSheet.create({
   },
   listQueue: {
     marginTop: 25
+  },
+  containerTime: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  time: {
+    fontFamily: fonts.text,
+    color: colors.foreground,
   }
 });
 

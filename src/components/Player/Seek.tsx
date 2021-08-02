@@ -10,6 +10,9 @@ const Seek: React.FC<{
   duration: number;
   value: number;
 }> = ({ duration, value }) => {
+  // console.log(duration)
+  // console.log(value)
+  
   const slidingStarted = async () => {
     await TrackPlayer.pause();
   };
@@ -24,7 +27,6 @@ const Seek: React.FC<{
       value={value}
       maximumValue={duration}
       minimumValue={0}
-      step={duration / 400}
       maximumTrackTintColor={transparentize(0.5, colors.foreground)}
       minimumTrackTintColor={colors.pink}
       thumbTintColor={darken(0.1, colors.pink)}
