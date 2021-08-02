@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import FastImage from 'react-native-fast-image'
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
@@ -25,9 +26,9 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
         });
       }}
     >
-      <ImageBackground
+      <FastImage
         style={styles.thumbnail}
-        imageStyle={{ borderRadius: 12 }}
+        // imageStyle={{ borderRadius: 12 }}
         source={{ uri: video.thumbnail }}
       >
         <View style={styles.container}>
@@ -36,7 +37,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
               (video.title.length > 50 ? "..." : "")}
           </Text>
         </View>
-      </ImageBackground>
+      </FastImage>
     </TouchableOpacity>
   );
 };
@@ -57,6 +58,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     flex: 1,
+    borderRadius: 12
   },
   title: {
     fontSize: 12,

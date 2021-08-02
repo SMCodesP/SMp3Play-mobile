@@ -8,6 +8,8 @@ import TextTicker from 'react-native-text-ticker'
 
 import { usePlayer } from '../../contexts/player';
 import colors from '../../styles/colors';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import fonts from '../../styles/fonts';
 
 function ProgressBar() {
   const { position, duration } = useTrackPlayerProgress();
@@ -25,7 +27,9 @@ function ProgressBar() {
   );
 }
 
-export const MiniPlayer: React.FC = () => {
+export const MiniPlayer: React.FC<{
+  onOpen?: () => void;
+}> = ({ onOpen }) => {
   const { track } = usePlayer()
   const playbackState = usePlaybackState();
 
@@ -37,13 +41,13 @@ export const MiniPlayer: React.FC = () => {
     await TrackPlayer.play();
   }
 
-  return track && (
-    <View style={styles.container}>
+  return (
+    <TouchableOpacity onPress={onOpen} activeOpacity={1} style={styles.container}>
       <ProgressBar />
       <View style={styles.containerMiniPlayer}>
         <Image
           style={styles.artwork}
-          source={{uri: String(track?.artwork || '')}}
+          source={{uri: String(track?.artwork || 'https://via.placeholder.com/50x50')}}
         />
         <View>
           <TextTicker
@@ -79,7 +83,7 @@ export const MiniPlayer: React.FC = () => {
           </TouchableOpacity>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -90,8 +94,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     // borderBottomWidth: 2,
     // borderBottomColor: colors.comment,
-    position: 'absolute',
-    bottom: 45,
   },
   progressContainer: {
     height: 1,
@@ -125,8 +127,8 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   author: {
-    color: colors.purple,
-    fontWeight: 'bold',
+    color: colors.comment,
+    fontFamily: fonts.complement,
     fontSize: 12,
   },
   control: {

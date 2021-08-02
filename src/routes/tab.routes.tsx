@@ -8,10 +8,14 @@ import { BlurView } from '@react-native-community/blur'
 import { HomeStackRoutes, SearchStackRoutes } from "./stack.routes";
 
 import colors from "../styles/colors";
+import BottomTab from "../components/BottomTab";
+import { usePlayer } from "../contexts/player";
 
 const AppTab = createBottomTabNavigator();
 
 export const TabRoutes: React.FC = () => {
+  const { track } = usePlayer();
+
   return (
     <AppTab.Navigator
       tabBarOptions={{
@@ -26,23 +30,7 @@ export const TabRoutes: React.FC = () => {
           elevation: 0,
         }
       }}
-      tabBar={(props) => {
-        return (
-        <BlurView
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-          blurType="dark"
-          blurAmount={8}
-          blurRadius={20}
-          overlayColor="transparent"
-        >
-          <BottomTabBar {...props} />
-        </BlurView>
-      )}}
+      tabBar={(props) => <BottomTab bottomTabBarProps={props} />}
     >
       <AppTab.Screen
         name="Início"

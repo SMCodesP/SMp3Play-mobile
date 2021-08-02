@@ -3,7 +3,6 @@ import {View} from 'react-native';
 import { usePlayer } from '../../contexts/player';
 
 import colors from '../../styles/colors'
-import { MiniPlayer } from '../MiniPlayer';
 
 const GlobalContainer: React.FC = ({children}) => {
   const {track} = usePlayer()
@@ -12,10 +11,9 @@ const GlobalContainer: React.FC = ({children}) => {
     <View style={{
       flex: 1,
       backgroundColor: colors.background,
-      paddingBottom: track ? 65 : 0,
+      // marginBottom: track ? 110 : 45
     }}>
       {children}
-      <MiniPlayer />
     </View>
   );
 };

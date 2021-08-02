@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
-import { RectButton } from 'react-native-gesture-handler'
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import colors from '../../styles/colors'
 import fonts from '../../styles/fonts'
@@ -19,11 +19,11 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
 				});
 			}}
 		>
-			<ImageBackground style={styles.thumbnail} imageStyle={{ borderRadius: 10 }} source={{ uri: video.thumbnail }}>
+			<FastImage style={styles.thumbnail} source={{ uri: video.thumbnail }}>
 				<View style={styles.container}>
 					<Text style={styles.title}>{video.title.substring(0, 50).trim() + (video.title.length > 50 ? '...' : '')}</Text>
 				</View>
-			</ImageBackground>
+			</FastImage>
 		</TouchableOpacity>
 	)
 }

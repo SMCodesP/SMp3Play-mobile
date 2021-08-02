@@ -4,6 +4,7 @@ import {View, Text, TouchableOpacity, ImageBackground, StyleSheet, ScrollView} f
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackPlayer from 'react-native-track-player';
+import ytdl from "react-native-ytdl"
 
 import colors from '../styles/colors'
 import fonts from '../styles/fonts'
@@ -27,7 +28,7 @@ const Details: React.FC<{
 }) => {
   return (
     <GlobalContainer>
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }}>
         <ImageBackground
           source={{uri: video.image}}
           style={{height: 250}}>
@@ -54,8 +55,16 @@ const Details: React.FC<{
                   alignItems: 'center',
                 }}
                 onPress={async () => {
+                  console.log('videoURL:', video.url)
+                  const urls = await ytdl(video.url, { quality: 'highestaudio' });
+                  console.log('')
+                  console.log('')
+                  console.log('urls:')
+                  console.log(urls[0].url)
+                  console.log('')
+                  console.log('')
                   const track = {
-                    url: `https://sm-p3-play-api.vercel.app/api/song/${video.videoId}`,
+                    url: urls[0].url,
                     artist: video.author.name,
                     title: video.title,
                     artwork: video.image,
@@ -64,6 +73,7 @@ const Details: React.FC<{
                     extra: video,
                     id: `${Math.floor(Math.random() * 100000000000)}`
                   };
+                  TrackPlayer.destroy();
                   await TrackPlayer.add(track);
                   await TrackPlayer.play();
                 }}
