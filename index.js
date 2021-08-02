@@ -8,5 +8,5 @@ import App from './App';
 // It also ensures that whether you load the app in Expo Go or in a native build,
 // the environment is set up appropriately
 
-TrackPlayer.registerPlaybackService(() => require('./service'));
 registerRootComponent(App);
+TrackPlayer.registerPlaybackService(() => require('./service'));

@@ -9,18 +9,14 @@ import TrackPlayer from "react-native-track-player";
 const Seek: React.FC<{
   duration: number;
   value: number;
-  setIsSeeking(value: boolean): void;
-  setSliderValue(value: number): void;
-}> = ({ duration, value, setIsSeeking, setSliderValue }) => {
-  const slidingStarted = () => {
-    setIsSeeking(true);
+}> = ({ duration, value }) => {
+  const slidingStarted = async () => {
+    await TrackPlayer.pause();
   };
 
   const slidingCompleted = async ([value]: any) => {
-    setSliderValue(value);
-    await TrackPlayer.play();
     await TrackPlayer.seekTo(value);
-    setIsSeeking(false);
+    await TrackPlayer.play();
   };
 
   return (
@@ -28,7 +24,7 @@ const Seek: React.FC<{
       value={value}
       maximumValue={duration}
       minimumValue={0}
-      // step={duration / 100}
+      step={duration / 400}
       maximumTrackTintColor={transparentize(0.5, colors.foreground)}
       minimumTrackTintColor={colors.pink}
       thumbTintColor={darken(0.1, colors.pink)}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, Dimensions, TouchableOpacity } from 'react-native';
-import TrackPlayer, { usePlaybackState, useTrackPlayerProgress, STATE_PAUSED } from 'react-native-track-player';
+import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -8,11 +8,10 @@ import TextTicker from 'react-native-text-ticker'
 
 import { usePlayer } from '../../contexts/player';
 import colors from '../../styles/colors';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import fonts from '../../styles/fonts';
 
 function ProgressBar() {
-  const { position, duration } = useTrackPlayerProgress();
+  const { position, duration } = useProgress();
 
   return (
     <View style={styles.progressContainer}>
@@ -63,7 +62,7 @@ export const MiniPlayer: React.FC<{
           </TextTicker>
           <Text style={styles.author}>{track?.artist}</Text>
         </View>
-        {playbackState === STATE_PAUSED ? (
+        {playbackState === State.Paused ? (
           <TouchableOpacity style={{ alignSelf: 'center' }} onPress={pause}>
             <MaterialCommunityIcons
               size={42}

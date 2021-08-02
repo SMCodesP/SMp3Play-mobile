@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect, useLayoutEffect } from 'react';
-import { View, StyleSheet, Text, Image, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, FlatList } from 'react-native';
 import GlobalContainer from '../components/GlobalContainer';
 import SecundaryCardVideo from '../components/SecundaryCardVideo';
 import { usePlayer } from '../contexts/player';

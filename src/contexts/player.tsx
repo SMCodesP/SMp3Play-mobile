@@ -1,75 +1,82 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import TrackPlayer, {
-  CAPABILITY_PLAY,
-  CAPABILITY_PAUSE,
-  CAPABILITY_SKIP_TO_NEXT,
-  CAPABILITY_SKIP_TO_PREVIOUS,
-  CAPABILITY_STOP,
-  CAPABILITY_SEEK_TO,
+  Capability,
   useTrackPlayerEvents,
-  TrackPlayerEvents
+  Event,
+  Track,
+  RepeatMode
 } from 'react-native-track-player';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback } from 'react';
 
 type PlayerType = {
-  history: TVideo[];
   refreshHistory(): Promise<void>;
-  track: TrackPlayer.Track | null;
+  toggleRepeat(): Promise<void>;
+  refreshQueue(): Promise<void>;
+  history: TVideo[];
+  queue: Track[];
+  track: Track | null;
+  repeating: boolean;
 };
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
 const PlayerProvider: React.FC = ({children}) => {
   const [history, setHistory] = useState<TVideo[]>([]);
-  const [track, setTrack] = useState<TrackPlayer.Track | null>(null);
+  const [queue, setQueue] = useState<Track[]>([]);
+  const [track, setTrack] = useState<Track | null>(null);
+  const [repeating, setRepeating] = useState<boolean>(false);
 
   useEffect(() => {
-    async function setup() {
-      await TrackPlayer.setupPlayer({})
-      TrackPlayer.updateOptions({
-        capabilities: [
-          CAPABILITY_PLAY,
-          CAPABILITY_PAUSE,
-          CAPABILITY_SKIP_TO_NEXT,
-          CAPABILITY_SKIP_TO_PREVIOUS,
-          CAPABILITY_STOP,
-          CAPABILITY_SEEK_TO,
-        ],
-        compactCapabilities: [
-          CAPABILITY_PLAY,
-          CAPABILITY_PAUSE,
-          CAPABILITY_STOP,
-        ],
-      })
+    ;(async () => {
+      setRepeating(RepeatMode.Queue === await TrackPlayer.getRepeatMode());
       await refreshHistory();
-    }
-    setup();
+    })();
   }, []);
 
   const refreshHistory = async () => {
     const jsonValue = await AsyncStorage.getItem('@history');
     setHistory(jsonValue != null ? JSON.parse(jsonValue) || [] : []);
+    return;
   }
 
+  const refreshQueue = async () => {
+    setQueue(await TrackPlayer.getQueue());
+    return;
+  }
+  
+  const toggleRepeat = useCallback(async () => {
+    await TrackPlayer.setRepeatMode(!repeating ? RepeatMode.Queue : RepeatMode.Off)
+    setRepeating(!repeating)
+    return;
+  }, [repeating])
+
   useTrackPlayerEvents(
-    [TrackPlayerEvents.PLAYBACK_TRACK_CHANGED, TrackPlayerEvents.PLAYBACK_QUEUE_ENDED],
+    [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded],
     async (data) => {
-      if (data.type === TrackPlayerEvents.PLAYBACK_TRACK_CHANGED) {
+      if (data.type === Event.PlaybackTrackChanged && (data.nextTrack !== undefined && data.nextTrack !== null)) {
         const nextTrack = await TrackPlayer.getTrack(data.nextTrack);
         setTrack(nextTrack || null);
+        const currentTrack = await TrackPlayer.getCurrentTrack();
       }
-      if (data.type === TrackPlayerEvents.PLAYBACK_QUEUE_ENDED) {
+      if (data.type === Event.PlaybackQueueEnded) {
         setTrack(null);
       }
+      await refreshHistory()
+      await refreshQueue()
     }
   )
 
   return (
     <PlayerContext.Provider
       value={{
-        history,
         refreshHistory,
-        track
+        toggleRepeat,
+        refreshQueue,
+        history,
+        track,
+        repeating,
+        queue,
       }}>
       {children}
     </PlayerContext.Provider>

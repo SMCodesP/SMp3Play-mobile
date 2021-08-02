@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
-  FlatList,
   View,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   StyleSheet,
   Text,
-  Image,
 } from "react-native";
 import { WaterfallList } from "react-native-largelist-v3";
 import { Jiro } from "react-native-textinput-effects";
-import { MaterialIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import axios from "axios";
 
@@ -42,12 +37,11 @@ export const Search: React.FC = ({ navigation }: any) => {
       setVideos(data);
       setLoading(false);
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
 
-  const renderTeste = (video: any) => (
+  const renderCardVideo = (video: any) => (
     <CardVideo {...video} navigation={navigation} />
   );
 
@@ -90,7 +84,7 @@ export const Search: React.FC = ({ navigation }: any) => {
           <WaterfallList
             data={videos}
             heightForItem={() => 140}
-            renderItem={renderTeste}
+            renderItem={renderCardVideo}
             showsVerticalScrollIndicator={false}
             numColumns={2}
           />

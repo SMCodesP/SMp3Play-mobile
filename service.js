@@ -7,42 +7,42 @@
  * such as processing media buttons or analytics
  */
 
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { Event } from 'react-native-track-player';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 module.exports = async function () {
-  TrackPlayer.addEventListener('remote-play', async () => {
+  TrackPlayer.addEventListener(Event.RemotePlay, async () => {
     try {
       await TrackPlayer.play();
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener('remote-pause', async () => {
+  TrackPlayer.addEventListener(Event.RemotePause, async () => {
     try {
       await TrackPlayer.pause();
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener('remote-next', async () => {
+  TrackPlayer.addEventListener(Event.RemoteNext, async () => {
     try {
       await TrackPlayer.skipToNext();
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener('remote-previous', async () => {
+  TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
     try {
       await TrackPlayer.skipToPrevious();
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener('remote-stop', async () => {
+  TrackPlayer.addEventListener(Event.RemoteStop, async (...props) => {
     try {
       TrackPlayer.destroy();
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener('playback-track-changed', async ({ nextTrack }) => {
-    if (nextTrack) {
+  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async ({ nextTrack }) => {
+    if (nextTrack !== undefined && nextTrack !== null) {
       const track = await TrackPlayer.getTrack(nextTrack);
       const jsonValue = await AsyncStorage.getItem('@history');
       const history = jsonValue != null ? JSON.parse(jsonValue) || [] : [];
@@ -57,7 +57,6 @@ module.exports = async function () {
           ].map((item) => [item.videoId, item]),
         ).values(),
       ];
-      console.log(newHistory)
       await AsyncStorage.setItem('@history', JSON.stringify(newHistory));
     }
   });

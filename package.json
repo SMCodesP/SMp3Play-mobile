@@ -38,7 +38,7 @@
     "react-native-spring-scrollview": "^3.0.1-rc.2",
     "react-native-text-ticker": "^1.13.0",
     "react-native-textinput-effects": "^0.6.2",
-    "react-native-track-player": "^1.2.7",
+    "react-native-track-player": "^2.0.0-rc18",
     "react-native-unimodules": "~0.14.5",
     "react-native-web": "~0.13.12",
     "react-native-ytdl": "^4.8.3"

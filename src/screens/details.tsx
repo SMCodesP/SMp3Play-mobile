@@ -12,6 +12,7 @@ import fonts from '../styles/fonts'
 import DefaultButton from '../components/DefaultButton';
 import GlobalContainer from '../components/GlobalContainer';
 import { formatNumber } from '../utils/formatNumber';
+import { usePlayer } from '../contexts/player';
 
 const Details: React.FC<{
   route: {
@@ -26,6 +27,30 @@ const Details: React.FC<{
   },
   navigation,
 }) => {
+  const { refreshQueue } = usePlayer();
+
+  const handlePlay = async () => {
+    TrackPlayer.destroy();
+    await handleAddQueue();
+  }
+
+  const handleAddQueue = async () => {
+    const urls = await ytdl(video.url, { quality: 'highestaudio' });
+    const track = {
+      url: urls[0].url,
+      artist: video.author.name,
+      title: video.title,
+      artwork: video.image,
+      description: video.description,
+      date: video.timestamp,
+      extra: video,
+      id: `${Math.floor(Math.random() * 100000000000)}`
+    };
+    await TrackPlayer.add(track);
+    await TrackPlayer.play();
+    await refreshQueue()
+  }
+
   return (
     <GlobalContainer>
       <ScrollView style={{ flex: 1 }}>
@@ -35,9 +60,7 @@ const Details: React.FC<{
           <View style={styles.containerImage}>
             <View style={styles.containerHeader}>
               <TouchableOpacity
-                onPress={() => {
-                  navigation.goBack();
-                }}>
+                onPress={navigation.goBack}>
                 <MaterialCommunityIcons
                   name="arrow-left"
                   size={28}
@@ -54,29 +77,7 @@ const Details: React.FC<{
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={async () => {
-                  console.log('videoURL:', video.url)
-                  const urls = await ytdl(video.url, { quality: 'highestaudio' });
-                  console.log('')
-                  console.log('')
-                  console.log('urls:')
-                  console.log(urls[0].url)
-                  console.log('')
-                  console.log('')
-                  const track = {
-                    url: urls[0].url,
-                    artist: video.author.name,
-                    title: video.title,
-                    artwork: video.image,
-                    description: video.description,
-                    date: video.timestamp,
-                    extra: video,
-                    id: `${Math.floor(Math.random() * 100000000000)}`
-                  };
-                  TrackPlayer.destroy();
-                  await TrackPlayer.add(track);
-                  await TrackPlayer.play();
-                }}
+                onPress={handlePlay}
               >
                 <MaterialCommunityIcons
                   name="play-circle"
@@ -90,7 +91,9 @@ const Details: React.FC<{
         <View style={styles.containerBody}>
           <DefaultButton
             buttonStyle={{marginVertical: 7.5, marginHorizontal: 15}}
-            icon="add">
+            icon="add"
+            onPress={handleAddQueue}
+          >
             Adicionar à fila
           </DefaultButton>
           <DefaultButton

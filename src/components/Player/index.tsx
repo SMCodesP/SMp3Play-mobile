@@ -1,16 +1,17 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
+  FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import { RectButton, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { AntDesign, Feather as Icon } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
-import { debounce } from "lodash";
+import Animated, { useSharedValue, useDerivedValue, withSpring, useAnimatedStyle, interpolate, Extrapolate, withTiming } from 'react-native-reanimated'
 
 import colors from "../../styles/colors";
 import { transparentize, darken } from "polished";
@@ -18,11 +19,12 @@ import TextTicker from "react-native-text-ticker";
 import { usePlayer } from "../../contexts/player";
 import fonts from "../../styles/fonts";
 import TrackPlayer, {
-  STATE_PAUSED,
+  State,
   usePlaybackState,
-  useTrackPlayerProgress,
+  useProgress,
 } from "react-native-track-player";
 import Seek from './Seek'
+import { CardVideoPlaying } from "./CardVideoPlaying";
 
 const { width } = Dimensions.get("window");
 
@@ -31,27 +33,32 @@ interface PlayerProps {
 }
 
 const Player = ({ onPress }: PlayerProps) => {
-  const [sliderValue, setSliderValue] = useState(0);
-  const [isSeeking, setIsSeeking] = useState(false);
-
-  const { track } = usePlayer();
-  const { duration, position } = useTrackPlayerProgress(250);
+  const { track, repeating, queue, toggleRepeat } = usePlayer();
+  const { duration, position } = useProgress(250);
   const playbackState = usePlaybackState();
-
-  useEffect(() => {
-    if (!isSeeking && position) {
-      setSliderValue(position);
-    }
-  }, [position]);
-
+  
   const play = async () => {
     await TrackPlayer.pause();
   };
-
+  
   const pause = async () => {
     await TrackPlayer.play();
   };
 
+  const pressed = useSharedValue(false);
+  const progress = useDerivedValue(() =>
+    pressed.value ? withTiming(0.925, { duration: 50 }) : withTiming(1, { duration: 50 })
+  )
+  // const progress = useDerivedValue(() =>
+  //   pressed.value ? 0.95 : 1
+  // )
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: progress.value }
+    ],
+  }))
+  
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
@@ -87,22 +94,20 @@ const Player = ({ onPress }: PlayerProps) => {
             </View>
           </RectButton>
         </View>
-        <FastImage source={{ uri: track?.artwork }} style={styles.cover} />
+        <FastImage source={{ uri: String(track?.artwork || '') }} style={styles.cover} />
         <View style={styles.metadata}>
           <View>
             <Text style={styles.song}>
-              {track?.title.substring(0, 14).trim() +
-                (track!.title.trim().length > 14 ? "..." : "")}
+              {String(track?.title).substring(0, 14).trim() +
+                (String(track?.title).trim().length > 14 ? "..." : "")}
             </Text>
             <Text style={styles.artist}>{track?.artist}</Text>
           </View>
           <AntDesign name="hearto" size={24} color={colors.pink} />
         </View>
         <Seek
-          value={sliderValue}
+          value={position}
           duration={duration}
-          setIsSeeking={setIsSeeking}
-          setSliderValue={setSliderValue}
         />
         <View style={styles.controls}>
           <TouchableOpacity>
@@ -116,27 +121,51 @@ const Player = ({ onPress }: PlayerProps) => {
             <AntDesign
               name="stepbackward"
               color={colors.foreground}
-              size={32}
+              size={46}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPressOut={playbackState === STATE_PAUSED ? pause : play}>
-            <AntDesign
-              name={playbackState === STATE_PAUSED ? "play" : "pausecircle"}
-              color={colors.foreground}
-              size={48}
-            />
+          <TouchableOpacity
+            onPressIn={() => pressed.value = true}
+            onPressOut={() => pressed.value = false}
+            onPress={playbackState === State.Paused ? pause : play}
+            activeOpacity={0.75}
+          >
+          {/* <TouchableOpacity onPressOut={playbackState === State.Paused ? pause : play}> */}
+            <Animated.View style={animatedStyle}>
+              <AntDesign
+                name={playbackState === State.Paused ? "play" : "pausecircle"}
+                color={colors.foreground}
+                size={60}
+              />
+            </Animated.View>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AntDesign name="stepforward" color={colors.foreground} size={32} />
+            <AntDesign name="stepforward" color={colors.foreground} size={46} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={toggleRepeat}>
             <Icon
               name="repeat"
-              color={transparentize(0.5, colors.foreground)}
+              color={repeating ? colors.foreground : transparentize(0.5, colors.foreground)}
               size={24}
+              style={{
+                alignSelf: 'center'
+              }}
             />
+            {repeating && (
+              <View style={styles.ball} />
+            )}
           </TouchableOpacity>
         </View>
+        <FlatList
+          data={queue}
+          renderItem={({ index, item }) => (
+            <CardVideoPlaying index={index} item={item} />
+          )}
+          keyExtractor={(item) => item.id}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={styles.listQueue}
+        />
       </View>
     </SafeAreaView>
   );
@@ -198,6 +227,17 @@ const styles = StyleSheet.create({
     height: 4,
     marginVertical: 16,
   },
+  ball: {
+    width: 5,
+    height: 5,
+    borderRadius: 5,
+    marginTop: 8,
+    alignSelf: 'center',
+    backgroundColor: colors.foreground,
+  },
+  listQueue: {
+    marginTop: 25
+  }
 });
 
 export default memo(Player);
