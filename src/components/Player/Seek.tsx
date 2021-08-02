@@ -4,15 +4,10 @@ import { darken, transparentize } from "polished";
 import colors from "../../styles/colors";
 import TrackPlayer from "react-native-track-player";
 
-// import { Container } from './styles';
-
 const Seek: React.FC<{
   duration: number;
   value: number;
 }> = ({ duration, value }) => {
-  // console.log(duration)
-  // console.log(value)
-  
   const slidingStarted = async () => {
     await TrackPlayer.pause();
   };

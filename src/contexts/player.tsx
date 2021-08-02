@@ -1,13 +1,13 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import TrackPlayer, {
   Capability,
   useTrackPlayerEvents,
   Event,
   Track,
-  RepeatMode
-} from 'react-native-track-player';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback } from 'react';
+  RepeatMode,
+} from "react-native-track-player";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback } from "react";
 
 type PlayerType = {
   refreshHistory(): Promise<void>;
@@ -21,57 +21,66 @@ type PlayerType = {
 
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
-const PlayerProvider: React.FC = ({children}) => {
+const PlayerProvider: React.FC = ({ children }) => {
   const [history, setHistory] = useState<TVideo[]>([]);
   const [queue, setQueue] = useState<Track[]>([]);
   const [track, setTrack] = useState<Track | null>(null);
   const [repeating, setRepeating] = useState<boolean>(false);
 
   useEffect(() => {
-    ;(async () => {
-      const repeatingStored = Number(await AsyncStorage.getItem('@repeating') || '0');
-      console.log(await AsyncStorage.getItem('@repeating'))
-      console.log(repeatingStored)
+    (async () => {
+      const repeatingStored = Number(
+        (await AsyncStorage.getItem("@repeating")) || "0"
+      );
       setRepeating(repeatingStored ? true : false);
-      await TrackPlayer.setRepeatMode(repeatingStored ? RepeatMode.Queue : RepeatMode.Off)
+      await TrackPlayer.setRepeatMode(
+        repeatingStored ? RepeatMode.Queue : RepeatMode.Off
+      );
       await refreshHistory();
     })();
   }, []);
 
   const refreshHistory = async () => {
-    const jsonValue = await AsyncStorage.getItem('@history');
+    const jsonValue = await AsyncStorage.getItem("@history");
     setHistory(jsonValue != null ? JSON.parse(jsonValue) || [] : []);
     return;
-  }
+  };
 
   const refreshQueue = async () => {
     setQueue(await TrackPlayer.getQueue());
     return;
-  }
-  
+  };
+
   const toggleRepeat = useCallback(async () => {
-    console.log(String(Number(!repeating)))
-    await AsyncStorage.setItem('@repeating', String(Number(!repeating)));
-    await TrackPlayer.setRepeatMode(!repeating ? RepeatMode.Queue : RepeatMode.Off)
-    setRepeating(!repeating)
+    await AsyncStorage.setItem("@repeating", String(Number(!repeating)));
+    await TrackPlayer.setRepeatMode(
+      !repeating ? RepeatMode.Queue : RepeatMode.Off
+    );
+    setRepeating(!repeating);
     return;
-  }, [repeating])
+  }, [repeating]);
 
   useTrackPlayerEvents(
     [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded],
     async (data) => {
-      if (data.type === Event.PlaybackTrackChanged && (data.nextTrack !== undefined && data.nextTrack !== null)) {
+      if (
+        data.type === Event.PlaybackTrackChanged &&
+        data.nextTrack !== undefined &&
+        data.nextTrack !== null
+      ) {
         const nextTrack = await TrackPlayer.getTrack(data.nextTrack);
         setTrack(nextTrack || null);
       }
       if (data.type === Event.PlaybackQueueEnded) {
         setTrack(null);
       }
-      await refreshQueue()
-      await TrackPlayer.setRepeatMode(repeating ? RepeatMode.Queue : RepeatMode.Off)
-      await refreshHistory()
+      await refreshQueue();
+      await TrackPlayer.setRepeatMode(
+        repeating ? RepeatMode.Queue : RepeatMode.Off
+      );
+      await refreshHistory();
     }
-  )
+  );
 
   return (
     <PlayerContext.Provider
@@ -83,7 +92,8 @@ const PlayerProvider: React.FC = ({children}) => {
         track,
         repeating,
         queue,
-      }}>
+      }}
+    >
       {children}
     </PlayerContext.Provider>
   );
@@ -94,6 +104,6 @@ function usePlayer(): PlayerType {
   return context;
 }
 
-export {usePlayer, PlayerProvider};
+export { usePlayer, PlayerProvider };
 
 export default PlayerContext;

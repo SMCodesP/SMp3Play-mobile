@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo } from "react";
 import {
   Dimensions,
   FlatList,
@@ -22,7 +22,7 @@ import TrackPlayer, {
   usePlaybackState,
   useProgress,
 } from "react-native-track-player";
-import Seek from './Seek'
+import Seek from "./Seek";
 import { CardVideoPlaying } from "./CardVideoPlaying";
 import TouchableScalable from "../TouchableScalable";
 import { msToHMS } from "../../utils/msToMHS";
@@ -37,15 +37,15 @@ const Player = ({ onPress }: PlayerProps) => {
   const { track, repeating, queue, toggleRepeat } = usePlayer();
   const { duration, position } = useProgress(250);
   const playbackState = usePlaybackState();
-  
+
   const play = async () => {
     await TrackPlayer.pause();
   };
-  
+
   const pause = async () => {
     await TrackPlayer.play();
   };
-  
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
@@ -77,11 +77,18 @@ const Player = ({ onPress }: PlayerProps) => {
             rippleColor={transparentize(0.7, colors.pink)}
           >
             <View accessible>
-              <Icon name="more-horizontal" color={colors.foreground} size={24} />
+              <Icon
+                name="more-horizontal"
+                color={colors.foreground}
+                size={24}
+              />
             </View>
           </RectButton>
         </View>
-        <FastImage source={{ uri: String(track?.artwork || '') }} style={styles.cover} />
+        <FastImage
+          source={{ uri: String(track?.artwork || "") }}
+          style={styles.cover}
+        />
         <View style={styles.metadata}>
           <View>
             <Text style={styles.song}>
@@ -92,10 +99,7 @@ const Player = ({ onPress }: PlayerProps) => {
           </View>
           <AntDesign name="hearto" size={24} color={colors.pink} />
         </View>
-        <Seek
-          value={position}
-          duration={duration}
-        />
+        <Seek value={position} duration={duration} />
         <View style={styles.containerTime}>
           <Text style={styles.time}>{msToHMS(position)}</Text>
           <Text style={styles.time}>{msToHMS(duration)}</Text>
@@ -133,15 +137,17 @@ const Player = ({ onPress }: PlayerProps) => {
           <TouchableOpacity onPress={toggleRepeat}>
             <Icon
               name="repeat"
-              color={repeating ? colors.foreground : transparentize(0.5, colors.foreground)}
+              color={
+                repeating
+                  ? colors.foreground
+                  : transparentize(0.5, colors.foreground)
+              }
               size={24}
               style={{
-                alignSelf: 'center'
+                alignSelf: "center",
               }}
             />
-            {repeating && (
-              <View style={styles.ball} />
-            )}
+            {repeating && <View style={styles.ball} />}
           </TouchableOpacity>
         </View>
         <FlatList
@@ -213,20 +219,20 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 5,
     marginTop: 8,
-    alignSelf: 'center',
+    alignSelf: "center",
     backgroundColor: colors.foreground,
   },
   listQueue: {
-    marginTop: 25
+    marginTop: 25,
   },
   containerTime: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   time: {
     fontFamily: fonts.text,
     color: colors.foreground,
-  }
+  },
 });
 
 export default memo(Player);

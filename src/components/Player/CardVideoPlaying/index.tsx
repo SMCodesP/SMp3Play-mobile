@@ -1,12 +1,12 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import FastImage from 'react-native-fast-image'
-import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import FastImage from "react-native-fast-image";
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import TrackPlayer, { Track } from "react-native-track-player";
 import { usePlayer } from "../../../contexts/player";
 
@@ -19,25 +19,27 @@ interface CardVideoProps {
   index: number;
 }
 
-export const CardVideoPlaying: React.FC<CardVideoProps> = ({ index, item: track }) => {
+export const CardVideoPlaying: React.FC<CardVideoProps> = ({
+  index,
+  item: track,
+}) => {
   const { track: currentTrack } = usePlayer();
   const pressed = useSharedValue(false);
   const progress = useDerivedValue(() =>
-    pressed.value ? withTiming(0.95, { duration: 25 }) : withTiming(1, { duration: 25 })
-  )
+    pressed.value
+      ? withTiming(0.95, { duration: 25 })
+      : withTiming(1, { duration: 25 })
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: progress.value }
-    ],
-  }))
+    transform: [{ scale: progress.value }],
+  }));
 
   const handleSkip = () => {
-    if (currentTrack?.id === track.id)
-      return;
-    TrackPlayer.skip(index)
+    if (currentTrack?.id === track.id) return;
+    TrackPlayer.skip(index);
     return;
-  }
+  };
 
   return (
     <TouchableScalable
@@ -52,7 +54,9 @@ export const CardVideoPlaying: React.FC<CardVideoProps> = ({ index, item: track 
         source={{ uri: String(track.artwork) }}
       >
         <View style={styles.container}>
-          {currentTrack?.id === track.id && <Text style={styles.playing}>Tocando</Text>}
+          {currentTrack?.id === track.id && (
+            <Text style={styles.playing}>Tocando</Text>
+          )}
           <View style={styles.containerTitle}>
             <Text style={styles.title}>
               {String(track.title).substring(0, 50).trim() +
@@ -73,7 +77,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     flex: 1,
-    borderRadius: 12
+    borderRadius: 12,
   },
   container: {
     flex: 1,
@@ -87,11 +91,11 @@ const styles = StyleSheet.create({
     color: colors.purple,
     fontFamily: fonts.complement,
     padding: 8,
-    textAlign: 'right'
+    textAlign: "right",
   },
   containerTitle: {
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end",
   },
   title: {
     fontSize: 12,

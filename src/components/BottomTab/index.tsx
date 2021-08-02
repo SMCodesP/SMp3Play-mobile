@@ -54,7 +54,10 @@ const BottomTab: React.FC<{
       bottomTabPosY.value = ctx.bottomTabPosY + Math.abs(event.translationY);
     },
     onEnd(event) {
-      if (event.velocityY <= -2500 || (event.absoluteY <= (WINDOW_HEIGHT / 100) * 75)) {
+      if (
+        event.velocityY <= -2500 ||
+        event.absoluteY <= (WINDOW_HEIGHT / 100) * 75
+      ) {
         playerPosY.value = withSpring(0);
         bottomTabPosY.value = withSpring(110);
       } else {
@@ -107,7 +110,19 @@ const BottomTab: React.FC<{
           </Animated.View>
         </PanGestureHandler>
       )}
-      <Animated.View style={[{ height: 110, width: "100%", position: 'absolute', bottom: 0, left: 0, right: 0 }, bottomTabPositionStyle]}>
+      <Animated.View
+        style={[
+          {
+            height: 110,
+            width: "100%",
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+          },
+          bottomTabPositionStyle,
+        ]}
+      >
         {track && (
           <PanGestureHandler onGestureEvent={onGestureEvent}>
             <Animated.View

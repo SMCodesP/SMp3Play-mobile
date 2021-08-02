@@ -1,9 +1,12 @@
 import React from "react";
-import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom-tabs";
+import {
+  createBottomTabNavigator,
+  BottomTabBar,
+} from "@react-navigation/bottom-tabs";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { BlurView } from '@react-native-community/blur'
+import { BlurView } from "@react-native-community/blur";
 
 import { HomeStackRoutes, SearchStackRoutes } from "./stack.routes";
 
@@ -25,10 +28,10 @@ export const TabRoutes: React.FC = () => {
         showLabel: false,
         style: {
           height: 45,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           borderTopWidth: 0,
           elevation: 0,
-        }
+        },
       }}
       tabBar={(props) => <BottomTab bottomTabBarProps={props} />}
     >
@@ -37,11 +40,7 @@ export const TabRoutes: React.FC = () => {
         component={HomeStackRoutes}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialIcons
-              name="home"
-              size={size}
-              color={color}
-            />
+            <MaterialIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -50,11 +49,7 @@ export const TabRoutes: React.FC = () => {
         component={SearchStackRoutes}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialIcons
-              name="search"
-              size={size}
-              color={color}
-            />
+            <MaterialIcons name="search" size={size} color={color} />
           ),
         }}
       />

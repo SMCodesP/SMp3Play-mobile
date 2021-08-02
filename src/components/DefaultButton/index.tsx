@@ -1,15 +1,22 @@
-import {rgba} from 'polished';
-import React, {useContext} from 'react';
-import {View, Text, StyleProp, TextStyle, ViewStyle, StyleSheet} from 'react-native';
-import {RectButton, RectButtonProps} from 'react-native-gesture-handler';
+import { rgba } from "polished";
+import React, { useContext } from "react";
+import {
+  View,
+  Text,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+  StyleSheet,
+} from "react-native";
+import { RectButton, RectButtonProps } from "react-native-gesture-handler";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import colors from '../../styles/colors'
+import colors from "../../styles/colors";
 
 interface DefaultButtonProps extends RectButtonProps {
   icon?: string;
-  type?: 'default' | 'cancel';
+  type?: "default" | "cancel";
   buttonStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
@@ -20,7 +27,7 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
   children,
   icon,
   IconType = MaterialIcons,
-  type = 'default',
+  type = "default",
   buttonStyle = {},
   containerStyle = {},
   textStyle = {},
@@ -87,7 +94,7 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
 
   return (
     <RectButton {...(types[type]?.button || {})} {...props}>
-      <View style={{...styles.container, ...containerStyle}} accessible>
+      <View style={[styles.container, containerStyle]} accessible>
         {icon && <IconType name={icon} size={32} {...types[type].icon} />}
         <Text {...(types[type]?.text || {})}>{children}</Text>
       </View>
@@ -96,21 +103,21 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-	button: {
-		borderRadius: 10,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	container: {
-		flexDirection: 'row',
-		width: '100%',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	buttonText: {
-		fontWeight: 'bold',
-  		fontSize: 20,
-	},
-})
+  button: {
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+});
 
 export default DefaultButton;

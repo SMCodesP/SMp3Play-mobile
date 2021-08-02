@@ -1,10 +1,10 @@
 import React from "react";
 
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 
 import { TabRoutes } from "./tab.routes";
 
-import colors from '../styles/colors';
+import colors from "../styles/colors";
 
 const MyTheme = {
   dark: true,

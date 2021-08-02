@@ -45,7 +45,7 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
   return (
     <TouchableOpacity
       onPressIn={() => {
-        pressed.value = true
+        pressed.value = true;
         onPressIn && onPressIn();
       }}
       onPressOut={() => {

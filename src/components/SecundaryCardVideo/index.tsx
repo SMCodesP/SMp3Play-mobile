@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import FastImage from 'react-native-fast-image'
+import FastImage from "react-native-fast-image";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
@@ -22,7 +22,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
     navigation.navigate("Details", {
       video,
     });
-  }
+  };
 
   return (
     <TouchableScalable
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     flex: 1,
-    borderRadius: 12
+    borderRadius: 12,
   },
   title: {
     fontSize: 12,
