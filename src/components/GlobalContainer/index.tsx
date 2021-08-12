@@ -1,18 +1,28 @@
-import React from 'react';
-import {View} from 'react-native';
-import { usePlayer } from '../../contexts/player';
+import React from "react";
+import { View, ViewProps } from "react-native";
+import { usePlayer } from "../../contexts/player";
 
-import colors from '../../styles/colors'
+import colors from "../../styles/colors";
 
-const GlobalContainer: React.FC = ({children}) => {
-  const {track} = usePlayer()
+const GlobalContainer: React.FC<ViewProps> = ({
+  children,
+  style,
+  ...props
+}) => {
+  const { track } = usePlayer();
 
   return (
-    <View style={{
-      flex: 1,
-      backgroundColor: colors.background,
-      // marginBottom: track ? 110 : 45
-    }}>
+    <View
+      style={[
+        {
+          flex: 1,
+          backgroundColor: colors.background,
+          marginBottom: track ? 110 : 45,
+        },
+        style,
+      ]}
+      {...props}
+    >
       {children}
     </View>
   );

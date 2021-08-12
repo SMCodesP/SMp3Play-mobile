@@ -17,16 +17,18 @@ interface CardVideoProps {
   item: TVideo;
 }
 
-const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
+const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
   const handleNavigation = () => {
+    console.log(video)
     navigation.navigate("Details", {
       video,
+      videoURL: video.url
     });
   };
 
   return (
     <TouchableScalable
-      duration={25}
+      duration={100}
       scaleTo={0.95}
       style={styles.containerGeral}
       onPress={handleNavigation}
@@ -47,7 +49,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
   );
 };
 
-export default memo(CardVideo);
+export default memo(SecundaryCardVideo);
 
 const styles = StyleSheet.create({
   container: {

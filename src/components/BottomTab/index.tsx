@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { BottomTabBar, BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import {
   PanGestureHandler,
-  TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
@@ -19,9 +18,6 @@ import { MiniPlayer } from "../MiniPlayer";
 import colors from "../../styles/colors";
 import { Dimensions } from "react-native";
 import { usePlayer } from "../../contexts/player";
-import { useEffect } from "react";
-
-// import { Container } from './styles';
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 

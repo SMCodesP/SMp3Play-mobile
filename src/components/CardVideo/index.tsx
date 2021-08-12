@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
+import ytdl from "react-native-ytdl";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
@@ -11,9 +12,9 @@ interface CardVideoProps extends TVideo {
 }
 
 const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
     navigation.navigate("Details", {
-      video,
+      videoURL: video.url
     });
   };
 

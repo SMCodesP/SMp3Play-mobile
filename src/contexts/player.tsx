@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import TrackPlayer, {
-  Capability,
   useTrackPlayerEvents,
   Event,
   Track,

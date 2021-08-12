@@ -1,18 +1,24 @@
 import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import {
-  createBottomTabNavigator,
-  BottomTabBar,
-} from "@react-navigation/bottom-tabs";
+  MaterialIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
-import { MaterialIcons } from "@expo/vector-icons";
-
-import { BlurView } from "@react-native-community/blur";
-
-import { HomeStackRoutes, SearchStackRoutes } from "./stack.routes";
+import {
+  HomeStackRoutes,
+  SearchStackRoutes,
+  DownloadsStackRoutes,
+  PlaylistsStackRoutes,
+  SettingsStackRoutes,
+} from "./stack.routes";
 
 import colors from "../styles/colors";
 import BottomTab from "../components/BottomTab";
 import { usePlayer } from "../contexts/player";
+import IconAnimated from "../components/IconAnimated";
 
 const AppTab = createBottomTabNavigator();
 
@@ -34,22 +40,74 @@ export const TabRoutes: React.FC = () => {
         },
       }}
       tabBar={(props) => <BottomTab bottomTabBarProps={props} />}
+      initialRouteName="Home"
     >
       <AppTab.Screen
-        name="Início"
-        component={HomeStackRoutes}
+        name="Downloads"
+        component={DownloadsStackRoutes}
         options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialIcons name="home" size={size} color={color} />
+          tabBarIcon: ({ size }) => (
+            <IconAnimated
+              IconProvider={Ionicons}
+              iconName="ios-download"
+              alternativeIconName="ios-download-outline"
+              size={size}
+            />
           ),
         }}
       />
       <AppTab.Screen
-        name="Pesquisar"
+        name="Playlists"
+        component={PlaylistsStackRoutes}
+        options={{
+          tabBarIcon: ({ size }) => (
+            <IconAnimated
+              IconProvider={MaterialCommunityIcons}
+              iconName="folder-music"
+              alternativeIconName="folder-music-outline"
+              size={size}
+            />
+          ),
+        }}
+      />
+      <AppTab.Screen
+        name="Home"
+        component={HomeStackRoutes}
+        options={{
+          tabBarIcon: ({ size }) => (
+            <IconAnimated
+              IconProvider={Ionicons}
+              iconName="ios-home"
+              alternativeIconName="ios-home-outline"
+              size={size}
+            />
+          ),
+        }}
+      />
+      <AppTab.Screen
+        name="Search"
         component={SearchStackRoutes}
         options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialIcons name="search" size={size} color={color} />
+          tabBarIcon: ({ size }) => (
+            <IconAnimated
+              IconProvider={MaterialIcons}
+              iconName="search"
+              size={size}
+            />
+          ),
+        }}
+      />
+      <AppTab.Screen
+        name="Settings"
+        component={SettingsStackRoutes}
+        options={{
+          tabBarIcon: ({ size }) => (
+            <IconAnimated
+              IconProvider={Ionicons}
+              iconName="ios-settings"
+              alternativeIconName="ios-settings-outline"
+              size={size}
+            />
           ),
         }}
       />

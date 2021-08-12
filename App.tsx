@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, LogBox } from "react-native";
 import {
   useFonts,
   Jost_400Regular,
@@ -13,6 +13,8 @@ import TrackPlayer, { Capability } from "react-native-track-player";
 import { Routes } from "./src/routes";
 import colors from "./src/styles/colors";
 import { PlayerProvider } from "./src/contexts/player";
+
+LogBox.ignoreAllLogs();
 
 TrackPlayer.setupPlayer({ waitForBuffer: true }).then(async () => {
   console.log("player setup!");

@@ -1,6 +1,7 @@
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect } from "react";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { View, StyleSheet, Text, FlatList, ScrollView } from "react-native";
+import { SpringScrollView } from "react-native-spring-scrollview";
 import GlobalContainer from "../components/GlobalContainer";
 import SecundaryCardVideo from "../components/SecundaryCardVideo";
 import { usePlayer } from "../contexts/player";
@@ -23,20 +24,25 @@ export const Home: React.FC<{
 
   return (
     <GlobalContainer>
-      <Text style={styles.title}>Seja bem-vindo (a)!</Text>
-      <Text style={styles.subTitle}>Histórico</Text>
-      <View style={styles.listHistory}>
-        <FlatList
-          data={history}
-          renderItem={({ item }) => (
-            <SecundaryCardVideo item={item} navigation={navigation} />
-          )}
-          horizontal={true}
-          bounces={true}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.videoId}
-        />
-      </View>
+      <ScrollView>
+        <Text style={styles.title}>Seja bem-vindo (a)!</Text>
+        <Text style={styles.subTitle}>Histórico</Text>
+        <View style={styles.listHistory}>
+          <FlatList
+            data={history}
+            renderItem={({ item }) => (
+              <SecundaryCardVideo item={item} navigation={navigation} />
+            )}
+            horizontal={true}
+            bounces={true}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.videoId}
+            ListEmptyComponent={() => (
+              <Text style={styles.empty}>Nenhuma música tocada</Text>
+            )}
+          />
+        </View>
+      </ScrollView>
     </GlobalContainer>
   );
 };
@@ -63,4 +69,11 @@ const styles = StyleSheet.create({
   listHistory: {
     height: 168,
   },
+  empty: {
+    color: colors.pink,
+    fontFamily: fonts.complement,
+    fontSize: 16,
+    marginHorizontal: 25,
+    marginVertical: 5
+  }
 });

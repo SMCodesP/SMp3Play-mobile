@@ -4,6 +4,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Details from "../screens/details";
 import { Search } from "../screens/search";
 import { Home } from "../screens/home";
+import { Downloads } from "../screens/downloads";
+import { Playlists } from "../screens/playlists";
+import { Settings } from "../screens/settings";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +20,27 @@ export const SearchStackRoutes = () => (
 export const HomeStackRoutes = () => (
   <Stack.Navigator headerMode="none" initialRouteName="Main">
     <Stack.Screen name="Main" component={Home} />
+    <Stack.Screen name="Details" component={Details} />
+  </Stack.Navigator>
+);
+
+export const DownloadsStackRoutes = () => (
+  <Stack.Navigator headerMode="none" initialRouteName="Main">
+    <Stack.Screen name="Main" component={Downloads} />
+    <Stack.Screen name="Details" component={Details} />
+  </Stack.Navigator>
+);
+
+export const PlaylistsStackRoutes = () => (
+  <Stack.Navigator headerMode="none" initialRouteName="Main">
+    <Stack.Screen name="Main" component={Playlists} />
+    <Stack.Screen name="Details" component={Details} />
+  </Stack.Navigator>
+);
+
+export const SettingsStackRoutes = () => (
+  <Stack.Navigator headerMode="none" initialRouteName="Main">
+    <Stack.Screen name="Main" component={Settings} />
     <Stack.Screen name="Details" component={Details} />
   </Stack.Navigator>
 );

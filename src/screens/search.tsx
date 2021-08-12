@@ -5,6 +5,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  Keyboard,
 } from "react-native";
 import { WaterfallList } from "react-native-largelist-v3";
 import { Jiro } from "react-native-textinput-effects";
@@ -16,11 +17,16 @@ import CardVideo from "../components/CardVideo";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
+import { usePlayer } from "../contexts/player";
+import { SpringScrollView } from "react-native-spring-scrollview";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export const Search: React.FC = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [videos, setVideos] = useState([]);
+
+  const { track } = usePlayer();
 
   const handleQuery = async () => {
     setVideos([]);
@@ -52,35 +58,37 @@ export const Search: React.FC = ({ navigation }: any) => {
         style={styles.container}
       >
         <View style={styles.inner}>
-          <Text style={styles.title}>Pesquise por músicas!</Text>
-          <View style={styles.containerInput}>
-            <Jiro
-              label={"Pesquise sua música"}
-              borderColor={colors.comment}
-              inputPadding={15}
-              inputStyle={{ color: colors.foreground }}
-              returnKeyType="search"
-              onChangeText={setQuery}
-              onSubmitEditing={handleQuery}
-              value={query}
-            />
-          </View>
-          {loading ? (
-            <LottieView
-              source={require("../../assets/lf30_editor_kplkuq1a.json")}
-              duration={1930}
-              autoPlay
-              loop
-            />
-          ) : (
-            videos.length === 0 && (
-              <View style={styles.containerSongEmpty}>
-                <Text style={styles.songEmpty}>
-                  Nenhuma música encontrada/pesquisada
-                </Text>
-              </View>
-            )
-          )}
+          {/* <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss} touchSoundDisabled> */}
+            <Text style={styles.title}>Pesquise por músicas!</Text>
+            <View style={styles.containerInput}>
+              <Jiro
+                label={"Pesquise sua música"}
+                borderColor={colors.comment}
+                inputPadding={15}
+                inputStyle={{ color: colors.foreground }}
+                returnKeyType="search"
+                onChangeText={setQuery}
+                onSubmitEditing={handleQuery}
+                value={query}
+              />
+            </View>
+            {loading ? (
+              <LottieView
+                source={require("../../assets/lf30_editor_kplkuq1a.json")}
+                duration={1930}
+                autoPlay
+                loop
+              />
+            ) : (
+              videos.length === 0 && (
+                <View style={styles.containerSongEmpty}>
+                  <Text style={styles.songEmpty}>
+                    Nenhuma música encontrada/pesquisada
+                  </Text>
+                </View>
+              )
+            )}
+          {/* </TouchableWithoutFeedback> */}
           <WaterfallList
             data={videos}
             heightForItem={() => 140}
