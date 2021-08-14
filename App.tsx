@@ -13,6 +13,7 @@ import TrackPlayer, { Capability } from "react-native-track-player";
 import { Routes } from "./src/routes";
 import colors from "./src/styles/colors";
 import { PlayerProvider } from "./src/contexts/player";
+import { PlaylistProvider } from "./src/contexts/playlist";
 
 LogBox.ignoreAllLogs();
 
@@ -51,18 +52,20 @@ export default function App() {
 
   return (
     <PlayerProvider>
-      <View
-        style={{
-          backgroundColor: colors.background,
-          flex: 1,
-        }}
-      >
-        <Routes />
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={colors.background}
-        />
-      </View>
+      <PlaylistProvider>
+        <View
+          style={{
+            backgroundColor: colors.background,
+            flex: 1,
+          }}
+        >
+          <Routes />
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor={colors.background}
+          />
+        </View>
+      </PlaylistProvider>
     </PlayerProvider>
   );
 }

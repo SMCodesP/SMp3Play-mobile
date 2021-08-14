@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import TrackPlayer from "react-native-track-player";
+import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
 import ytdl from "react-native-ytdl";
 
 import { SpringScrollView } from "react-native-spring-scrollview";
@@ -34,6 +34,10 @@ import 'sugar/locales/pt'
 import Sugar from 'sugar'
 import FastImage from "react-native-fast-image";
 import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
+import { isFavorite, usePlaylist } from "../contexts/playlist";
+
+const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
+const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
 
 const IMAGE_HEIGHT = 275
 
@@ -41,7 +45,7 @@ const Details: React.FC<{
   route: {
     params: {
       video: TMinimalInfo | null;
-      videoURL: string;
+      videoId: string;
     };
   };
   navigation: any;
@@ -49,23 +53,34 @@ const Details: React.FC<{
   route: {
     params: {
       video: initialVideo = null,
-      videoURL,
+      videoId,
     },
   },
   navigation,
 }) => {
+  const { refreshQueue, track } = usePlayer();
+  const { toggleLikeSong } = usePlaylist();
+
   const [video, setVideo] = useState<TMinimalInfo | null>(initialVideo);
   const [loadingTrack, setLoadingTrack] = useState(false);
+  const playbackState = usePlaybackState();
   const scrollY = useValue(0);
 
-  const { refreshQueue, track } = usePlayer();
+  const isLiked = isFavorite(videoId);
 
   const handlePlay = async () => {
+    if (track) {
+      if (track?.extra.videoId === video?.videoId) return await TrackPlayer.play();
+    }
     setLoadingTrack(true);
     TrackPlayer.destroy();
     await handleAddQueue();
     setLoadingTrack(false);
-  };
+  }
+
+  const handlePause = async () => {
+    await TrackPlayer.pause();
+  }
 
   const handleAddQueue = useCallback(async () => {
     if (video) {
@@ -86,12 +101,9 @@ const Details: React.FC<{
     }
   }, [video]);
 
-  const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
-  const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
-
   useEffect(() => {
     ;(async () => {
-      const videoData: TInfo = await ytdl.getBasicInfo(videoURL);
+      const videoData: TInfo = await ytdl.getBasicInfo(videoId);
       setVideo({
         ago: Sugar.Date.relative(
           new Date(videoData.videoDetails.uploadDate),
@@ -150,7 +162,7 @@ const Details: React.FC<{
               top: 1
             }}
             locations={[0, 1, 0]}
-            colors={['#00000044', colors.background]}
+            colors={['#00000044', colors.background, '#00000000']}
           >
             <TouchableOpacity
               style={{
@@ -199,7 +211,7 @@ const Details: React.FC<{
               top: 1,
             }}
             locations={[0, 1, 0]}
-            colors={['#00000000', colors.background]}
+            colors={['#00000000', colors.background, '#00000000']}
           />
           <TouchableOpacity
             style={{
@@ -275,14 +287,16 @@ const Details: React.FC<{
                     style={[styles.button, {
                       backgroundColor: colors.cyan
                     }]}
-                    onPress={handlePlay}
+                    onPress={track?.extra.videoId === video?.videoId ? (playbackState === State.Paused ? handlePlay : handlePause) : handlePlay}
                     enabled={!loadingTrack}
                     rippleColor={darken(0.1, colors.cyan)}
                   >
                     <View accessible>
                       {loadingTrack ? (
                         <ActivityIndicator size="small" color={colors.background} />
-                      ) : <Ionicons name="play" size={26} color={colors.background} />}
+                      ) : (
+                        <Ionicons name={track?.extra.videoId === video?.videoId ? (playbackState === State.Paused ? "play" : "pause") : "play"} size={26} color={colors.background} />
+                      )}
                     </View>
                   </RectButton>
                   <RectButton
@@ -290,9 +304,21 @@ const Details: React.FC<{
                       backgroundColor: colors.pink
                     }]}
                     rippleColor={darken(0.1, colors.pink)}
+                    onPress={() => video && toggleLikeSong(video)}
                   >
                     <View accessible>
-                      <AntDesign name="hearto" size={26} color={colors.background} />
+                      <AntDesign name={isLiked ? "heart" : "hearto"} size={26} color={colors.background} />
+                    </View>
+                  </RectButton>
+                  <RectButton
+                    style={[styles.button, {
+                      backgroundColor: colors.yellow
+                    }]}
+                    rippleColor={darken(0.1, colors.yellow)}
+                    onPress={handleAddQueue}
+                  >
+                    <View accessible>
+                      <Ionicons name={"add"} size={26} color={colors.background} />
                     </View>
                   </RectButton>
                 </SkeletonContent>

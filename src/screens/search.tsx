@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.foreground,
-    fontSize: 26,
+    fontSize: 32,
     fontFamily: fonts.heading,
     paddingHorizontal: 15,
     paddingVertical: 5,

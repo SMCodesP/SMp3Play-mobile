@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import {
   Dimensions,
   FlatList,
@@ -28,6 +28,7 @@ import TouchableScalable from "../TouchableScalable";
 import { msToHMS } from "../../utils/msToMHS";
 
 import { FavoriteButton  } from '../FavoriteButton'
+import { isFavorite, usePlaylist } from "../../contexts/playlist";
 
 const { width } = Dimensions.get("window");
 
@@ -37,7 +38,9 @@ interface PlayerProps {
 
 const Player = ({ onPress }: PlayerProps) => {
   const { track, repeating, queue, toggleRepeat } = usePlayer();
-  const { duration, position } = useProgress(250);
+  const { toggleLikeSong } = usePlaylist();
+  const isLiked = isFavorite(track?.extra.videoId);
+  const { duration, position } = useProgress();
   const playbackState = usePlaybackState();
 
   const play = async () => {
@@ -99,7 +102,7 @@ const Player = ({ onPress }: PlayerProps) => {
               </Text>
               <Text style={styles.artist}>{track?.artist}</Text>
             </View>
-            <FavoriteButton size={30} color={colors.pink} />
+            <FavoriteButton onPress={() => toggleLikeSong(track?.extra)} actived={isLiked} size={30} color={colors.pink} />
           </View>
           <Seek value={position} duration={duration} />
           <View style={styles.containerTime}>

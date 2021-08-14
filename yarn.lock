@@ -6017,6 +6017,16 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-draggable-dynamic-flatlist@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-dynamic-flatlist/-/react-native-draggable-dynamic-flatlist-1.0.4.tgz#9195ffb6220edeedabed7fb2069779013503c7f7"
+  integrity sha512-FSpwSaN6riqqLF70izzcQOZ5D+LvYWV0EzFWll5tBtIzLWI88tXrwFd/rNH8IKl3X5Bd4pl2MNUCEbP1LO51xw==
+
+react-native-draggable-flatlist@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-2.6.2.tgz#d1445fd52e75bc4f4ebbd832a8bc4525cebb8302"
+  integrity sha512-0IBS1lgw137FDaDLccUidHXYu/6PbnIO1R0IXYVfxtNOvhFLfJyGOY526vmO72Sf/ch9yayED4+DaQWGBOqNyw==
+
 react-native-fast-image@^8.3.7:
   version "8.3.7"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.7.tgz#c4877de17903101f6d94b6736a4f7e5d7b019224"

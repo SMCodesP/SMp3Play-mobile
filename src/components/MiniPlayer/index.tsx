@@ -43,11 +43,11 @@ export const MiniPlayer: React.FC<{
   const { track } = usePlayer();
   const playbackState = usePlaybackState();
 
-  const play = async () => {
+  const pause = async () => {
     await TrackPlayer.pause();
   };
 
-  const pause = async () => {
+  const play = async () => {
     await TrackPlayer.play();
   };
 
@@ -80,7 +80,7 @@ export const MiniPlayer: React.FC<{
           <Text style={styles.author}>{track?.artist}</Text>
         </View>
         {playbackState === State.Paused ? (
-          <TouchableOpacity style={{ alignSelf: "center" }} onPress={pause}>
+          <TouchableOpacity style={{ alignSelf: "center" }} onPress={play}>
             <MaterialCommunityIcons
               size={42}
               color={colors.foreground}
@@ -89,7 +89,7 @@ export const MiniPlayer: React.FC<{
             />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={{ alignSelf: "center" }} onPress={play}>
+          <TouchableOpacity style={{ alignSelf: "center" }} onPress={pause}>
             <MaterialCommunityIcons
               size={42}
               color={colors.foreground}

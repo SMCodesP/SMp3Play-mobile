@@ -14,7 +14,7 @@ interface CardVideoProps extends TVideo {
 const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
   const handleNavigation = async () => {
     navigation.navigate("Details", {
-      videoURL: video.url
+      videoId: video.videoId
     });
   };
 

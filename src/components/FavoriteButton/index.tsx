@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Animated, {
   useSharedValue,
   withSpring,
@@ -15,7 +15,8 @@ export const FavoriteButton: React.FC<{
   color: string;
   onPress?: () => Promise<void> | void;
   style?: StyleProp<ViewStyle> | ((state: PressableStateCallbackType) => StyleProp<ViewStyle>);
-}> = ({ size, color, onPress, style }) => {
+  actived?: boolean;
+}> = ({ actived, size, color, onPress, style }) => {
   const liked = useSharedValue(0);
 
   const outlineStyle = useAnimatedStyle(() => {
@@ -39,9 +40,12 @@ export const FavoriteButton: React.FC<{
     };
   });
 
+  useEffect(() => {
+    liked.value = withSpring(actived ? 1 : 0, { mass: 2.5 })
+  }, [actived])
+
   return (
     <Pressable onPress={() => {
-      (liked.value = withSpring(liked.value ? 0 : 1, { mass: 2.5 }))
       onPress && onPress()
     }} style={style}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>

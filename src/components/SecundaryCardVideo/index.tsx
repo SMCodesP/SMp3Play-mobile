@@ -19,10 +19,9 @@ interface CardVideoProps {
 
 const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
   const handleNavigation = () => {
-    console.log(video)
     navigation.navigate("Details", {
       video,
-      videoURL: video.url
+      videoId: video.videoId
     });
   };
 

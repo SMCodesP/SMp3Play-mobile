@@ -97,6 +97,7 @@ const PlayerProvider: React.FC = ({ children }) => {
     </PlayerContext.Provider>
   );
 };
+
 function usePlayer(): PlayerType {
   const context = useContext(PlayerContext);
 
