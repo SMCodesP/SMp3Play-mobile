@@ -28,7 +28,7 @@ const IconAnimated: React.FC<{
       color: interpolateColor(
         progress.value,
         [0, 1],
-        [colors.comment, colors.pink]
+        [colors.purple, colors.pink]
       ),
       transform: [{ scale: interpolate(progress.value, [0, 1], [1, 1.2]) }],
     };

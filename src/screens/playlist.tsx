@@ -159,6 +159,11 @@ export const Playlist: React.FC<{
           <Text>Nenhuma música na playlist</Text>
         )}
       </SpringScroll>
+      <RectButton style={styles.sync}>
+        <View style={styles.align} accessible>
+          <Ionicons name="ios-download" size={28} color={colors.foreground} />
+        </View>
+      </RectButton>
     </GlobalContainer>
   );
 };
@@ -210,5 +215,21 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontFamily: fonts.complement,
     fontSize: 18
+  },
+  sync: {
+    position: "absolute",
+    bottom: 10,
+    right: 20,
+    borderRadius: 32,
+    width: 52,
+    height: 52,
+    backgroundColor: colors.comment,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  align: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
   }
 });

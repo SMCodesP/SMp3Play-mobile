@@ -1,8 +1,43 @@
 import React from 'react';
-import { View } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
+import { SpringScrollView } from 'react-native-spring-scrollview';
 
-// import { Container } from './styles';
+import { CardSongDownload } from '../components/CardSongDownload';
+import GlobalContainer from '../components/GlobalContainer';
+
+import { usePlaylist } from '../contexts/playlist';
+
+import colors from '../styles/colors';
+import fonts from '../styles/fonts';
 
 export const Downloads: React.FC = () => {
-  return <View />;
+  const { playlists } = usePlaylist();
+
+  return (
+    <GlobalContainer>
+      <SpringScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Downloads</Text>
+        <FlatList
+          data={playlists[0].songs || []}
+          renderItem={({ item }) => (
+            <CardSongDownload song={item} />
+          )}
+          keyExtractor={({ videoId }) => videoId}
+          nestedScrollEnabled
+        />
+      </SpringScrollView>
+    </GlobalContainer>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 5,
+    paddingHorizontal: 15
+  },
+  title: {
+    fontFamily: fonts.heading,
+    fontSize: 32,
+    color: colors.foreground
+  }
+})
