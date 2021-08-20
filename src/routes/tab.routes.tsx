@@ -1,5 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { StyleSheet } from 'react-native';
 
 import {
   MaterialIcons,
@@ -32,6 +33,10 @@ export const TabRoutes: React.FC = () => {
         inactiveTintColor: colors.comment,
         labelPosition: "below-icon",
         showLabel: false,
+        tabStyle: {
+          height: 45,
+          backgroundColor: 'transparent',
+        },
         style: {
           height: 45,
           backgroundColor: "transparent",

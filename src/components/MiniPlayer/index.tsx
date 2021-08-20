@@ -107,9 +107,8 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 65,
-    backgroundColor: colors.background,
-    // borderBottomWidth: 2,
-    // borderBottomColor: colors.comment,
+    backgroundColor: "transparent",
+    position: "relative",
   },
   progressContainer: {
     height: 1,

@@ -11,7 +11,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { lighten } from "polished";
+import { lighten, transparentize } from "polished";
 
 import Player from "../Player";
 import { MiniPlayer } from "../MiniPlayer";
@@ -20,6 +20,8 @@ import { Dimensions } from "react-native";
 import { usePlayer } from "../../contexts/player";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
+
+const BlurViewAnimated = Animated.createAnimatedComponent(BlurView)
 
 const BottomTab: React.FC<{
   bottomTabBarProps: BottomTabBarProps;
@@ -106,47 +108,47 @@ const BottomTab: React.FC<{
           </Animated.View>
         </PanGestureHandler>
       )}
-      <Animated.View
-        style={[
-          {
-            height: 110,
-            width: "100%",
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-          },
-          bottomTabPositionStyle,
-        ]}
+      <BlurViewAnimated
+        style={[{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: track ? 110 : 45,
+          backgroundColor: transparentize(0.5, colors.background)
+        }, bottomTabPositionStyle]}
+        blurType="dark"
+        blurAmount={8}
+        blurRadius={20}
+        overlayColor="transparent"
       >
-        {track && (
-          <PanGestureHandler onGestureEvent={onGestureEvent}>
-            <Animated.View
-              style={{
-                width: "100%",
-                height: 65,
-                position: "absolute",
-              }}
-            >
-              <MiniPlayer onOpen={open} />
-            </Animated.View>
-          </PanGestureHandler>
-        )}
-        <BlurView
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-          blurType="dark"
-          blurAmount={8}
-          blurRadius={20}
-          overlayColor="transparent"
+        <Animated.View
+          style={[
+            {
+              width: "100%",
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+            },
+            bottomTabPositionStyle,
+          ]}
         >
-          <BottomTabBar {...bottomTabBarProps} />
-        </BlurView>
-      </Animated.View>
+          {track && (
+            <PanGestureHandler onGestureEvent={onGestureEvent}>
+              <Animated.View
+                style={{
+                  flex: 1
+                  // position: "absolute",
+                }}
+              >
+                <MiniPlayer onOpen={open} />
+              </Animated.View>
+            </PanGestureHandler>
+          )}
+            <BottomTabBar {...bottomTabBarProps} />
+        </Animated.View>
+      </BlurViewAnimated>
     </>
   );
 };

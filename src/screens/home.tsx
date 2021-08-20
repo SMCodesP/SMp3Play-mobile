@@ -24,7 +24,7 @@ export const Home: React.FC<{
 
   return (
     <GlobalContainer>
-      <ScrollView>
+      <SpringScrollView directionalLockEnabled={true}>
         <Text style={styles.title}>Seja bem-vindo (a)!</Text>
         <Text style={styles.subTitle}>Histórico</Text>
         <View style={styles.listHistory}>
@@ -42,7 +42,7 @@ export const Home: React.FC<{
             )}
           />
         </View>
-      </ScrollView>
+      </SpringScrollView>
     </GlobalContainer>
   );
 };
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: fonts.heading,
     paddingHorizontal: 15,
-    paddingVertical: 5,
+    // paddingVertical: 5,
   },
   subTitle: {
     color: colors.foreground,

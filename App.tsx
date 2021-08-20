@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StatusBar, LogBox } from "react-native";
+import React, { useEffect } from "react";
+import { SafeAreaView, View, StatusBar, LogBox } from "react-native";
 import {
   useFonts,
   Jost_400Regular,
@@ -9,16 +9,17 @@ import {
 } from "@expo-google-fonts/jost";
 import AppLoading from "expo-app-loading";
 import TrackPlayer, { Capability } from "react-native-track-player";
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 import { Routes } from "./src/routes";
 import colors from "./src/styles/colors";
 import { PlayerProvider } from "./src/contexts/player";
 import { PlaylistProvider } from "./src/contexts/playlist";
 
-LogBox.ignoreAllLogs();
+SystemNavigationBar.setNavigationColor(colors.background, true)
 
 TrackPlayer.setupPlayer({ waitForBuffer: true }).then(async () => {
-  console.log("player setup!");
+  console.log("player setup?");
 
   await TrackPlayer.updateOptions({
     stopWithApp: false,

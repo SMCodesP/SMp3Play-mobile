@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 144,
-    height: 86
+    height: 86,
+    borderRadius: 10
   },
   containerInfo: {
     flex: 1,

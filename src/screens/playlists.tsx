@@ -34,7 +34,6 @@ export const Playlists: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 5,
     marginHorizontal: 15
   },
   title: {

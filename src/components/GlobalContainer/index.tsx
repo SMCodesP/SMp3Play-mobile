@@ -1,6 +1,7 @@
 import React from "react";
 import { View, ViewProps } from "react-native";
 import { usePlayer } from "../../contexts/player";
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import colors from "../../styles/colors";
 

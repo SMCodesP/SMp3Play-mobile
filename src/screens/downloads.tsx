@@ -15,7 +15,10 @@ export const Downloads: React.FC = () => {
 
   return (
     <GlobalContainer>
-      <SpringScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <SpringScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.title}>Downloads</Text>
         <FlatList
           data={playlists[0].songs || []}

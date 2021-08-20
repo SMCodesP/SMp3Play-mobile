@@ -22,7 +22,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
     <TouchableScalable
       duration={25}
       scaleTo={0.95}
-      style={{ flex: 1 }}
+      style={{ flex: 1, height: 140 }}
       buttonStyle={{ flex: 1 }}
       onPress={handleNavigation}
     >
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     flex: 1,
+    height: 140,
     borderRadius: 10,
     marginHorizontal: 2,
     marginVertical: 3,

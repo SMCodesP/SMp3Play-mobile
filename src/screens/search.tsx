@@ -6,11 +6,14 @@ import {
   StyleSheet,
   Text,
   Keyboard,
+  FlatList
 } from "react-native";
 import { WaterfallList } from "react-native-largelist-v3";
 import { Jiro } from "react-native-textinput-effects";
 import LottieView from "lottie-react-native";
+import { BlurView } from "@react-native-community/blur";
 import axios from "axios";
+import { transparentize } from "polished";
 
 import CardVideo from "../components/CardVideo";
 
@@ -24,6 +27,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 export const Search: React.FC = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const [queried, setQueried] = useState("");
   const [videos, setVideos] = useState([]);
 
   const { track } = usePlayer();
@@ -42,14 +46,15 @@ export const Search: React.FC = ({ navigation }: any) => {
       );
       setVideos(data);
       setLoading(false);
+      setQueried(query)
     } catch (error) {
       setLoading(false);
     }
   };
 
-  const renderCardVideo = (video: any) => (
-    <CardVideo {...video} navigation={navigation} />
-  );
+  // const renderCardVideo = ({item: video}) => (
+  //   <CardVideo {...video} navigation={navigation} />
+  // );
 
   return (
     <GlobalContainer>
@@ -57,46 +62,47 @@ export const Search: React.FC = ({ navigation }: any) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <View style={styles.inner}>
+        <SpringScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
+          <Text style={styles.title}>{queried ? `Pesquise mais músicas` : 'Pesquise por músicas!'}</Text>
+          <View style={styles.containerInput}>
+            <Jiro
+              label={"Pesquise sua música"}
+              borderColor={colors.comment}
+              inputPadding={15}
+              inputStyle={{ color: colors.foreground }}
+              returnKeyType="search"
+              onChangeText={setQuery}
+              onSubmitEditing={handleQuery}
+              value={query}
+            />
+          </View>
+          {loading ? (
+            <LottieView
+              source={require("../../assets/lf30_editor_kplkuq1a.json")}
+              duration={1930}
+              autoPlay
+              loop
+            />
+          ) : (
+            videos.length === 0 && (
+              <View style={styles.containerSongEmpty}>
+                <Text style={styles.songEmpty}>
+                  Nenhuma música encontrada/pesquisada
+                </Text>
+              </View>
+            )
+          )}
           {/* <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss} touchSoundDisabled> */}
-            <Text style={styles.title}>Pesquise por músicas!</Text>
-            <View style={styles.containerInput}>
-              <Jiro
-                label={"Pesquise sua música"}
-                borderColor={colors.comment}
-                inputPadding={15}
-                inputStyle={{ color: colors.foreground }}
-                returnKeyType="search"
-                onChangeText={setQuery}
-                onSubmitEditing={handleQuery}
-                value={query}
-              />
-            </View>
-            {loading ? (
-              <LottieView
-                source={require("../../assets/lf30_editor_kplkuq1a.json")}
-                duration={1930}
-                autoPlay
-                loop
-              />
-            ) : (
-              videos.length === 0 && (
-                <View style={styles.containerSongEmpty}>
-                  <Text style={styles.songEmpty}>
-                    Nenhuma música encontrada/pesquisada
-                  </Text>
-                </View>
-              )
-            )}
           {/* </TouchableWithoutFeedback> */}
-          <WaterfallList
+          <FlatList
             data={videos}
-            heightForItem={() => 140}
-            renderItem={renderCardVideo}
-            showsVerticalScrollIndicator={false}
+            // heightForItem={() => 140}
+            renderItem={({ item: video}) => <CardVideo {...video} navigation={navigation} />}
+            keyExtractor={(video) => video.videoId}
             numColumns={2}
+            nestedScrollEnabled
           />
-        </View>
+        </SpringScrollView>
       </KeyboardAvoidingView>
     </GlobalContainer>
   );
@@ -116,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: fonts.heading,
     paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingBottom: 5
   },
   containerInput: {
     paddingHorizontal: 25,
