@@ -1,4 +1,4 @@
 interface TPlaylist {
   name: string;
-  songs: TMinimalInfo[];
+  songs: string[];
 }

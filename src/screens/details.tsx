@@ -6,6 +6,8 @@ import {
   ImageBackground,
   StyleSheet,
   ActivityIndicator,
+  Modal,
+  FlatList,
 } from "react-native";
 
 import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
@@ -15,7 +17,7 @@ import { SpringScrollView } from "react-native-spring-scrollview";
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
-import { darken } from "polished";
+import { darken, lighten, transparentize } from "polished";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -23,7 +25,7 @@ import Feather from "react-native-vector-icons/Feather";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 
-import { usePlayer } from "../contexts/player";
+import { usePlayer, useSong } from "../contexts/player";
 
 import GlobalContainer from "../components/GlobalContainer";
 
@@ -34,7 +36,11 @@ import 'sugar/locales/pt'
 import Sugar from 'sugar'
 import FastImage from "react-native-fast-image";
 import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
-import { isFavorite, usePlaylist } from "../contexts/playlist";
+import { isOnPlaylist, usePlaylist } from "../contexts/playlist";
+import { BlurView } from "@react-native-community/blur";
+import { Radio } from "../components/Radio";
+import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
+import TouchableScalable from "../components/TouchableScalable";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
@@ -52,21 +58,22 @@ const Details: React.FC<{
 }> = ({
   route: {
     params: {
-      video: initialVideo = null,
       videoId,
     },
   },
   navigation,
 }) => {
-  const { refreshQueue, track } = usePlayer();
-  const { toggleLikeSong } = usePlaylist();
-
-  const [video, setVideo] = useState<TMinimalInfo | null>(initialVideo);
   const [loadingTrack, setLoadingTrack] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const { handlePlaySong, track } = usePlayer();
+  const { toggleSongInPlaylist, playlists } = usePlaylist();
+  const video = useSong(videoId);
+
   const playbackState = usePlaybackState();
   const scrollY = useValue(0);
 
-  const isLiked = isFavorite(videoId);
+  const isLiked = isOnPlaylist(videoId, "Favoritos");
 
   const handlePlay = async () => {
     if (track) {
@@ -74,56 +81,15 @@ const Details: React.FC<{
     }
     setLoadingTrack(true);
     TrackPlayer.destroy();
-    await handleAddQueue();
+    if (video) {
+      await handlePlaySong(video);
+    }
     setLoadingTrack(false);
   }
 
   const handlePause = async () => {
     await TrackPlayer.pause();
   }
-
-  const handleAddQueue = useCallback(async () => {
-    if (video) {
-      const urls = await ytdl(video.url, { quality: "highestaudio" });
-      const track = {
-        url: urls[0].url,
-        artist: video.author.name,
-        title: video.title,
-        artwork: video.thumbnail,
-        description: video.description,
-        date: video.timestamp,
-        extra: video,
-        id: `${Math.floor(Math.random() * 100000000000)}`,
-      };
-      await TrackPlayer.add(track);
-      await TrackPlayer.play();
-      await refreshQueue();
-    }
-  }, [video]);
-
-  useEffect(() => {
-    ;(async () => {
-      const videoData: TInfo = await ytdl.getBasicInfo(videoId);
-      setVideo({
-        ago: Sugar.Date.relative(
-          new Date(videoData.videoDetails.uploadDate),
-          'pt'
-        ),
-        author: {
-          name: videoData.videoDetails.author.name,
-          avatar: videoData.videoDetails.author.thumbnails[videoData.videoDetails.author.thumbnails.length-1].url,
-        },
-        description: videoData.videoDetails.description,
-        thumbnail: videoData.videoDetails.thumbnails[videoData.videoDetails.thumbnails.length-1].url,
-        related_videos: videoData.related_videos,
-        timestamp: videoData.videoDetails.lengthSeconds,
-        title: videoData.videoDetails.title,
-        url: videoData.videoDetails.video_url,
-        videoId: videoData.videoDetails.videoId,
-        views: Number(videoData.videoDetails.viewCount),
-      })
-    })();
-  }, [])
 
   const handleBack = async () => {
     navigation.goBack()
@@ -281,6 +247,7 @@ const Details: React.FC<{
                   layout={[
                     { key: 'button1', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
                     { key: 'button2', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
+                    { key: 'button3', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
                   ]}
                 >
                   <RectButton
@@ -304,7 +271,7 @@ const Details: React.FC<{
                       backgroundColor: colors.pink
                     }]}
                     rippleColor={darken(0.1, colors.pink)}
-                    onPress={() => video && toggleLikeSong(video)}
+                    onPress={() => video && toggleSongInPlaylist(video, "Favoritos")}
                   >
                     <View accessible>
                       <AntDesign name={isLiked ? "heart" : "hearto"} size={26} color={colors.background} />
@@ -315,7 +282,7 @@ const Details: React.FC<{
                       backgroundColor: colors.yellow
                     }]}
                     rippleColor={darken(0.1, colors.yellow)}
-                    onPress={handleAddQueue}
+                    onPress={() => setModalIsOpen(true)}
                   >
                     <View accessible>
                       <Ionicons name={"add"} size={26} color={colors.background} />
@@ -364,6 +331,34 @@ const Details: React.FC<{
           </SkeletonContent>
         </View>
       </SpringScroll>
+      <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>
+        <BlurView style={styles.blurModal} blurAmount={2} blurRadius={10} overlayColor={transparentize(0.5, colors.background)} />
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Adicionar às playlists:</Text>
+            {video && <FlatList
+              data={playlists}
+              keyExtractor={({ name }) => name}
+              renderItem={({ item }) => <CardPlaylistSelection item={item} video={video} />}
+            />}
+            <View>
+              <TouchableScalable
+                buttonStyle={styles.containerButtonModal}
+                duration={100}
+                scaleTo={0.95}
+                style={[styles.modalButton, {
+                  backgroundColor: colors.comment
+                }]}
+                delayPressOut={100}
+                onPressOut={() => setModalIsOpen(false)}
+              >
+                <Ionicons name="ios-save" size={26} color={colors.foreground} />
+                <Animated.Text style={styles.textButtonModal}>Salvar</Animated.Text>
+              </TouchableScalable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </GlobalContainer>
   );
 };
@@ -444,7 +439,55 @@ const styles = StyleSheet.create({
     height: 42,
     marginLeft: 15,
     borderRadius: 10
-  }
+  },
+  blurModal: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    width: "90%",
+    flex: 1,
+    backgroundColor: lighten(0.1, colors.background),
+    borderRadius: 15,
+    paddingHorizontal: 25,
+    marginTop: 65,
+    marginBottom: 45,
+    paddingVertical: 15
+  },
+  modalTitle: {
+    color: colors.foreground,
+    fontSize: 26,
+    fontFamily: fonts.heading,
+  },
+  containerButtonModal: {
+    marginTop: 10,
+    borderRadius: 50,
+    height: 50,
+    width: "75%",
+    alignSelf: "center",
+  },
+  textButtonModal: {
+    color: colors.foreground,
+    marginLeft: 15,
+    fontFamily: fonts.complement,
+    fontSize: 18
+  },
+  modalButton: {
+    borderRadius: 50,
+    height: 50,
+    width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default Details;

@@ -14,13 +14,13 @@ import TouchableScalable from "../TouchableScalable";
 
 interface CardVideoProps {
   navigation?: any;
-  item: TVideo;
+  item: TMinimalInfo;
 }
 
 const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
   const handleNavigation = () => {
     navigation.navigate("Details", {
-      video,
+      // video,
       videoId: video.videoId
     });
   };

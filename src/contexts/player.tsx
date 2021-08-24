@@ -7,12 +7,18 @@ import TrackPlayer, {
 } from "react-native-track-player";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback } from "react";
+import ytdl from "react-native-ytdl";
+import Sugar from 'sugar'
+
+import { dynamicSort } from "../utils/dynamicSort";
 
 type PlayerType = {
-  refreshHistory(): Promise<void>;
   toggleRepeat(): Promise<void>;
   refreshQueue(): Promise<void>;
-  history: TVideo[];
+  refreshVideos(): Promise<void>;
+  handlePlaySong(song: TMinimalInfo): Promise<void>;
+  addSongLocal(song: TMinimalInfo): Promise<void>;
+  videos: TMinimalInfo[];
   queue: Track[];
   track: Track | null;
   repeating: boolean;
@@ -21,7 +27,7 @@ type PlayerType = {
 const PlayerContext = createContext<PlayerType>({} as PlayerType);
 
 const PlayerProvider: React.FC = ({ children }) => {
-  const [history, setHistory] = useState<TVideo[]>([]);
+  const [videos, setVideos] = useState<TMinimalInfo[]>([]);
   const [queue, setQueue] = useState<Track[]>([]);
   const [track, setTrack] = useState<Track | null>(null);
   const [repeating, setRepeating] = useState<boolean>(false);
@@ -35,20 +41,54 @@ const PlayerProvider: React.FC = ({ children }) => {
       await TrackPlayer.setRepeatMode(
         repeatingStored ? RepeatMode.Queue : RepeatMode.Off
       );
-      await refreshHistory();
     })();
   }, []);
 
-  const refreshHistory = async () => {
-    const jsonValue = await AsyncStorage.getItem("@history");
-    setHistory(jsonValue != null ? JSON.parse(jsonValue) || [] : []);
+  const addSongLocal = async (song: TMinimalInfo) => {
+    if (videos.findIndex(({ videoId }) => videoId === song.videoId) === -1) {
+      const newVideos = [
+        ...new Map(
+          [
+            {
+              ...song,
+              videoId: song.videoId,
+            },
+            ...videos,
+          ].map((item) => [item.videoId, item]),
+        ).values(),
+      ];
+      setVideos(newVideos)
+      await AsyncStorage.setItem('@videos', JSON.stringify(newVideos));
+    }
+  }
+
+  const refreshVideos = async () => {
+    const jsonValue = await AsyncStorage.getItem("@videos");
+    setVideos(jsonValue != null ? JSON.parse(jsonValue) || [] : []);
     return;
   };
-
+  
   const refreshQueue = async () => {
     setQueue(await TrackPlayer.getQueue());
     return;
   };
+
+  const handlePlaySong = async (song: TMinimalInfo) => {
+    const urls = await ytdl(song.url, { quality: "highestaudio" });
+    const track = {
+      url: urls[0].url,
+      artist: song.author.name,
+      title: song.title,
+      artwork: song.thumbnail,
+      description: song.description,
+      date: song.timestamp,
+      extra: song,
+      id: `${Math.floor(Math.random() * 100000000000)}`,
+    };
+    await TrackPlayer.add(track);
+    await TrackPlayer.play();
+    // await refreshVideos()
+  }
 
   const toggleRepeat = useCallback(async () => {
     await AsyncStorage.setItem("@repeating", String(Number(!repeating)));
@@ -77,20 +117,21 @@ const PlayerProvider: React.FC = ({ children }) => {
       await TrackPlayer.setRepeatMode(
         repeating ? RepeatMode.Queue : RepeatMode.Off
       );
-      await refreshHistory();
     }
   );
 
   return (
     <PlayerContext.Provider
       value={{
-        refreshHistory,
         toggleRepeat,
         refreshQueue,
-        history,
         track,
         repeating,
         queue,
+        videos,
+        refreshVideos,
+        handlePlaySong,
+        addSongLocal,
       }}
     >
       {children}
@@ -98,12 +139,49 @@ const PlayerProvider: React.FC = ({ children }) => {
   );
 };
 
+function useSong(id: string): TMinimalInfo | undefined {
+  const { videos } = usePlayer();
+  const [video, setVideo] = useState(videos.find((video) => video.videoId === id));
+
+  useEffect(() => {
+    ;(async () => {
+      const videoData: TInfo = await ytdl.getBasicInfo(id);
+      setVideo({
+        ago: Sugar.Date.relative(
+          new Date(videoData.videoDetails.uploadDate),
+          'pt'
+        ),
+        author: {
+          name: videoData.videoDetails.author.name,
+          avatar: videoData.videoDetails.author.thumbnails[videoData.videoDetails.author.thumbnails.length-1].url,
+        },
+        description: videoData.videoDetails.description,
+        thumbnail: videoData.videoDetails.thumbnails[videoData.videoDetails.thumbnails.length-1].url,
+        timestamp: videoData.videoDetails.lengthSeconds,
+        title: videoData.videoDetails.title,
+        url: videoData.videoDetails.video_url,
+        videoId: videoData.videoDetails.videoId,
+        views: Number(videoData.videoDetails.viewCount),
+        is_liked: false,
+      })
+    })();
+  }, [])
+
+  return video;
+}
+
+async function useRefresh() {
+  const { refreshVideos } = usePlayer()
+
+  return await refreshVideos();
+}
+
 function usePlayer(): PlayerType {
   const context = useContext(PlayerContext);
 
   return context;
 }
 
-export { usePlayer, PlayerProvider };
+export { usePlayer, PlayerProvider, useSong, useRefresh };
 
 export default PlayerContext;

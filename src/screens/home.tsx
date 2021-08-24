@@ -1,40 +1,36 @@
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect } from "react";
-import { View, StyleSheet, Text, FlatList, ScrollView } from "react-native";
-import { SpringScrollView } from "react-native-spring-scrollview";
+import { View, StyleSheet, Text, FlatList } from "react-native";
 import GlobalContainer from "../components/GlobalContainer";
 import SecundaryCardVideo from "../components/SecundaryCardVideo";
 import { usePlayer } from "../contexts/player";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 
-// import { Container } from './styles';
-
 export const Home: React.FC<{
   navigation: any;
 }> = ({ navigation }) => {
-  const { history, refreshHistory } = usePlayer();
+  const {videos, refreshVideos} = usePlayer();
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (refreshHistory && isFocused) {
-      refreshHistory();
+    if (refreshVideos && isFocused) {
+      refreshVideos();
     }
   }, [isFocused]);
 
   return (
     <GlobalContainer>
-      <SpringScrollView directionalLockEnabled={true}>
+      <View>
         <Text style={styles.title}>Seja bem-vindo (a)!</Text>
         <Text style={styles.subTitle}>Histórico</Text>
         <View style={styles.listHistory}>
           <FlatList
-            data={history}
+            data={videos.filter(song => song.updated_at !== undefined).sort((a: any, b: any) => b.updated_at - a.updated_at)}
             renderItem={({ item }) => (
               <SecundaryCardVideo item={item} navigation={navigation} />
             )}
             horizontal={true}
-            bounces={true}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.videoId}
             ListEmptyComponent={() => (
@@ -42,7 +38,7 @@ export const Home: React.FC<{
             )}
           />
         </View>
-      </SpringScrollView>
+      </View>
     </GlobalContainer>
   );
 };

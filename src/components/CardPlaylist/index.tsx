@@ -8,30 +8,40 @@ import FastImage from "react-native-fast-image";
 
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
+import { usePlaylistInfo } from '../../contexts/playlist';
+import TouchableScalable from '../TouchableScalable';
 
 export const CardPlaylist: React.FC<{
   playlist: TPlaylist
 }> = ({ playlist }) => {
   const navigation = useNavigation();
+  const { playlist: { songs } } = usePlaylistInfo(playlist.name)
 
   return (
-    <RectButton style={styles.container} onPress={() => {
-      navigation.navigate('Playlist', {
-        playlist
-      })
-    }}>
-      <View style={{
+    <TouchableScalable
+      rectButton={true}
+      duration={100}
+      scaleTo={0.95}
+      delayPressOut={100}
+      buttonStyle={styles.container}
+      style={{
         flexDirection: 'row',
         width: '100%'
-      }} accessible>
+      }}
+      onPress={() => {
+        navigation.navigate('Playlist', {
+          playlist
+        })
+      }}
+    >
         <View style={styles.containerThumbnail}>
           <View>
-            {playlist.songs[0] && <FastImage style={[styles.thumbnailItem, { borderTopLeftRadius: 10 }]} source={{ uri: playlist.songs[0].thumbnail }} />}
-            {playlist.songs[1] && <FastImage style={[styles.thumbnailItem, { borderBottomLeftRadius: 10 }]} source={{ uri: playlist.songs[1].thumbnail }} />}
+            {songs[0] && <FastImage style={[styles.thumbnailItem, { borderTopLeftRadius: 10 }]} source={{ uri: songs[0].thumbnail }} />}
+            {songs[1] && <FastImage style={[styles.thumbnailItem, { borderBottomLeftRadius: 10 }]} source={{ uri: songs[1].thumbnail }} />}
           </View>
           <View>
-            {playlist.songs[2] && <FastImage style={[styles.thumbnailItem, { borderTopRightRadius: 10 }]} source={{ uri: playlist.songs[2].thumbnail }} />}
-            {playlist.songs[3] && <FastImage style={[styles.thumbnailItem, { borderBottomRightRadius: 10 }]} source={{ uri: playlist.songs[3].thumbnail }} />}
+            {songs[2] && <FastImage style={[styles.thumbnailItem, { borderTopRightRadius: 10 }]} source={{ uri: songs[2].thumbnail }} />}
+            {songs[3] && <FastImage style={[styles.thumbnailItem, { borderBottomRightRadius: 10 }]} source={{ uri: songs[3].thumbnail }} />}
           </View>
           <View style={{
             ...StyleSheet.absoluteFillObject,
@@ -45,10 +55,9 @@ export const CardPlaylist: React.FC<{
           <Text style={styles.title}>{playlist.name}</Text>
           <Text style={styles.from}>YT</Text>
           <View style={styles.hr} />
-          <Text style={styles.counter}>{playlist.songs.length}</Text>
+          <Text style={styles.counter}>{songs.length}</Text>
         </View>
-      </View>
-    </RectButton>
+    </TouchableScalable>
   );
 }
 
@@ -57,7 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.comment,
     borderRadius: 10,
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
   },
   containerInfo: {
     flex: 1,

@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import ytdl from "react-native-ytdl";
+import { useSong } from "../../contexts/player";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";

@@ -9,6 +9,7 @@
 
 import TrackPlayer, { Event } from 'react-native-track-player';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRefresh } from './src/contexts/player';
 
 module.exports = async function () {
   TrackPlayer.addEventListener(Event.RemotePlay, async () => {
@@ -44,20 +45,22 @@ module.exports = async function () {
   TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async ({ nextTrack }) => {
     if (nextTrack !== undefined && nextTrack !== null) {
       const track = await TrackPlayer.getTrack(nextTrack);
-      const jsonValue = await AsyncStorage.getItem('@history');
-      const history = jsonValue != null ? JSON.parse(jsonValue) || [] : [];
-      const newHistory = [
+      const jsonValue = await AsyncStorage.getItem('@videos');
+      const videos = jsonValue != null ? JSON.parse(jsonValue) || [] : [];
+      const newVideos = [
         ...new Map(
           [
+            ...videos,
             {
               ...track.extra,
               videoId: track.extra.videoId,
+              updated_at: Date.now(),
             },
-            ...history,
           ].map((item) => [item.videoId, item]),
         ).values(),
       ];
-      await AsyncStorage.setItem('@history', JSON.stringify(newHistory));
+      await AsyncStorage.setItem('@videos', JSON.stringify(newVideos));
+      // await useRefresh()
     }
   });
 };

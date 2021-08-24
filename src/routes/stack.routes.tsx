@@ -8,6 +8,7 @@ import { Downloads } from "../screens/downloads";
 import { Playlists } from "../screens/playlists";
 import { Settings } from "../screens/settings";
 import { Playlist } from "../screens/playlist";
+import { SearchAddPlaylist } from "../screens/searchAddPlaylist";
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,7 @@ export const PlaylistsStackRoutes = () => (
     <Stack.Screen name="Main" component={Playlists} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
+    <Stack.Screen name="SearchAddPlaylist" component={SearchAddPlaylist} />
   </Stack.Navigator>
 );
 

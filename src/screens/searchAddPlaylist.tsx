@@ -17,11 +17,11 @@ import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
 import { SpringScrollView } from "react-native-spring-scrollview";
+import CardAddSong from "../components/CardAddSong";
 
-export const Search: React.FC = ({ navigation }: any) => {
+export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { playlist } } }: any) => {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [queried, setQueried] = useState("");
   const [videos, setVideos] = useState<TVideo[]>([]);
 
   const handleQuery = async () => {
@@ -38,7 +38,6 @@ export const Search: React.FC = ({ navigation }: any) => {
       );
       setVideos(data);
       setLoading(false);
-      setQueried(query)
     } catch (error) {
       setLoading(false);
     }
@@ -50,43 +49,49 @@ export const Search: React.FC = ({ navigation }: any) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <SpringScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
-          <Text style={styles.title}>{queried ? `Pesquise mais músicas` : 'Pesquise por músicas!'}</Text>
-          <View style={styles.containerInput}>
-            <Jiro
-              label={"Pesquise sua música"}
-              borderColor={colors.comment}
-              inputPadding={15}
-              inputStyle={{ color: colors.foreground }}
-              returnKeyType="search"
-              onChangeText={setQuery}
-              onSubmitEditing={handleQuery}
-              value={query}
+        <SpringScrollView showsVerticalScrollIndicator={false} style={styles.inner} dragToHideKeyboard={true}>
+          {/* <TouchableWithoutFeedback style={styles.inner} touchSoundDisabled={true} onPress={Keyboard.dismiss}> */}
+            <View style={styles.containerInput}>
+              <Jiro
+                label={"Adicione uma música"}
+                borderColor={colors.comment}
+                inputStyle={{
+                  color: colors.foreground,
+                  fontSize: 22
+                }}
+                labelStyle={{
+                  fontSize: 22
+                }}
+                returnKeyType="search"
+                onChangeText={setQuery}
+                onSubmitEditing={handleQuery}
+                value={query}
+              />
+            </View>
+            {loading ? (
+              <LottieView
+                source={require("../../assets/lf30_editor_kplkuq1a.json")}
+                duration={1930}
+                autoPlay
+                loop
+              />
+            ) : (
+              videos.length === 0 && (
+                <View style={styles.containerSongEmpty}>
+                  <Text style={styles.songEmpty}>
+                    Nenhuma música encontrada/pesquisada
+                  </Text>
+                </View>
+              )
+            )}
+            <FlatList
+              data={videos}
+              renderItem={({ item }) => <CardAddSong playlistName={playlist} item={item} navigation={navigation} />}
+              keyExtractor={(video) => video.videoId}
+              contentContainerStyle={styles.containerListSongs}
+              nestedScrollEnabled
             />
-          </View>
-          {loading ? (
-            <LottieView
-              source={require("../../assets/lf30_editor_kplkuq1a.json")}
-              duration={1930}
-              autoPlay
-              loop
-            />
-          ) : (
-            videos.length === 0 && (
-              <View style={styles.containerSongEmpty}>
-                <Text style={styles.songEmpty}>
-                  Nenhuma música encontrada/pesquisada
-                </Text>
-              </View>
-            )
-          )}
-          <FlatList
-            data={videos}
-            renderItem={({ item: video}) => <CardVideo {...video} navigation={navigation} />}
-            keyExtractor={(video) => video.videoId}
-            numColumns={2}
-            nestedScrollEnabled
-          />
+          {/* </TouchableWithoutFeedbacsk> */}
         </SpringScrollView>
       </KeyboardAvoidingView>
     </GlobalContainer>
@@ -124,4 +129,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.complement,
     textAlign: "center",
   },
+  containerListSongs: {
+    backgroundColor: colors.comment,
+    borderRadius: 15,
+    marginHorizontal: 15,
+  }
 });

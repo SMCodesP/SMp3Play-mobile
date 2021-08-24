@@ -28,7 +28,7 @@ import TouchableScalable from "../TouchableScalable";
 import { msToHMS } from "../../utils/msToMHS";
 
 import { FavoriteButton  } from '../FavoriteButton'
-import { isFavorite, usePlaylist } from "../../contexts/playlist";
+import { isOnPlaylist, usePlaylist } from "../../contexts/playlist";
 
 const { width } = Dimensions.get("window");
 
@@ -38,8 +38,8 @@ interface PlayerProps {
 
 const Player = ({ onPress }: PlayerProps) => {
   const { track, repeating, queue, toggleRepeat } = usePlayer();
-  const { toggleLikeSong } = usePlaylist();
-  const isLiked = isFavorite(track?.extra.videoId);
+  const { toggleSongInPlaylist } = usePlaylist();
+  const isLiked = isOnPlaylist(track?.extra.videoId, "Favoritos");
   const { duration, position } = useProgress();
   const playbackState = usePlaybackState();
 
@@ -102,7 +102,7 @@ const Player = ({ onPress }: PlayerProps) => {
               </Text>
               <Text style={styles.artist}>{track?.artist}</Text>
             </View>
-            <FavoriteButton onPress={() => toggleLikeSong(track?.extra)} actived={isLiked} size={30} color={colors.pink} />
+            <FavoriteButton onPress={() => toggleSongInPlaylist(track?.extra, "Favoritos")} actived={isLiked} size={30} color={colors.pink} />
           </View>
           <Seek value={position} duration={duration} />
           <View style={styles.containerTime}>

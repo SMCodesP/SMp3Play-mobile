@@ -7,6 +7,7 @@ import {
   Text,
   processColor,
   FlatList,
+  Modal,
 } from "react-native";
 
 import { SpringScrollView } from "react-native-spring-scrollview";
@@ -27,6 +28,7 @@ import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import CardSongPlaylist from "../components/CardSongPlaylist";
 import { usePlaylist, usePlaylistInfo } from "../contexts/playlist";
+import TouchableScalable from "../components/TouchableScalable";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 
@@ -57,6 +59,12 @@ export const Playlist: React.FC<{
 
   const handleBack = async () => {
     navigation.goBack()
+  }
+
+  const handleSearchSong = async () => {
+    navigation.navigate("SearchAddPlaylist", {
+      playlist: playlist.name
+    })
   }
 
   return (
@@ -128,20 +136,28 @@ export const Playlist: React.FC<{
       >
         <View style={styles.containerBody}>
           <Text style={styles.title}>{playlist?.name}</Text>
-          <RectButton
-            style={styles.containerButton}
+          <TouchableScalable
+            buttonStyle={styles.containerButton}
             rippleColor={colors.pink}
-            onPress={() => {
+            rectButton={true}
+            duration={100}
+            scaleTo={0.95}
+            onPressOut={() => {
               if (playlist) {
                 handlePlayPlaylist(playlist.name)
               }
             }}
+            enabled={playlist?.songs.length !== 0}
           >
-            <View style={styles.button} accessible>
+            <View style={[styles.button, {
+              borderColor: darken(0.1, colors.pink)
+            }]} accessible>
               <Ionicons name="play" size={26} color={darken(0.1, colors.pink)} />
-              <Animated.Text style={styles.textButton}>Tocar</Animated.Text>
+              <Animated.Text style={[styles.textButton, {
+                color: darken(0.1, colors.pink)
+              }]}>Tocar</Animated.Text>
             </View>
-          </RectButton>
+          </TouchableScalable>
         </View>
         {playlist && playlist?.songs.length !== 0 ? <DraggableFlatList
           data={playlist.songs}
@@ -151,12 +167,34 @@ export const Playlist: React.FC<{
           activationDistance={moving ? 1 : 100000000}
           onDragBegin={() => setMoving(true)}
           onDragEnd={({ data: newData }) => {
-            setPlaylist(newData)
+            setPlaylist(newData.map(song => song.videoId))
             setMoving(false)
           }}
           initialNumToRender={playlist.songs.length}
         /> : (
-          <Text>Nenhuma música na playlist</Text>
+          <>
+            <Text style={styles.emptyPlaylistText}>Nenhuma música na playlist</Text>
+            <TouchableScalable
+              buttonStyle={[styles.containerButton, {
+                backgroundColor: darken(0.1, colors.purple),
+              }]}
+              rippleColor={colors.purple}
+              rectButton={false}
+              duration={100}
+              scaleTo={0.95}
+              onPress={handleSearchSong}
+            >
+              <View style={[styles.button, {
+                borderColor: darken(0.1, colors.purple),
+                borderWidth: 0
+              }]} accessible>
+                <Ionicons name="search" size={26} color={colors.background} />
+                <Animated.Text style={[styles.textButton, {
+                  color: colors.background
+                }]}>Adicionar música</Animated.Text>
+              </View>
+            </TouchableScalable>
+          </>
         )}
       </SpringScroll>
       <RectButton style={styles.sync}>
@@ -173,7 +211,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     top: -1,
-    height: IMAGE_HEIGHT
+    height: IMAGE_HEIGHT,
+    backgroundColor: colors.comment,
   },
   thumbnailItem: {
     width: width / 2,
@@ -194,11 +233,8 @@ const styles = StyleSheet.create({
   containerButton: {
     borderRadius: 100,
     height: 50,
-    paddingVertical: 5,
     width: "65%",
     alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center"
   },
   button: {
     flexDirection: 'row',
@@ -231,5 +267,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
+  },
+  emptyPlaylistText: {
+    fontFamily: fonts.heading,
+    color: colors.foreground,
+    fontSize: 24,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    textAlign: "center",
+    marginBottom: 10
   }
 });

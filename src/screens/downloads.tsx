@@ -5,13 +5,13 @@ import { SpringScrollView } from 'react-native-spring-scrollview';
 import { CardSongDownload } from '../components/CardSongDownload';
 import GlobalContainer from '../components/GlobalContainer';
 
-import { usePlaylist } from '../contexts/playlist';
+import { usePlaylist, usePlaylistInfo } from '../contexts/playlist';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 export const Downloads: React.FC = () => {
-  const { playlists } = usePlaylist();
+  const { playlist } = usePlaylistInfo("Favoritos");
 
   return (
     <GlobalContainer>
@@ -21,7 +21,7 @@ export const Downloads: React.FC = () => {
       >
         <Text style={styles.title}>Downloads</Text>
         <FlatList
-          data={playlists[0].songs || []}
+          data={playlist.songs || []}
           renderItem={({ item }) => (
             <CardSongDownload song={item} />
           )}

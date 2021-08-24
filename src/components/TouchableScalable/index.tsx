@@ -1,10 +1,11 @@
 import React from "react";
 import {
-  TouchableOpacity,
   TouchableOpacityProps,
   StyleProp,
   ViewStyle,
+  TouchableOpacity
 } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -19,7 +20,13 @@ interface TouchableScalable extends TouchableOpacityProps {
   buttonStyle?: StyleProp<ViewStyle>;
   onPressOut?: any;
   onPressIn?: any;
+  rectButton?: boolean;
+  enabled?: boolean;
+  rippleColor?: string;
 }
+
+const RectButtonAnimated = Animated.createAnimatedComponent(RectButton) as any
+const TouchableAnimated = Animated.createAnimatedComponent(TouchableOpacity) as any
 
 const TouchableScalable: React.FC<TouchableScalable> = ({
   scaleTo,
@@ -29,6 +36,8 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
   onPressOut,
   onPressIn,
   buttonStyle,
+  rectButton = false,
+  enabled = true,
   ...props
 }) => {
   const pressed = useSharedValue(false);
@@ -42,8 +51,24 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
     transform: [{ scale: progress.value }],
   }));
 
-  return (
-    <TouchableOpacity
+  return rectButton ? (
+    <RectButtonAnimated
+      onBegan={() => {
+        pressed.value = true;
+        onPressIn && onPressIn();
+      }}
+      onEnded={() => {
+        pressed.value = false;
+        onPressOut && onPressOut();
+      }}
+      style={[buttonStyle, animatedStyle]}
+      enabled={enabled}
+      {...props}
+    >
+      <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>
+    </RectButtonAnimated>
+  ) : (
+    <TouchableAnimated
       onPressIn={() => {
         pressed.value = true;
         onPressIn && onPressIn();
@@ -52,11 +77,11 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
         pressed.value = false;
         onPressOut && onPressOut();
       }}
-      style={buttonStyle}
+      style={[buttonStyle, animatedStyle]}
       {...props}
     >
       <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>
-    </TouchableOpacity>
+    </TouchableAnimated>
   );
 };
 
