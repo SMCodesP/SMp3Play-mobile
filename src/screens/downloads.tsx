@@ -3,15 +3,15 @@ import { FlatList, StyleSheet, Text } from 'react-native';
 import { SpringScrollView } from 'react-native-spring-scrollview';
 
 import { CardSongDownload } from '../components/CardSongDownload';
+import { CardSongDownloaded } from '../components/CardSongDownloaded';
 import GlobalContainer from '../components/GlobalContainer';
-
-import { usePlaylist, usePlaylistInfo } from '../contexts/playlist';
+import { useDownloads } from '../contexts/downloads';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 export const Downloads: React.FC = () => {
-  const { playlist } = usePlaylistInfo("Favoritos");
+  const {downloads, downloadsCompleted} = useDownloads()
 
   return (
     <GlobalContainer>
@@ -21,11 +21,31 @@ export const Downloads: React.FC = () => {
       >
         <Text style={styles.title}>Downloads</Text>
         <FlatList
-          data={playlist.songs || []}
+          data={downloads}
           renderItem={({ item }) => (
-            <CardSongDownload song={item} />
+            <CardSongDownload downloadItem={item} />
           )}
-          keyExtractor={({ videoId }) => videoId}
+          keyExtractor={({ id }) => id}
+          ListHeaderComponent={() => (
+            <Text style={styles.titleHeader}>Baixando:</Text>
+          )}
+          ListEmptyComponent={() => (
+            <Text style={styles.empty}>Nenhuma música baixando</Text>
+          )}
+          nestedScrollEnabled
+        />
+        <FlatList
+          data={downloadsCompleted}
+          renderItem={({ item }) => (
+            <CardSongDownloaded id={item.id} />
+          )}
+          keyExtractor={({ id }) => id}
+          ListHeaderComponent={() => (
+            <Text style={styles.titleHeader}>Baixadas:</Text>
+          )}
+          ListEmptyComponent={() => (
+            <Text style={styles.empty}>Nenhuma música baixada</Text>
+          )}
           nestedScrollEnabled
         />
       </SpringScrollView>
@@ -42,5 +62,17 @@ const styles = StyleSheet.create({
     fontFamily: fonts.heading,
     fontSize: 32,
     color: colors.foreground
+  },
+  titleHeader: {
+    fontFamily: fonts.complement,
+    fontSize: 22,
+    color: colors.foreground,
+  },
+  empty: {
+    fontFamily: fonts.complement,
+    fontSize: 18,
+    color: colors.red,
+    margin: 10,
+    marginHorizontal: 20,
   }
 })

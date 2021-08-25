@@ -80,7 +80,7 @@ const Details: React.FC<{
       if (track?.extra.videoId === video?.videoId) return await TrackPlayer.play();
     }
     setLoadingTrack(true);
-    TrackPlayer.destroy();
+    await TrackPlayer.destroy();
     if (video) {
       await handlePlaySong(video);
     }

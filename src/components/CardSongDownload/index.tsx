@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { DownloadTask } from 'react-native-background-downloader'
 import FastImage from 'react-native-fast-image';
@@ -10,13 +10,33 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { transparentize } from 'polished'
+import RNBackgroundDownloader, { DownloadTask, DownloadTaskState } from 'react-native-background-downloader';
+import { useSong } from '../../contexts/player';
+import { useDownloads } from '../../contexts/downloads';
 
 export const CardSongDownload: React.FC<{
-  song: TMinimalInfo;
-}> = ({ song }) => {
+  downloadItem: DownloadTask;
+}> = ({ downloadItem }) => {
+  const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(downloadItem.state === 'PAUSED');
+  const { handleCompleteDownload } = useDownloads();
+  const song = useSong(downloadItem.id)
+
+  useEffect(() => {
+    downloadItem.progress((percent) => {
+      setProgress(percent * 100)
+      if (Math.floor(percent * 100) === 100) {
+        handleCompleteDownload(downloadItem.id)
+      }
+    }).done(() => {
+      handleCompleteDownload(downloadItem.id)
+      setProgress(100)
+    })
+  }, [downloadItem])
+
   return (
     <View style={styles.container}>
-      <FastImage source={{ uri: song.thumbnail }} style={styles.image}>
+      <FastImage source={{ uri: song?.thumbnail }} style={styles.image}>
         <LinearGradient
           style={{
             flex: 1
@@ -28,27 +48,47 @@ export const CardSongDownload: React.FC<{
         />
       </FastImage>
       <View style={styles.info}>
-        <Text style={styles.title}>{song.title}</Text>
-        <Text style={styles.author}>{song.author.name}</Text>
+        <Text style={styles.title}>{song?.title}</Text>
+        <Text style={styles.author}>{song?.author.name}</Text>
       </View>
       <View style={styles.containerButtons}>
-        <TouchableOpacity style={styles.button}>
-          <AnimatedCircularProgress
-            size={42}
-            width={2}
-            fill={5}
-            rotation={0}
-            tintColor={colors.purple}
-            backgroundColor={transparentize(0.75, colors.purple)}
-            children={() => (
-              <MaterialCommunityIcons
+        {(downloadItem.state === "DONE" || progress === 100) ? (
+          <MaterialCommunityIcons
+            size={32}
+            color={colors.foreground}
+            name="check"
+            style={styles.button}
+            onPress={() => {
+              setPaused(false)
+              downloadItem.resume()
+            }}
+          />
+        ) : (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={paused ? () => {
+              setPaused(false)
+              downloadItem.resume()
+            } : () => {
+              setPaused(true)
+              downloadItem.pause()
+            }}
+          >
+            <AnimatedCircularProgress
+              size={42}
+              width={2}
+              fill={progress}
+              rotation={0}
+              tintColor={colors.purple}
+              backgroundColor={transparentize(0.75, colors.purple)}
+              children={() => <MaterialCommunityIcons
                 size={32}
                 color={colors.foreground}
-                name="pause"
-              />
-            )}
-          />
-        </TouchableOpacity> 
+                name={paused ? "play" : "pause"}
+              />}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

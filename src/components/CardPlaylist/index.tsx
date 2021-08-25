@@ -1,8 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 import { StyleSheet, Text, View } from 'react-native';
-import { RectButton } from 'react-native-gesture-handler';
 
 import FastImage from "react-native-fast-image";
 
@@ -10,6 +9,7 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import { usePlaylistInfo } from '../../contexts/playlist';
 import TouchableScalable from '../TouchableScalable';
+import { darken } from 'polished';
 
 export const CardPlaylist: React.FC<{
   playlist: TPlaylist
@@ -23,6 +23,7 @@ export const CardPlaylist: React.FC<{
       duration={100}
       scaleTo={0.95}
       delayPressOut={100}
+      rippleColor={darken(0.1, colors.comment)}
       buttonStyle={styles.container}
       style={{
         flexDirection: 'row',

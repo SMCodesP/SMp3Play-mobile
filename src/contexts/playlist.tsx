@@ -7,11 +7,14 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrackPlayer, { Track } from "react-native-track-player";
+import RNFS from 'react-native-fs';
 import { usePlayer } from "./player";
+import RNBackgroundDownloader from "react-native-background-downloader";
 
 type PlaylistType = {
   toggleSongInPlaylist(song: TMinimalInfo, playlist: string): Promise<void>;
   createPlaylist(playlist: string): void;
+  getPlaylist(playlist: string): TPlaylist | undefined;
   isSongLiked(song: TMinimalInfo): boolean;
   handlePlayPlaylist(name: string): Promise<void>;
   setContext: (updates: any) => void;
@@ -65,6 +68,10 @@ const PlaylistProvider: React.FC = ({ children }) => {
     }
   }
 
+  const getPlaylist: PlaylistType["getPlaylist"] = (playlist) => {
+    return state.playlists.find((value) => value.name === playlist);
+  }
+
   const toggleSongInPlaylist: PlaylistType["toggleSongInPlaylist"] = async (song, playlist) => {
     const cloneState = state.playlists;
     let playlistIndex = cloneState.findIndex(
@@ -103,10 +110,11 @@ const PlaylistProvider: React.FC = ({ children }) => {
   ) => {
     const playlist = state.playlists[state.playlists.findIndex(value => value.name === name)];
     if (playlist) {
-      const songs: Track[] = playlist.songs.map((songId) => {
+      const songs: Promise<Track>[] = playlist.songs.map(async (songId) => {
         const song = videos.find(({ videoId }) => videoId === songId)
+        const fileExists = await RNFS.exists(`${RNBackgroundDownloader.directories.documents}/${songId}.mp3`);
         return {
-          url: `https://sm-p3-play-api.vercel.app/api/song/${song!.videoId}`,
+          url: fileExists ? `${RNBackgroundDownloader.directories.documents}/${songId}.mp3` : `https://sm-p3-play-api.vercel.app/api/song/${song!.videoId}`,
           artist: song!.author.name,
           title: song!.title,
           artwork: song!.thumbnail,
@@ -116,8 +124,9 @@ const PlaylistProvider: React.FC = ({ children }) => {
           id: `${Math.floor(Math.random() * 100000000000)}`,
         }
       });
+      const resolvedSongs = await Promise.all(songs);
       await TrackPlayer.destroy();
-      await TrackPlayer.add(songs);
+      await TrackPlayer.add(resolvedSongs);
       await TrackPlayer.play();
     }
   };
@@ -137,6 +146,7 @@ const PlaylistProvider: React.FC = ({ children }) => {
       handlePlayPlaylist,
       toggleSongInPlaylist,
       createPlaylist,
+      getPlaylist,
     }),
     [state, setContext],
   )

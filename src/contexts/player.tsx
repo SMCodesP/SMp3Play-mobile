@@ -1,16 +1,18 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+
 import TrackPlayer, {
   useTrackPlayerEvents,
   Event,
   Track,
   RepeatMode,
 } from "react-native-track-player";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback } from "react";
-import ytdl from "react-native-ytdl";
+import RNFS from 'react-native-fs';
 import Sugar from 'sugar'
 
-import { dynamicSort } from "../utils/dynamicSort";
+import ytdl from "react-native-ytdl";
+import RNBackgroundDownloader from "react-native-background-downloader";
 
 type PlayerType = {
   toggleRepeat(): Promise<void>;
@@ -74,9 +76,9 @@ const PlayerProvider: React.FC = ({ children }) => {
   };
 
   const handlePlaySong = async (song: TMinimalInfo) => {
-    const urls = await ytdl(song.url, { quality: "highestaudio" });
+    const fileExists = await RNFS.exists(`${RNBackgroundDownloader.directories.documents}/${song.videoId}.mp3`);
     const track = {
-      url: urls[0].url,
+      url: fileExists ? `${RNBackgroundDownloader.directories.documents}/${song.videoId}.mp3` : (await ytdl(song.url, { quality: "highestaudio" }))[0].url,
       artist: song.author.name,
       title: song.title,
       artwork: song.thumbnail,
@@ -87,7 +89,6 @@ const PlayerProvider: React.FC = ({ children }) => {
     };
     await TrackPlayer.add(track);
     await TrackPlayer.play();
-    // await refreshVideos()
   }
 
   const toggleRepeat = useCallback(async () => {

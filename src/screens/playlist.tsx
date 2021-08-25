@@ -29,6 +29,7 @@ import fonts from "../styles/fonts";
 import CardSongPlaylist from "../components/CardSongPlaylist";
 import { usePlaylist, usePlaylistInfo } from "../contexts/playlist";
 import TouchableScalable from "../components/TouchableScalable";
+import { useDownloads } from "../contexts/downloads";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 
@@ -53,6 +54,7 @@ export const Playlist: React.FC<{
   // const [data, setData] = useState(playlist.songs);
   const { playlist, setPlaylist } = usePlaylistInfo(data.name)
   const { handlePlayPlaylist } = usePlaylist()
+  const { handleDownloadPlaylist } = useDownloads()
 
   const navigation = useNavigation();
   const scrollY = useValue(0);
@@ -65,6 +67,11 @@ export const Playlist: React.FC<{
     navigation.navigate("SearchAddPlaylist", {
       playlist: playlist.name
     })
+  }
+
+  const handleDownload = async () => {
+    handleDownloadPlaylist(playlist.name);
+    navigation.navigate("Downloads")
   }
 
   return (
@@ -197,7 +204,7 @@ export const Playlist: React.FC<{
           </>
         )}
       </SpringScroll>
-      <RectButton style={styles.sync}>
+      <RectButton style={styles.sync} onPress={handleDownload}>
         <View style={styles.align} accessible>
           <Ionicons name="ios-download" size={28} color={colors.foreground} />
         </View>

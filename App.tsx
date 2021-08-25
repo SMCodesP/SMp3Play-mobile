@@ -16,6 +16,7 @@ import { Routes } from "./src/routes";
 import colors from "./src/styles/colors";
 import { PlayerProvider } from "./src/contexts/player";
 import { PlaylistProvider } from "./src/contexts/playlist";
+import { DownloadsProvider } from "./src/contexts/downloads";
 
 SystemNavigationBar.setNavigationColor(colors.background, true)
 BackgroundColor.setColor(colors.background)
@@ -56,18 +57,20 @@ export default function App() {
   return (
     <PlayerProvider>
       <PlaylistProvider>
-        <View
-          style={{
-            backgroundColor: colors.background,
-            flex: 1,
-          }}
-        >
-          <Routes />
-          <StatusBar
-            barStyle="light-content"
-            backgroundColor={colors.background}
-          />
-        </View>
+        <DownloadsProvider>
+          <View
+            style={{
+              backgroundColor: colors.background,
+              flex: 1,
+            }}
+          >
+            <Routes />
+            <StatusBar
+              barStyle="light-content"
+              backgroundColor={colors.background}
+            />
+          </View>
+        </DownloadsProvider>
       </PlaylistProvider>
     </PlayerProvider>
   );
