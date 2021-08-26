@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   View,
@@ -18,15 +18,19 @@ import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
 import { SpringScrollView } from "react-native-spring-scrollview";
 
-export const Search: React.FC = ({ navigation }: any) => {
+export const Search: React.FC = ({
+  navigation,
+  route,
+}: any) => {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [queried, setQueried] = useState("");
   const [videos, setVideos] = useState<TVideo[]>([]);
 
-  const handleQuery = async () => {
+  const handleQuery = async ({ initialQuery = "" }) => {
     setVideos([]);
-    if (query.length === 0) {
+    if (query.length === 0 && initialQuery.length === 0) {
+      setQueried("")
       return;
     }
 
@@ -34,15 +38,22 @@ export const Search: React.FC = ({ navigation }: any) => {
 
     try {
       const { data } = await axios.get(
-        `https://sm-p3-play-api.vercel.app/api/videos/search?q=${query}&limit=12`
+        `https://sm-p3-play-api.vercel.app/api/videos/search?q=${initialQuery || query}&limit=12`
       );
       setVideos(data);
       setLoading(false);
-      setQueried(query)
+      setQueried(initialQuery || query)
     } catch (error) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (route.params.initialQuery) {
+      setQuery(String(route.params.initialQuery || ""))
+      handleQuery({ initialQuery: String(route.params.initialQuery || "")})
+    }
+  }, [route.params.initialQuery])
 
   return (
     <GlobalContainer>
@@ -60,7 +71,7 @@ export const Search: React.FC = ({ navigation }: any) => {
               inputStyle={{ color: colors.foreground }}
               returnKeyType="search"
               onChangeText={setQuery}
-              onSubmitEditing={handleQuery}
+              onSubmitEditing={() => handleQuery({})}
               value={query}
             />
           </View>

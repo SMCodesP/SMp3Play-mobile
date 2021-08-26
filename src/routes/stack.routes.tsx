@@ -13,32 +13,32 @@ import { SearchAddPlaylist } from "../screens/searchAddPlaylist";
 const Stack = createStackNavigator();
 
 export const SearchStackRoutes = () => (
-  <Stack.Navigator headerMode="none" initialRouteName="Main">
-    <Stack.Screen name="Main" component={Search} />
+  <Stack.Navigator headerMode="none" initialRouteName="MainSearch">
+    <Stack.Screen name="MainSearch" component={Search} initialParams={{ initialQuery: "" }} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
   </Stack.Navigator>
 );
 
 export const HomeStackRoutes = () => (
-  <Stack.Navigator headerMode="none" initialRouteName="Main">
-    <Stack.Screen name="Main" component={Home} />
+  <Stack.Navigator headerMode="none" initialRouteName="MainHome">
+    <Stack.Screen name="MainHome" component={Home} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
   </Stack.Navigator>
 );
 
 export const DownloadsStackRoutes = () => (
-  <Stack.Navigator headerMode="none" initialRouteName="Main">
-    <Stack.Screen name="Main" component={Downloads} />
+  <Stack.Navigator headerMode="none" initialRouteName="MainDownloads">
+    <Stack.Screen name="MainDownloads" component={Downloads} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
   </Stack.Navigator>
 );
 
 export const PlaylistsStackRoutes = () => (
-  <Stack.Navigator headerMode="none" initialRouteName="Main">
-    <Stack.Screen name="Main" component={Playlists} />
+  <Stack.Navigator headerMode="none" initialRouteName="MainPlaylists">
+    <Stack.Screen name="MainPlaylists" component={Playlists} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
     <Stack.Screen name="SearchAddPlaylist" component={SearchAddPlaylist} />
@@ -46,8 +46,8 @@ export const PlaylistsStackRoutes = () => (
 );
 
 export const SettingsStackRoutes = () => (
-  <Stack.Navigator headerMode="none" initialRouteName="Main">
-    <Stack.Screen name="Main" component={Settings} />
+  <Stack.Navigator headerMode="none" initialRouteName="MainSettings">
+    <Stack.Screen name="MainSettings" component={Settings} />
     <Stack.Screen name="Details" component={Details} />
     <Stack.Screen name="Playlist" component={Playlist} />
   </Stack.Navigator>

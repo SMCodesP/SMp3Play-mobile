@@ -117,7 +117,7 @@ const Player = ({ onPress }: PlayerProps) => {
                 size={24}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={TrackPlayer.skipToPrevious}>
               <AntDesign
                 name="stepbackward"
                 color={colors.foreground}
@@ -126,7 +126,7 @@ const Player = ({ onPress }: PlayerProps) => {
             </TouchableOpacity>
             <TouchableScalable
               duration={50}
-              scaleTo={0.925}
+              scaleTo={0.9}
               onPress={playbackState === State.Paused ? pause : play}
               activeOpacity={0.5}
             >
@@ -136,7 +136,7 @@ const Player = ({ onPress }: PlayerProps) => {
                 size={60}
               />
             </TouchableScalable>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={TrackPlayer.skipToNext}>
               <AntDesign name="stepforward" color={colors.foreground} size={46} />
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleRepeat}>

@@ -58,7 +58,7 @@ export const Playlists: React.FC = () => {
             />
           )}
           keyExtractor={({ name }) => name}
-          nestedScrollEnabled
+          // nestedScrollEnabled
         />
       </SpringScrollView>
       <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>

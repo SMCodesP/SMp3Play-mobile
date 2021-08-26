@@ -5,8 +5,9 @@ import {
   ViewStyle,
   TouchableOpacity
 } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import { PanGestureHandler, RectButton } from "react-native-gesture-handler";
 import Animated, {
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -60,6 +61,9 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
       onEnded={() => {
         pressed.value = false;
         onPressOut && onPressOut();
+      }}
+      onCancelled={() => {
+        pressed.value = false;
       }}
       style={[buttonStyle, animatedStyle]}
       enabled={enabled}

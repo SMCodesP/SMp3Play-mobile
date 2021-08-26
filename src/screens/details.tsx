@@ -38,12 +38,13 @@ import FastImage from "react-native-fast-image";
 import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
 import { isOnPlaylist, usePlaylist } from "../contexts/playlist";
 import { BlurView } from "@react-native-community/blur";
+
 import { Radio } from "../components/Radio";
 import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
 import TouchableScalable from "../components/TouchableScalable";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
-const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
+const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage);
 
 const IMAGE_HEIGHT = 275
 

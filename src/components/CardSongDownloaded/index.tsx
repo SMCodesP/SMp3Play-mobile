@@ -35,7 +35,7 @@ export const CardSongDownloaded: React.FC<{
       delayPressOut={100}
       rippleColor={darken(0.1, colors.comment)}
       buttonStyle={styles.container}
-      onPressOut={handleNavigationToSong}
+      onPress={handleNavigationToSong}
       style={{
         flex: 1,
         flexDirection: 'row',
