@@ -1,14 +1,14 @@
-import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { SpringScrollView } from "react-native-spring-scrollview";
-import CardGenre from "../components/CardGenre";
+
 import GlobalContainer from "../components/GlobalContainer";
 import SecundaryCardVideo from "../components/SecundaryCardVideo";
+
 import { usePlayer } from "../contexts/player";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
-import { genres } from "../utils/genres";
 
 export const Home: React.FC<{
   navigation: any;
@@ -39,17 +39,6 @@ export const Home: React.FC<{
             ListEmptyComponent={() => (
               <Text style={styles.empty}>Nenhuma música tocada</Text>
             )}
-          />
-        </View>
-        <Text style={styles.subTitle}>Explore novos universos</Text>
-        <View>
-          <FlatList
-            data={genres}
-            renderItem={({ item }) => <CardGenre item={item} />}
-            numColumns={2}
-            horizontal={false}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.name}
           />
         </View>
       </SpringScrollView>

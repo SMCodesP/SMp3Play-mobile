@@ -4,6 +4,7 @@ interface TMinimalInfo {
     name: string;
     avatar: string;
   };
+  authorId: string;
   description: string;
   thumbnail: string;
   timestamp: string;

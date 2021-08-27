@@ -44,7 +44,7 @@ import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
 import TouchableScalable from "../components/TouchableScalable";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
-const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage);
+const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
 
 const IMAGE_HEIGHT = 275
 

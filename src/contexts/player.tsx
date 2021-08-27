@@ -164,6 +164,7 @@ function useSong(id: string): TMinimalInfo | undefined {
         videoId: videoData.videoDetails.videoId,
         views: Number(videoData.videoDetails.viewCount),
         is_liked: false,
+        authorId: videoData.videoDetails.videoId,
       })
     })();
   }, [])

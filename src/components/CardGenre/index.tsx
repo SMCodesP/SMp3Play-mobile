@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { getColor } from 'get-color-sm';
@@ -7,7 +7,6 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import { getLuminance } from 'polished';
 import TouchableScalable from '../TouchableScalable';
-import { useNavigation } from '@react-navigation/native';
 
 const generateColorLight = (): string => {
   const color = getColor();
@@ -19,16 +18,9 @@ const CardGenre: React.FC<{
     name: string;
     query: string;
   }
-}> = ({ item }) => {
-  const color = generateColorLight();
-  const navigation = useNavigation();
-
-  const handleQuery = () => {
-    navigation.navigate("Search",{
-      params: {initialQuery: item.query},
-      screen: 'MainSearch'
-    })
-  }
+  onPress(): void;
+}> = ({ item, onPress }) => {
+  const color = useMemo(() => generateColorLight(), []);
 
   return (
     <TouchableScalable
@@ -47,7 +39,7 @@ const CardGenre: React.FC<{
           backgroundColor: `#${color}`
         }
       ]}
-      onPress={handleQuery}
+      onPress={onPress}
     >
         <Text
           style={[
@@ -78,4 +70,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default memo(CardGenre)
+export default CardGenre
