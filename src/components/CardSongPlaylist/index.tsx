@@ -44,7 +44,6 @@ const CardSongPlaylist: React.FC<CardSongPlaylistProps> = ({ item, setMoving, dr
       <FastImage style={styles.image} source={{ uri: item.thumbnail }} />
       <View style={styles.containerInfo}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.author}>{item.author.name}</Text>
       </View>
         <View style={styles.buttonDrag}>
           <TouchableOpacity style={{ flex: 1 }} delayLongPress={100} onPressOut={() => setMoving(false)} onLongPress={drag}>
@@ -76,10 +75,6 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     fontFamily: fonts.text,
     fontSize: 14,
-  },
-  author: {
-    color: colors.comment,
-    fontFamily: fonts.complement
   },
   buttonDrag: {
     alignSelf: 'center',

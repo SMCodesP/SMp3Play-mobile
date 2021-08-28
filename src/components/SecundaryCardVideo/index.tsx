@@ -20,7 +20,6 @@ interface CardVideoProps {
 const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
   const handleNavigation = () => {
     navigation.navigate("Details", {
-      // video,
       videoId: video.videoId
     });
   };
@@ -34,7 +33,6 @@ const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video 
     >
       <FastImage
         style={styles.thumbnail}
-        // imageStyle={{ borderRadius: 12 }}
         source={{ uri: video.thumbnail }}
       >
         <View style={styles.container}>

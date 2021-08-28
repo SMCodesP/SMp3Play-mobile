@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// import { DownloadTask } from 'react-native-background-downloader'
+
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
+
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -49,7 +50,6 @@ export const CardSongDownload: React.FC<{
       </FastImage>
       <View style={styles.info}>
         <Text style={styles.title}>{song?.title}</Text>
-        <Text style={styles.author}>{song?.author.name}</Text>
       </View>
       <View style={styles.containerButtons}>
         {(downloadItem.state === "DONE" || progress === 100) ? (
@@ -132,10 +132,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    // height: 42,
-    // padding: 0,
-    // borderRadius: 64,
-    // borderWidth: 1,
-    // borderColor: colors.foreground,
   }
 })

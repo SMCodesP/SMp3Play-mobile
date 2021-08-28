@@ -77,7 +77,6 @@ const PlaylistProvider: React.FC = ({ children }) => {
     let playlistIndex = cloneState.findIndex(
       (value) => value.name === playlist
     );
-    await addSongLocal(song)
     if (playlistIndex === -1) {
       playlistIndex = cloneState.push({
         name: playlist,
@@ -96,6 +95,7 @@ const PlaylistProvider: React.FC = ({ children }) => {
         };
       }
     }
+    await addSongLocal(song)
     setContext({ playlists: cloneState })
   }
 
@@ -115,7 +115,7 @@ const PlaylistProvider: React.FC = ({ children }) => {
         const fileExists = await RNFS.exists(`${RNBackgroundDownloader.directories.documents}/${songId}.mp3`);
         return {
           url: fileExists ? `${RNBackgroundDownloader.directories.documents}/${songId}.mp3` : `https://sm-p3-play-api.vercel.app/api/song/${song!.videoId}`,
-          artist: song!.author.name,
+          artist: song!.creator?.author,
           title: song!.title,
           artwork: song!.thumbnail,
           description: song!.description,

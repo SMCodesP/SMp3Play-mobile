@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// import { DownloadTask } from 'react-native-background-downloader'
 
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
@@ -54,7 +53,6 @@ export const CardSongDownloaded: React.FC<{
       </FastImage>
       <View style={styles.info}>
         <Text style={styles.title}>{song?.title}</Text>
-        <Text style={styles.author}>{song?.author.name}</Text>
       </View>
       <View style={styles.containerButtons}>
         <MaterialCommunityIcons

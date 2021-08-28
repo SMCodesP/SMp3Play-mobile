@@ -17,6 +17,7 @@ import colors from "./src/styles/colors";
 import { PlayerProvider } from "./src/contexts/player";
 import { PlaylistProvider } from "./src/contexts/playlist";
 import { DownloadsProvider } from "./src/contexts/downloads";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 SystemNavigationBar.setNavigationColor(colors.background, true)
 BackgroundColor.setColor(colors.background)

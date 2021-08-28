@@ -16,8 +16,6 @@ import { usePlaylist } from '../contexts/playlist';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
-// import { Container } from './styles';
-
 export const Playlists: React.FC = () => {
   const {playlists, createPlaylist} = usePlaylist();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -58,7 +56,6 @@ export const Playlists: React.FC = () => {
             />
           )}
           keyExtractor={({ name }) => name}
-          // nestedScrollEnabled
         />
       </SpringScrollView>
       <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>

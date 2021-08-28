@@ -35,7 +35,7 @@ const Suggestion: React.FC<{
         rippleColor={lighten(0.1, colors.background)}
         onPress={() => {
           setQuery(item)
-          handleQuery({})
+          handleQuery({ initialQuery: item })
         }}
       >
         <View
@@ -103,4 +103,4 @@ const Suggestion: React.FC<{
   )
 }
 
-export default memo(Suggestion)
+export default Suggestion

@@ -1,9 +1,6 @@
 interface TMinimalInfo {
   ago: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
+  creator?: TCreator;
   authorId: string;
   description: string;
   thumbnail: string;

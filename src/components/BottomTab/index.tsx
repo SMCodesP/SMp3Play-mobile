@@ -139,7 +139,6 @@ const BottomTab: React.FC<{
               <Animated.View
                 style={{
                   flex: 1
-                  // position: "absolute",
                 }}
               >
                 <MiniPlayer onOpen={open} />

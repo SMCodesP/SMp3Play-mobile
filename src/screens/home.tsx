@@ -9,11 +9,12 @@ import SecundaryCardVideo from "../components/SecundaryCardVideo";
 import { usePlayer } from "../contexts/player";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
+import { CardCreator } from "../components/CardCreator";
 
 export const Home: React.FC<{
   navigation: any;
 }> = ({ navigation }) => {
-  const {videos, refreshVideos} = usePlayer();
+  const { videos, creators, refreshVideos } = usePlayer();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -41,6 +42,21 @@ export const Home: React.FC<{
             )}
           />
         </View>
+        <Text style={styles.subTitle}>Artístas</Text>
+        <View style={{ paddingHorizontal: 15 }}>
+          <FlatList
+            data={creators}
+            renderItem={({ item }) => (
+              <CardCreator item={item} />
+            )}
+            numColumns={3}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.authorId}
+            ListEmptyComponent={() => (
+              <Text style={styles.empty}>Nenhum artísta encontrado</Text>
+            )}
+          />
+        </View>
       </SpringScrollView>
     </GlobalContainer>
   );
@@ -56,7 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: fonts.heading,
     paddingHorizontal: 15,
-    // paddingVertical: 5,
   },
   subTitle: {
     color: colors.foreground,

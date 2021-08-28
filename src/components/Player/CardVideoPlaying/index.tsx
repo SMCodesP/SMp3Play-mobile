@@ -50,7 +50,6 @@ export const CardVideoPlaying: React.FC<CardVideoProps> = ({
     >
       <FastImage
         style={styles.thumbnail}
-        // imageStyle={{ borderRadius: 12 }}
         source={{ uri: String(track.artwork) }}
       >
         <View style={styles.container}>

@@ -57,6 +57,7 @@ export const Search: React.FC = ({
       setVideos(data);
       setLoading(false);
       setQueried(initialQuery || query)
+      setSuggestions([])
     } catch (error) {
       setLoading(false);
     }
@@ -101,7 +102,6 @@ export const Search: React.FC = ({
             }}
             returnKeyType="search"
             onChangeText={handlerTextChange}
-            onFocus={() => handlerTextChange(query)}
             onSubmitEditing={() => handleQuery({})}
             value={query}
           />
@@ -191,7 +191,6 @@ const styles = StyleSheet.create({
   containerInput: {
     paddingHorizontal: 25,
     paddingBottom: 20,
-    // position: "relative"
   },
   containerSongEmpty: {
     marginTop: 10,

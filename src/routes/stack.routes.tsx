@@ -9,6 +9,7 @@ import { Playlists } from "../screens/playlists";
 import { Settings } from "../screens/settings";
 import { Playlist } from "../screens/playlist";
 import { SearchAddPlaylist } from "../screens/searchAddPlaylist";
+import Creator from "../screens/creator";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ export const HomeStackRoutes = () => (
   <Stack.Navigator headerMode="none" initialRouteName="MainHome">
     <Stack.Screen name="MainHome" component={Home} />
     <Stack.Screen name="Details" component={Details} />
+    <Stack.Screen name="Creator" component={Creator} />
     <Stack.Screen name="Playlist" component={Playlist} />
   </Stack.Navigator>
 );

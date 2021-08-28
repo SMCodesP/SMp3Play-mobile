@@ -37,10 +37,7 @@ const CardAddSong: React.FC<CardAddSongProps> = ({ item: video, playlistName }) 
           new Date(videoData.videoDetails.uploadDate),
           'pt'
         ),
-        author: {
-          name: videoData.videoDetails.author.name,
-          avatar: videoData.videoDetails.author.thumbnails[videoData.videoDetails.author.thumbnails.length-1].url,
-        },
+        authorId: videoData.videoDetails.author.id,
         description: videoData.videoDetails.description,
         thumbnail: videoData.videoDetails.thumbnails[videoData.videoDetails.thumbnails.length-1].url,
         timestamp: videoData.videoDetails.lengthSeconds,
@@ -64,7 +61,6 @@ const CardAddSong: React.FC<CardAddSongProps> = ({ item: video, playlistName }) 
     >
       <FastImage
         style={styles.thumbnail}
-        // imageStyle={{ borderRadius: 12 }}
         source={{ uri: video.thumbnail }}
       />
       <View style={styles.containerInfo}>

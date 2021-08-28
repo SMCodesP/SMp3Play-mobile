@@ -19,7 +19,6 @@ import { useNavigation } from "@react-navigation/native";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { darken, rgb } from 'polished'
-// import DraggableFlatList from 'react-native-draggable-dynamic-flatlist'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 
 import GlobalContainer from "../components/GlobalContainer";
@@ -51,7 +50,6 @@ export const Playlist: React.FC<{
   },
 }) => {
   const [moving, setMoving] = useState(false);
-  // const [data, setData] = useState(playlist.songs);
   const { playlist, setPlaylist } = usePlaylistInfo(data.name)
   const { handlePlayPlaylist } = usePlaylist()
   const { handleDownloadPlaylist } = useDownloads()
@@ -118,7 +116,6 @@ export const Playlist: React.FC<{
         >
           <TouchableOpacity
             style={{
-              // backgroundColor: colors.cyan,
               margin: 15,
               width: 40,
               height: 40
