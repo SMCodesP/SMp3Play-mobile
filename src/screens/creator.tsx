@@ -3,46 +3,27 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
-  ImageBackground,
   StyleSheet,
-  ActivityIndicator,
-  Modal,
-  FlatList,
 } from "react-native";
-
-import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
-import ytdl from "react-native-ytdl";
 
 import { SpringScrollView } from "react-native-spring-scrollview";
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
-import { darken, lighten, transparentize } from "polished";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import { darken } from "polished";
 import Feather from "react-native-vector-icons/Feather";
 
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 
-import { useCreator, usePlayer, useSong } from "../contexts/player";
+import { useCreator } from "../contexts/player";
 
 import GlobalContainer from "../components/GlobalContainer";
 
-import { formatNumber } from "../utils/formatNumber";
 import { getRandomInt } from "../utils/randomNumber";
 
-import 'sugar/locales/pt'
-import Sugar from 'sugar'
 import FastImage from "react-native-fast-image";
-import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
-import { isOnPlaylist, usePlaylist } from "../contexts/playlist";
-import { BlurView } from "@react-native-community/blur";
-
-import { Radio } from "../components/Radio";
-import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
-import TouchableScalable from "../components/TouchableScalable";
-import { msToHMS } from "../utils/msToMHS";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
@@ -182,6 +163,7 @@ const Creator: React.FC<{
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
+        decelerationRate={0.1}
       >
         <View style={styles.containerBody}>
           <View style={styles.containerHeaderInfo}>

@@ -7,7 +7,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { Pressable, PressableStateCallbackType, StyleProp, StyleSheet, ViewStyle } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import colors from "../../styles/colors";
 
 export const FavoriteButton: React.FC<{

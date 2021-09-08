@@ -9,7 +9,8 @@ import {
   View,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { AntDesign, Feather as Icon } from "@expo/vector-icons";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Icon from "react-native-vector-icons/Feather";
 import FastImage from "react-native-fast-image";
 
 import colors from "../../styles/colors";
@@ -52,14 +53,14 @@ const Player = ({ onPress }: PlayerProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
+    // <SafeAreaView style={styles.root}>
       <View style={styles.container}>
         <View style={styles.inner}>
           <View style={styles.header}>
             <RectButton
               style={styles.button}
               rippleColor={transparentize(0.7, colors.pink)}
-              onEnded={onPress}
+              onPress={onPress}
               hitSlop={5}
             >
               <View accessible>
@@ -167,7 +168,7 @@ const Player = ({ onPress }: PlayerProps) => {
           />
         </View>
       </View>
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 };
 
@@ -180,7 +181,8 @@ const styles = StyleSheet.create({
     right: 0,
   },
   container: {
-    width: '100%',
+    flex: 1,
+    // width: '100%',
     alignItems: 'center',
   },
   inner: {
@@ -255,4 +257,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(Player);
+export default Player;

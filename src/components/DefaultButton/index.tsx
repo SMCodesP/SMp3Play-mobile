@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { RectButton, RectButtonProps } from "react-native-gesture-handler";
 
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 import colors from "../../styles/colors";
 

@@ -92,11 +92,12 @@ const BottomTab: React.FC<{
   return (
     <>
       {track && (
-        <PanGestureHandler minDist={100} onGestureEvent={onGestureEvent}>
+        <PanGestureHandler onGestureEvent={onGestureEvent}>
           <Animated.View
             style={[
               {
                 flex: 1,
+                width: Dimensions.get("window").width,
                 height: "100%",
                 position: "absolute",
                 backgroundColor: lighten(0.035, colors.background),
@@ -131,21 +132,21 @@ const BottomTab: React.FC<{
               left: 0,
               right: 0,
             },
-            bottomTabPositionStyle,
+            // bottomTabPositionStyle,
           ]}
         >
           {track && (
             <PanGestureHandler onGestureEvent={onGestureEvent}>
               <Animated.View
                 style={{
-                  flex: 1
+                  flex: 1,
                 }}
               >
                 <MiniPlayer onOpen={open} />
               </Animated.View>
             </PanGestureHandler>
           )}
-            <BottomTabBar {...bottomTabBarProps} />
+          <BottomTabBar {...bottomTabBarProps} />
         </Animated.View>
       </BlurViewAnimated>
     </>
