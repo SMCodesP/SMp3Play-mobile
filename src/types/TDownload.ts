@@ -1,0 +1,3 @@
+interface TDownload {
+  id: string;
+}

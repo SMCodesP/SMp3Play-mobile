@@ -1,24 +1,43 @@
-import React from 'react';
-import {View} from 'react-native';
-import {Host} from 'react-native-portalize';
+import React from "react";
+import { View, ViewProps } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 
-import Player from '../Player';
+import { usePlayer } from "../../contexts/player";
 
-import {Container} from './styles';
+import colors from "../../styles/colors";
 
-const GlobalContainer: React.FC = ({children}) => {
+const GlobalContainer: React.FC<ViewProps> = ({
+  children,
+  style,
+  ...props
+}) => {
+  const { track } = usePlayer();
+  const navigation = useNavigation();
+
+  ReceiveSharingIntent.getReceivedFiles((files: any) => {
+    const urlsplit = files[0].weblink.split(/^.*(youtu.be\/|v\/|embed\/|watch\?|youtube.com\/user\/[^#]*#([^\/]*?\/)*)\??v?=?([^#\&\?]*).*/);
+    if (urlsplit[3]) {
+      navigation.navigate("Details", {
+        videoId: urlsplit[3]
+      })
+    }
+  }, () => {}, 'SMp3Play')
+
   return (
-    <Host>
-      <Container>
-        <View
-          style={{
-            flex: 1,
-          }}>
-          {children}
-        </View>
-        <Player />
-      </Container>
-    </Host>
+    <View
+      style={[
+        {
+          flex: 1,
+          backgroundColor: colors.background,
+          marginBottom: track ? 110 : 45,
+        },
+        style,
+      ]}
+      {...props}
+    >
+      {children}
+    </View>
   );
 };
 

@@ -1,16 +1,22 @@
-import {rgba} from 'polished';
-import React, {useContext} from 'react';
-import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {RectButtonProps} from 'react-native-gesture-handler';
+import { rgba } from "polished";
+import React, { useContext } from "react";
+import {
+  View,
+  Text,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+  StyleSheet,
+} from "react-native";
+import { RectButton, RectButtonProps } from "react-native-gesture-handler";
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {ThemeContext} from 'styled-components';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-import {Button, Container, ButtonText} from './styles';
+import colors from "../../styles/colors";
 
 interface DefaultButtonProps extends RectButtonProps {
   icon?: string;
-  type?: 'default' | 'cancel';
+  type?: "default" | "cancel";
   buttonStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
@@ -21,14 +27,12 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
   children,
   icon,
   IconType = MaterialIcons,
-  type = 'default',
+  type = "default",
   buttonStyle = {},
   containerStyle = {},
   textStyle = {},
   ...props
 }) => {
-  const theme = useContext(ThemeContext);
-
   const types: {
     [key: string]: {
       button: {
@@ -48,50 +52,72 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
       button: {
         style: {
           paddingVertical: 15,
+          backgroundColor: colors.comment,
+          ...styles.button,
           ...(buttonStyle as any),
-          backgroundColor: theme.comment,
         },
       },
       text: {
         style: {
-          ...(textStyle as any),
-          color: theme.foreground,
+          color: colors.foreground,
           marginLeft: icon ? 20 : 0,
+          ...styles.buttonText,
+          ...(textStyle as any),
         },
       },
       icon: {
-        color: theme.foreground,
+        color: colors.foreground,
       },
     },
     cancel: {
       button: {
-        rippleColor: rgba(theme.red, 0.1),
+        rippleColor: rgba(colors.red, 0.1),
         style: {
           paddingVertical: 15,
+          ...styles.button,
           ...(buttonStyle as any),
         },
       },
       text: {
         style: {
-          ...(textStyle as any),
-          color: theme.red,
+          color: colors.red,
           marginLeft: icon ? 20 : 0,
+          ...styles.buttonText,
+          ...(textStyle as any),
         },
       },
       icon: {
-        color: theme.red,
+        color: colors.red,
       },
     },
   };
 
   return (
-    <Button {...(types[type]?.button || {})} {...props}>
-      <Container style={containerStyle} accessible>
+    <RectButton {...(types[type]?.button || {})} {...props}>
+      <View style={[styles.container, containerStyle]} accessible>
         {icon && <IconType name={icon} size={32} {...types[type].icon} />}
-        <ButtonText {...(types[type]?.text || {})}>{children}</ButtonText>
-      </Container>
-    </Button>
+        <Text {...(types[type]?.text || {})}>{children}</Text>
+      </View>
+    </RectButton>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+});
 
 export default DefaultButton;

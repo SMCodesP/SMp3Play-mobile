@@ -81,15 +81,8 @@ project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
 ]
 
-project.ext.vectoricons = [
-    iconFontNames: [
-        'MaterialCommunityIcons.ttf'
-    ]
-]
-
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle" // <- add this line (2/2)
-
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -137,12 +130,12 @@ android {
     }
 
     defaultConfig {
-        multiDexEnabled true
         applicationId "com.smp3play"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+	    multiDexEnabled true
     }
     splits {
         abi {
@@ -153,14 +146,6 @@ android {
         }
     }
     signingConfigs {
-    	release {
-            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
-            }
-        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -175,7 +160,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
