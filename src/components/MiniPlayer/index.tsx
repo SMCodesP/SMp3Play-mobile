@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width - 130,
     color: colors.foreground,
     fontSize: 15,
-    fontWeight: "bold",
+    fontFamily: fonts.complement,
     paddingTop: 5,
   },
   author: {

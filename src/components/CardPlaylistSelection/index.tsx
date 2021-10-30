@@ -46,7 +46,7 @@ export const CardPlaylistSelection: React.FC<CardPlaylistSelection> = ({ item, v
 const styles = StyleSheet.create({
   modalContainerPlaylist: {
     backgroundColor: colors.comment,
-    borderRadius: 10,
+    //TouchableScalableBorderRadiusborderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 15,
     marginVertical: 7.5,

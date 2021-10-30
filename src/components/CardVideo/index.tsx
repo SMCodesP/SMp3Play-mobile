@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import ytdl from "react-native-ytdl";
@@ -6,7 +6,7 @@ import { useSong } from "../../contexts/player";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
-import TouchableScalable from "../TouchableScalable";
+import TouchableScalable from "../Buttons/TouchableScalable";
 
 interface CardVideoProps extends TVideo {
   navigation: any;
@@ -39,7 +39,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
   );
 };
 
-export default memo(CardVideo);
+export default CardVideo;
 
 const styles = StyleSheet.create({
   container: {

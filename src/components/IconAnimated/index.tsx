@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import Animated, {
   interpolate,
@@ -45,4 +45,4 @@ const IconAnimated: React.FC<{
   );
 };
 
-export default memo(IconAnimated);
+export default IconAnimated;

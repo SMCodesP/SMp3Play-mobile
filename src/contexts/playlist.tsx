@@ -5,16 +5,22 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Clipboard, ToastAndroid } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrackPlayer, { Track } from "react-native-track-player";
 import RNFS from 'react-native-fs';
-import { usePlayer } from "./player";
 import RNBackgroundDownloader from "react-native-background-downloader";
+import DocumentPicker from 'react-native-document-picker'
+import getPath from '@flyerhq/react-native-android-uri-path'
+import { usePlayer } from "./player";
 
 type PlaylistType = {
   toggleSongInPlaylist(song: TMinimalInfo, playlist: string): Promise<void>;
   createPlaylist(playlist: string): void;
+  deletePlaylist(playlist: string): void;
   getPlaylist(playlist: string): TPlaylist | undefined;
+  exportPlaylist(playlist: string): Promise<void>;
+  importPlaylist(data: string): Promise<void>
   isSongLiked(song: TMinimalInfo): boolean;
   handlePlayPlaylist(name: string): Promise<void>;
   setContext: (updates: any) => void;
@@ -35,15 +41,13 @@ const getDefaultState = (): {
 const PlaylistContext = createContext<PlaylistType>({} as PlaylistType);
 
 const PlaylistProvider: React.FC = ({ children }) => {
-  const [state, setState] = useState(getDefaultState())
-  const { videos, addSongLocal } = usePlayer();
+  const [state, setState] = useState(getDefaultState());
+  const { videos, creators, addSongLocal } = usePlayer();
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setContext({
-        playlists: JSON.parse(
-          (await AsyncStorage.getItem("@playlists")) || '[]'
-        )
+        playlists: JSON.parse((await AsyncStorage.getItem("@playlists")) || '[]')
       });
     })();
   }, []);
@@ -54,13 +58,13 @@ const PlaylistProvider: React.FC = ({ children }) => {
     })();
   }, [state]);
 
-  const createPlaylist: PlaylistType["createPlaylist"] = (playlist) => {
-    const cloneState = state.playlists;
+  const createPlaylist: PlaylistType["createPlaylist"] = async (playlist) => {
+    const cloneState = JSON.parse((await AsyncStorage.getItem("@playlists")) || '[]');
     let playlistIndex = cloneState.findIndex(
-      (value) => value.name === playlist
+      (value: any) => value.name === playlist
     );
     if (playlistIndex === -1) {
-      playlistIndex = cloneState.push({
+      cloneState.push({
         name: playlist,
         songs: [],
       })
@@ -68,8 +72,39 @@ const PlaylistProvider: React.FC = ({ children }) => {
     }
   }
 
+  const deletePlaylist: PlaylistType["deletePlaylist"] = (playlist) => {
+    console.log(state.playlists.filter((value) => value.name !== playlist))
+    setContext({ playlists: state.playlists.filter((value) => value.name !== playlist) });
+  }
+
   const getPlaylist: PlaylistType["getPlaylist"] = (playlist) => {
     return state.playlists.find((value) => value.name === playlist);
+  }
+
+  const exportPlaylist: PlaylistType["exportPlaylist"] = async (playlist) => {
+    const playlistInfo = getPlaylist(playlist);
+    Clipboard.setString(JSON.stringify(playlistInfo))
+  }
+
+  const importPlaylist: PlaylistType["importPlaylist"] = async (data) => {
+    const parsedData = JSON.parse(data);
+    if (parsedData.name !== undefined
+      && parsedData.songs !== undefined
+      && typeof parsedData.name === 'string'
+      && Array.isArray(parsedData.songs)) {
+      const cloneState = JSON.parse((await AsyncStorage.getItem("@playlists")) || '[]');
+      let playlistIndex = cloneState.findIndex(
+        (value: any) => value.name === parsedData.name
+      );
+      if (playlistIndex === -1) {
+        cloneState.push(parsedData)
+        setContext({ playlists: cloneState })
+      } else {
+        throw new Error(`Já existe uma playlist com o nome "${parsedData.name}".`);
+      }
+    } else {
+      throw new Error("Não foi possível criar essa playlist.");
+    }
   }
 
   const toggleSongInPlaylist: PlaylistType["toggleSongInPlaylist"] = async (song, playlist) => {
@@ -112,10 +147,11 @@ const PlaylistProvider: React.FC = ({ children }) => {
     if (playlist) {
       const songs: Promise<Track>[] = playlist.songs.map(async (songId) => {
         const song = videos.find(({ videoId }) => videoId === songId)
+        const creator = creators.find(({ authorId }) => authorId === song?.authorId)
         const fileExists = await RNFS.exists(`${RNBackgroundDownloader.directories.documents}/${songId}.mp3`);
         return {
           url: fileExists ? `${RNBackgroundDownloader.directories.documents}/${songId}.mp3` : `https://sm-p3-play-api.vercel.app/api/song/${song!.videoId}`,
-          artist: song!.creator?.author,
+          artist: creator?.author,
           title: song!.title,
           artwork: song!.thumbnail,
           description: song!.description,
@@ -146,7 +182,10 @@ const PlaylistProvider: React.FC = ({ children }) => {
       handlePlayPlaylist,
       toggleSongInPlaylist,
       createPlaylist,
+      deletePlaylist,
       getPlaylist,
+      importPlaylist,
+      exportPlaylist,
     }),
     [state, setContext],
   )
@@ -179,11 +218,14 @@ function usePlaylistInfo(name: string) {
   };
 
   return {
-    playlist: {
+    playlist: playlists[playlists.findIndex(value => value.name === name)] ? {
       ...playlists[playlists.findIndex(value => value.name === name)],
       songs: playlists[playlists.findIndex(value => value.name === name)].songs.map(songId => ({
         ...videos.find(song => song.videoId === songId)
       }))
+    } : {
+      name: "",
+      songs: []
     } as {
       name: string,
       songs: TMinimalInfo[]

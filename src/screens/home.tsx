@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { View, StyleSheet, Text, FlatList } from "react-native";
-import { SpringScrollView } from "react-native-spring-scrollview";
 
 import GlobalContainer from "../components/GlobalContainer";
 import SecundaryCardVideo from "../components/SecundaryCardVideo";
@@ -10,6 +9,7 @@ import { usePlayer } from "../contexts/player";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import { CardCreator } from "../components/CardCreator";
+import MyScrollView from "../components/MyScrollView";
 
 export const Home: React.FC<{
   navigation: any;
@@ -25,7 +25,7 @@ export const Home: React.FC<{
 
   return (
     <GlobalContainer>
-      <SpringScrollView showsVerticalScrollIndicator={false}>
+      <MyScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Seja bem-vindo (a)!</Text>
         <Text style={styles.subTitle}>Histórico</Text>
         <View style={styles.listHistory}>
@@ -57,7 +57,7 @@ export const Home: React.FC<{
             )}
           />
         </View>
-      </SpringScrollView>
+      </MyScrollView>
     </GlobalContainer>
   );
 };
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   title: {
     color: colors.foreground,
     fontSize: 32,
-    fontFamily: fonts.heading,
     paddingHorizontal: 15,
+    fontFamily: fonts.heading,
   },
   subTitle: {
     color: colors.foreground,

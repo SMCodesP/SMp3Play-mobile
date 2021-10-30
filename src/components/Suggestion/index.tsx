@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ const Suggestion: React.FC<{
     <View style={{flexDirection: "row"}}>
       <RectButton
         style={{
-          borderRadius: 10,
+          //TouchableScalableBorderRadiusborderRadius: 10,
           flex: 1,
         }}
         rippleColor={lighten(0.1, colors.background)}
@@ -84,7 +84,7 @@ const Suggestion: React.FC<{
           minHeight: 50,
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 10,
+          //TouchableScalableBorderRadiusborderRadius: 10,
         }}
         rippleColor={lighten(0.1, colors.background)}
         onPress={() => {

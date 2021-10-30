@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { getColor } from 'get-color-sm';
@@ -6,7 +6,7 @@ import { getColor } from 'get-color-sm';
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import { getLuminance } from 'polished';
-import TouchableScalable from '../TouchableScalable';
+import TouchableScalable from '../Buttons/TouchableScalable';
 
 const generateColorLight = (): string => {
   const color = getColor();
@@ -30,7 +30,7 @@ const CardGenre: React.FC<{
       buttonStyle={{
         flex: 1,
         height: 100,
-        borderRadius: 15,
+        //TouchableScalableBorderRadiusborderRadius: 15
         margin: 5
       }}
       style={[
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   genre: {
     flex: 1,
     backgroundColor: colors.cyan,
-    borderRadius: 15,
+    //TouchableScalableBorderRadiusborderRadius: 15,
     alignItems: "center",
     justifyContent: "center"
   },

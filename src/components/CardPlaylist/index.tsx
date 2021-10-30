@@ -8,7 +8,7 @@ import FastImage from "react-native-fast-image";
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import { usePlaylistInfo } from '../../contexts/playlist';
-import TouchableScalable from '../TouchableScalable';
+import TouchableScalable from '../Buttons/TouchableScalable';
 import { darken } from 'polished';
 
 export const CardPlaylist: React.FC<{
@@ -65,7 +65,7 @@ export const CardPlaylist: React.FC<{
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.comment,
-    borderRadius: 10,
+    //TouchableScalableBorderRadiusborderRadius: 10,
     flexDirection: 'row',
     marginBottom: 10,
   },

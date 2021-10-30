@@ -12,7 +12,7 @@ import { usePlayer } from "../../../contexts/player";
 
 import colors from "../../../styles/colors";
 import fonts from "../../../styles/fonts";
-import TouchableScalable from "../../TouchableScalable";
+import TouchableScalable from "../../Buttons/TouchableScalable";
 
 interface CardVideoProps {
   item: Track;

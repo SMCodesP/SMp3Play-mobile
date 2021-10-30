@@ -5,7 +5,7 @@ import FastImage from "react-native-fast-image";
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
 
-import TouchableScalable from "../TouchableScalable";
+import TouchableScalable from "../Buttons/TouchableScalable";
 
 export const CardCreator: React.FC<{
   item: TCreator

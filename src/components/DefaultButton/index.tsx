@@ -13,6 +13,7 @@ import { RectButton, RectButtonProps } from "react-native-gesture-handler";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
 
 interface DefaultButtonProps extends RectButtonProps {
   icon?: string;
@@ -104,7 +105,7 @@ const DefaultButton: React.FC<DefaultButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 10,
+    //TouchableScalableBorderRadiusborderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    fontWeight: "bold",
+    fontFamily: fonts.complement,
     fontSize: 20,
   },
 });

@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   TouchableOpacityProps,
   StyleProp,
   ViewStyle,
   TouchableOpacity
 } from "react-native";
-import { PanGestureHandler, RectButton } from "react-native-gesture-handler";
+import { RectButton } from "react-native-gesture-handler";
 import Animated, {
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -27,7 +26,7 @@ interface TouchableScalable extends TouchableOpacityProps {
 }
 
 const RectButtonAnimated = Animated.createAnimatedComponent(RectButton) as any
-const TouchableAnimated = Animated.createAnimatedComponent(TouchableOpacity) as any
+const TouchableAnimated = Animated.createAnimatedComponent(TouchableOpacity)
 
 const TouchableScalable: React.FC<TouchableScalable> = ({
   scaleTo,
@@ -51,7 +50,7 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: progress.value }],
   }));
-
+  
   return rectButton ? (
     <RectButtonAnimated
       onBegan={() => {

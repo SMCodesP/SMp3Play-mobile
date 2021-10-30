@@ -5,6 +5,9 @@ import TrackPlayer, {
   Event,
   Track,
   RepeatMode,
+  ProgressState,
+  State,
+  usePlaybackState
 } from "react-native-track-player";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,9 +39,10 @@ const PlayerProvider: React.FC = ({ children }) => {
   const [repeating, setRepeating] = useState<boolean>(false);
   const [videos, setVideos] = useState<TMinimalInfo[]>([]);
   const [creators, setCreators] = useState<TCreator[]>([]);
+  const playbackState = usePlaybackState()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const repeatingStored = Number(
         (await AsyncStorage.getItem("@repeating")) || "0"
       );
@@ -49,8 +53,16 @@ const PlayerProvider: React.FC = ({ children }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (playbackState === State.Stopped || playbackState === State.None) {
+      setTrack(null)
+      setQueue([])
+    }
+  }, [playbackState])
+
   const addSongLocal = async (song: TMinimalInfo) => {
-    if (videos.findIndex(({ videoId }) => videoId === song.videoId) === -1) {
+    const storagedVideos = JSON.parse(await AsyncStorage.getItem("@videos") || '[]');
+    if (storagedVideos.findIndex(({ videoId }: any) => videoId === song.videoId) === -1) {
       const newVideos = [
         ...new Map(
           [
@@ -58,13 +70,14 @@ const PlayerProvider: React.FC = ({ children }) => {
               ...song,
               creator: undefined
             },
-            ...videos,
+            ...storagedVideos,
           ].map((item) => [item.videoId, item]),
         ).values(),
       ];
       setVideos(newVideos)
       await AsyncStorage.setItem('@videos', JSON.stringify(newVideos));
     }
+    const storagedCreators = JSON.parse(await AsyncStorage.getItem("@creators") || '[]');
     const creator = await ytch.getChannelInfo(song.authorId);
     const newCreators = [
       ...new Map(
@@ -79,7 +92,7 @@ const PlayerProvider: React.FC = ({ children }) => {
             description: creator.description,
             isVerified: creator.isVerified,
           },
-          ...creators,
+          ...storagedCreators,
         ].map((item) => [item.authorId, item]),
       ).values(),
     ];

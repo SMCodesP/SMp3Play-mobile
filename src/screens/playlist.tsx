@@ -1,36 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   View,
   StyleSheet,
   Dimensions,
   Text,
-  processColor,
   FlatList,
-  Modal,
 } from "react-native";
 
-import { SpringScrollView } from "react-native-spring-scrollview";
-import Animated, { Extrapolate, interpolateColor, useAnimatedStyle, useDerivedValue, useSharedValue, useValue, withTiming } from "react-native-reanimated";
+import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
-import { RectButton, State, TouchableOpacity } from "react-native-gesture-handler";
+import { RectButton, BorderlessButton } from "react-native-gesture-handler";
 import FastImage from "react-native-fast-image";
 import { useNavigation } from "@react-navigation/native";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { darken, rgb } from 'polished'
+import { darken, transparentize } from 'polished'
 import DraggableFlatList from 'react-native-draggable-flatlist'
 
 import GlobalContainer from "../components/GlobalContainer";
 
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
+
 import CardSongPlaylist from "../components/CardSongPlaylist";
 import { usePlaylist, usePlaylistInfo } from "../contexts/playlist";
-import TouchableScalable from "../components/TouchableScalable";
+import TouchableScalable from "../components/Buttons/TouchableScalable";
 import { useDownloads } from "../contexts/downloads";
-
-const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
+import { AnimatedMyScrollView } from "../components/MyScrollView";
+import ModalOptionsPlaylist from "../components/Modals/ModalOptionsPlaylist";
+import DraggableList from "../components/DraggableList";
 
 const { width } = Dimensions.get("window");
 
@@ -50,8 +49,9 @@ export const Playlist: React.FC<{
   },
 }) => {
   const [moving, setMoving] = useState(false);
+  const [optionsIsOpened, setOptionsIsOpened] = useState(false);
   const { playlist, setPlaylist } = usePlaylistInfo(data.name)
-  const { handlePlayPlaylist } = usePlaylist()
+  const { handlePlayPlaylist, deletePlaylist } = usePlaylist()
   const { handleDownloadPlaylist } = useDownloads()
 
   const navigation = useNavigation();
@@ -110,16 +110,21 @@ export const Playlist: React.FC<{
           style={{
             ...StyleSheet.absoluteFillObject,
             flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            zIndex: 1,
+            padding: 15
           }}
           locations={[0, 1, 0]}
           colors={['#00000044', colors.background, '#00000000']}
         >
-          <TouchableOpacity
-            style={{
-              margin: 15,
-              width: 40,
-              height: 40
-            }}
+        <View style={{
+          zIndex: 1,
+        }}>
+          <TouchableScalable
+            rectButton={true}
+            duration={200}
+            scaleTo={0.9}
             onPress={handleBack}
           >
             <Feather
@@ -127,11 +132,30 @@ export const Playlist: React.FC<{
               size={40}
               color={colors.foreground}
             />
-          </TouchableOpacity>
+          </TouchableScalable>
+        </View>
+        <View style={{
+          zIndex: 1,
+        }}>
+          <TouchableScalable
+            rectButton={true}
+            duration={200}
+            scaleTo={0.2}
+            buttonStyle={{ width: 46, height: 46 }}
+            style={{flex: 1}}
+            // onPress={() => setOptionsIsOpened(true)}
+          >
+            <Feather
+              name="more-vertical"
+              size={32}
+              color={colors.foreground}
+            />
+          </TouchableScalable>
+        </View>
         </LinearGradient>
       </Animated.View>
-      <SpringScroll
-        scrollEnabled={!moving}
+      <AnimatedMyScrollView
+        // scrollEnabled={!moving}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -141,7 +165,6 @@ export const Playlist: React.FC<{
         <View style={styles.containerBody}>
           <Text style={styles.title}>{playlist?.name}</Text>
           <TouchableScalable
-            buttonStyle={styles.containerButton}
             rippleColor={colors.pink}
             rectButton={true}
             duration={100}
@@ -152,37 +175,39 @@ export const Playlist: React.FC<{
               }
             }}
             enabled={playlist?.songs.length !== 0}
+            buttonStyle={styles.containerButton}
+            style={[styles.button, {
+              borderColor: playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine,
+              backgroundColor: playlist?.songs.length !== 0 ? 'transparent' : transparentize(0.65, colors.selection)
+            }]}
           >
-            <View style={[styles.button, {
-              borderColor: darken(0.1, colors.pink)
-            }]} accessible>
-              <Ionicons name="play" size={26} color={darken(0.1, colors.pink)} />
-              <Animated.Text style={[styles.textButton, {
-                color: darken(0.1, colors.pink)
-              }]}>Tocar</Animated.Text>
-            </View>
+            <Ionicons name="play" size={26} color={playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine} />
+            <Text style={[styles.textButton, {
+              color: playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine
+            }]}>Tocar</Text>
           </TouchableScalable>
         </View>
-        {playlist && playlist?.songs.length !== 0 ? <DraggableFlatList
+        {/* {playlist && playlist?.songs.length !== 0 ? <DraggableFlatList
           data={playlist.songs}
-          keyExtractor={(item) => item.videoId}
+          keyExtractor={(item) => (item as any).videoId}
           renderItem={(props) => <CardSongPlaylist setMoving={setMoving} {...props} />}
-          scrollEnabled={false}
-          activationDistance={moving ? 1 : 100000000}
+          // scrollEnabled={false}
+          // initialNumToRender={playlist.songs.length}
+          // activationDistance={moving ? 1 : 100000000}
           onDragBegin={() => setMoving(true)}
           onDragEnd={({ data: newData }) => {
+            console.log(newData.map(song => song.videoId))
             setPlaylist(newData.map(song => song.videoId))
             setMoving(false)
           }}
-          initialNumToRender={playlist.songs.length}
-        /> : (
+        /> : ( */}
+        {playlist && playlist?.songs.length !== 0 ? <DraggableList songs={playlist.songs} setPlaylist={setPlaylist} /> : (
           <>
             <Text style={styles.emptyPlaylistText}>Nenhuma música na playlist</Text>
             <TouchableScalable
               buttonStyle={[styles.containerButton, {
                 backgroundColor: darken(0.1, colors.purple),
               }]}
-              rippleColor={colors.purple}
               rectButton={false}
               duration={100}
               scaleTo={0.95}
@@ -200,12 +225,23 @@ export const Playlist: React.FC<{
             </TouchableScalable>
           </>
         )}
-      </SpringScroll>
+      </AnimatedMyScrollView>
       <RectButton style={styles.sync} onPress={handleDownload}>
         <View style={styles.align} accessible>
           <Ionicons name="ios-download" size={28} color={colors.foreground} />
         </View>
       </RectButton>
+      <ModalOptionsPlaylist
+        handleDelete={() => {
+          setOptionsIsOpened(false);
+          navigation.goBack();
+          deletePlaylist(data.name)
+        }}
+        handleDownload={handleDownload}
+        handleSearchSong={handleSearchSong}
+        closeModal={() => setOptionsIsOpened(false)}
+        modalIsOpen={optionsIsOpened}
+      />
     </GlobalContainer>
   );
 };
@@ -235,7 +271,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   containerButton: {
-    borderRadius: 100,
+    //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "65%",
     alignSelf: "center",
@@ -244,7 +280,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 50,
+    //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "100%",
     borderWidth: 1,
@@ -260,7 +296,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     right: 20,
-    borderRadius: 32,
+    //TouchableScalableBorderRadiusborderRadius: 32,
     width: 52,
     height: 52,
     backgroundColor: colors.comment,

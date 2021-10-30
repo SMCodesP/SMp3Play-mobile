@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   View,
   Text,
-  ImageBackground,
   StyleSheet,
   ActivityIndicator,
   Modal,
@@ -11,9 +10,7 @@ import {
 } from "react-native";
 
 import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
-import ytdl from "react-native-ytdl";
 
-import { SpringScrollView } from "react-native-spring-scrollview";
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
@@ -25,7 +22,7 @@ import Feather from "react-native-vector-icons/Feather";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 
-import { useCreator, usePlayer, useSong } from "../contexts/player";
+import { usePlayer, useSong } from "../contexts/player";
 
 import GlobalContainer from "../components/GlobalContainer";
 
@@ -39,12 +36,12 @@ import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
 import { isOnPlaylist, usePlaylist } from "../contexts/playlist";
 import { BlurView } from "@react-native-community/blur";
 
-import { Radio } from "../components/Radio";
 import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
-import TouchableScalable from "../components/TouchableScalable";
+import TouchableScalable from "../components/Buttons/TouchableScalable";
 import { msToHMS } from "../utils/msToMHS";
+import ModalCustom from "../components/ModalCustom";
+import MyScrollView, { AnimatedMyScrollView } from "../components/MyScrollView";
 
-const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
 
 const IMAGE_HEIGHT = 275
@@ -67,6 +64,8 @@ const Details: React.FC<{
 }) => {
   const [loadingTrack, setLoadingTrack] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [heightDescription, setHeightDescription] = useState(0);
+  const [isMaximized, setIsMaximized] = useState(false);
 
   const { handlePlaySong, track } = usePlayer();
   const { toggleSongInPlaylist, playlists } = usePlaylist();
@@ -115,8 +114,8 @@ const Details: React.FC<{
                   extrapolate: Extrapolate.CLAMP,
                 }),
                 scale: scrollY.interpolate({
-                  inputRange: [-IMAGE_HEIGHT * 2, 0],
-                  outputRange: [5.5, 1],
+                  inputRange: [-IMAGE_HEIGHT * 4, 0],
+                  outputRange: [11.5, 1],
                   extrapolate: Extrapolate.CLAMP,
                 }),
               },
@@ -200,7 +199,7 @@ const Details: React.FC<{
           </TouchableOpacity>
         </Animated.View>
       )}
-      <SpringScroll
+      <AnimatedMyScrollView
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -214,10 +213,10 @@ const Details: React.FC<{
               containerStyle={{ padding: 0, margin: 0 }}
               boneColor={darken(0.15, colors.comment)}
               highlightColor={darken(0.1, colors.comment)}
-              animationType="pulse"
+              animationType="shiver"
               duration={2500}
               layout={[
-                { key: 'description1', width: 152, height: 152, borderRadius: 20, padding: 0, margin: 0 },
+                { key: 'avatar', width: 152, height: 152, borderRadius: 20, padding: 0, margin: 0 },
               ]}
             >
               <FastImage style={styles.authorAvatar} source={{ uri: String(video?.creator?.authorThumbnail.url || '') }} />
@@ -228,7 +227,7 @@ const Details: React.FC<{
                 containerStyle={{ padding: 0, margin: 0 }}
                 boneColor={darken(0.15, colors.comment)}
                 highlightColor={darken(0.1, colors.comment)}
-                animationType="pulse"
+                animationType="shiver"
                 duration={2500}
                 layout={[
                   { key: 'title', width: `${getRandomInt(45, 100)}%`, height: 16, margin: 15 },
@@ -242,7 +241,7 @@ const Details: React.FC<{
                   containerStyle={{ ...styles.containerButtons }}
                   boneColor={darken(0.15, colors.comment)}
                   highlightColor={darken(0.1, colors.comment)}
-                  animationType="pulse"
+                  animationType="shiver"
                   duration={2500}
                   layout={[
                     { key: 'button1', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
@@ -256,7 +255,7 @@ const Details: React.FC<{
                     }]}
                     onPress={track?.extra.videoId === video?.videoId ? (playbackState === State.Paused ? handlePlay : handlePause) : handlePlay}
                     enabled={!loadingTrack}
-                    rippleColor={darken(0.1, colors.cyan)}
+                    rippleColor={darken(0.3, colors.cyan)}
                   >
                     <View accessible>
                       {loadingTrack ? (
@@ -270,7 +269,7 @@ const Details: React.FC<{
                     style={[styles.button, {
                       backgroundColor: colors.pink
                     }]}
-                    rippleColor={darken(0.1, colors.pink)}
+                    rippleColor={darken(0.3, colors.pink)}
                     onPress={() => video && toggleSongInPlaylist(video, "Favoritos")}
                   >
                     <View accessible>
@@ -281,7 +280,7 @@ const Details: React.FC<{
                     style={[styles.button, {
                       backgroundColor: colors.yellow
                     }]}
-                    rippleColor={darken(0.1, colors.yellow)}
+                    rippleColor={darken(0.3, colors.yellow)}
                     onPress={() => setModalIsOpen(true)}
                   >
                     <View accessible>
@@ -293,27 +292,37 @@ const Details: React.FC<{
             </View>
           </View>
           <SkeletonContent
-            containerStyle={{ padding: 20 }}
+            containerStyle={{ paddingHorizontal: 20 }}
             isLoading={!video}
             boneColor={darken(0.15, colors.comment)}
             highlightColor={darken(0.1, colors.comment)}
-            animationType="pulse"
+            animationType="shiver"
             duration={2500}
             layout={[
-              { key: 'description1', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description2', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description3', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description5', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description6', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description7', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description8', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'channel', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6 },
-              { key: 'views', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6 },
-              { key: 'duration', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6 },
-              { key: 'published', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6 },
+              { key: 'description1', width: `100%`, height: 185, marginBottom: 6, borderRadius: 15 },
+              { key: 'channel', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6, borderRadius: 15 },
+              { key: 'views', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6, borderRadius: 15 },
+              { key: 'duration', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6, borderRadius: 15 },
+              { key: 'published', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6, borderRadius: 15 },
             ]}
           >
-            <Text style={styles.description}>{video?.description}</Text>
+            <View>
+              <Text style={styles.titleCaption}>Descrição</Text>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setIsMaximized(true)}
+              >
+                <View style={styles.containerDescription}>
+                  <Text
+                    onLayout={(event) => setHeightDescription(event.nativeEvent.layout.height)}
+                    style={[styles.description, styles.descriptionText]}
+                  >{video?.description}</Text>
+                  {heightDescription >= 155 && (
+                    <Text style={styles.readMore}>Ler mais</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            </View>
             <View style={styles.containerInfo}>
               <Text style={styles.info}>
                 <Text style={styles.span}>Autor:</Text> {String(video?.creator?.author)}
@@ -330,7 +339,7 @@ const Details: React.FC<{
             </View>
           </SkeletonContent>
         </View>
-      </SpringScroll>
+      </AnimatedMyScrollView>
       <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>
         <BlurView style={styles.blurModal} blurAmount={2} blurRadius={10} overlayColor={transparentize(0.5, colors.background)} />
         <View style={styles.centeredView}>
@@ -355,10 +364,66 @@ const Details: React.FC<{
                 <Ionicons name="ios-save" size={26} color={colors.foreground} />
                 <Animated.Text style={styles.textButtonModal}>Salvar</Animated.Text>
               </TouchableScalable>
+              <TouchableScalable
+                duration={100}
+                scaleTo={0.95}
+                rectButton={false}
+                activeOpacity={1}
+                style={styles.containerButtonModal}
+                delayPressOut={100}
+                onPressOut={() => setModalIsOpen(false)}
+              >
+                <RectButton
+                  style={{
+                    flex: 1,
+                    //TouchableScalableBorderRadiusborderRadius: 50,
+                  }}
+                  rippleColor={colors.red}
+                >
+                  <View style={styles.modalButton} accessible>
+                    <Animated.Text style={[styles.textButtonModal, {
+                      color: colors.red
+                    }]}>Cancelar</Animated.Text>
+                  </View>
+                </RectButton>
+              </TouchableScalable>
             </View>
           </View>
         </View>
       </Modal>
+      <ModalCustom modalIsOpen={isMaximized}>
+        <View style={styles.modalView}>
+          <MyScrollView showsVerticalScrollIndicator={false}>
+            <Text style={styles.modalTitle}>Descrição:</Text>
+            <Text style={styles.descriptionText}>{video?.description}</Text>
+          </MyScrollView>
+          <TouchableScalable
+            duration={150}
+            delayPressOut={150}
+            scaleTo={0.9}
+            rectButton={false}
+            activeOpacity={1}
+            style={styles.containerButtonModal}
+            // buttonStyle={styles.containerButtonModal}
+            onPressOut={() => setIsMaximized(false)}
+            rippleColor={colors.red}
+          >
+            <RectButton
+              style={{
+                flex: 1,
+                //TouchableScalableBorderRadiusborderRadius: 50,
+              }}
+              rippleColor={colors.red}
+            >
+              <View style={styles.modalButton} accessible>
+                <Text style={[styles.textButtonModal, {
+                  color: colors.red
+                }]}>Fechar</Text>
+              </View>
+            </RectButton>
+          </TouchableScalable>
+        </View>
+      </ModalCustom>
     </GlobalContainer>
   );
 };
@@ -388,13 +453,30 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: fonts.complement,
     color: colors.foreground,
-    fontWeight: "bold",
   },
   containerBody: {
     marginHorizontal: 10,
     paddingTop: IMAGE_HEIGHT,
   },
+  titleCaption: {
+    fontSize: 14,
+    fontFamily: fonts.complement,
+    color: colors.purple,
+    marginVertical: 5,
+  },
+  containerDescription: {
+    padding: 10,
+    borderRadius: 15,
+    backgroundColor: colors.comment,
+  },
+  readMore: {
+    color: colors.cyan,
+    fontFamily: fonts.complement
+  },
   description: {
+    maxHeight: 155
+  },
+  descriptionText: {
     fontSize: 16,
     fontFamily: fonts.text,
     color: colors.foreground,
@@ -419,7 +501,8 @@ const styles = StyleSheet.create({
   containerHeaderInfo: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    top: -64
+    top: -46,
+    marginTop: -46,
   },
   containerTitle: {
     flex: 1,
@@ -438,7 +521,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 42,
     marginLeft: 15,
-    borderRadius: 10
+    //TouchableScalableBorderRadiusborderRadius: 10
   },
   blurModal: {
     position: "absolute",
@@ -469,7 +552,7 @@ const styles = StyleSheet.create({
   },
   containerButtonModal: {
     marginTop: 10,
-    borderRadius: 50,
+    //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "75%",
     alignSelf: "center",
@@ -481,10 +564,11 @@ const styles = StyleSheet.create({
     fontSize: 18
   },
   modalButton: {
-    borderRadius: 50,
+    //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "100%",
     flexDirection: 'row',
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -6,7 +6,6 @@ import {
   StyleSheet,
 } from "react-native";
 
-import { SpringScrollView } from "react-native-spring-scrollview";
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
@@ -24,8 +23,8 @@ import { getRandomInt } from "../utils/randomNumber";
 
 import FastImage from "react-native-fast-image";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { AnimatedMyScrollView } from "../components/MyScrollView";
 
-const SpringScroll = Animated.createAnimatedComponent(SpringScrollView);
 const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
 
 const IMAGE_HEIGHT = 275
@@ -157,13 +156,12 @@ const Creator: React.FC<{
           </TouchableOpacity>
         </Animated.View>
       )}
-      <SpringScroll
+      <AnimatedMyScrollView
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
-        decelerationRate={0.1}
       >
         <View style={styles.containerBody}>
           <View style={styles.containerHeaderInfo}>
@@ -216,7 +214,7 @@ const Creator: React.FC<{
             <Text style={styles.description}>{creator?.description}</Text>
           </SkeletonContent>
         </View>
-      </SpringScroll>
+      </AnimatedMyScrollView>
     </GlobalContainer>
   );
 };

@@ -26,7 +26,6 @@ TrackPlayer.setupPlayer({ waitForBuffer: true }).then(async () => {
   console.log("player setup!");
 
   await TrackPlayer.updateOptions({
-    stopWithApp: false,
     notificationCapabilities: [
       Capability.Play,
       Capability.Pause,
@@ -46,18 +45,9 @@ TrackPlayer.setupPlayer({ waitForBuffer: true }).then(async () => {
 });
 
 export default function App() {
-  // const [fontIsLoading] = useFonts({
-  //   Jost_400Regular,
-  //   Jost_600SemiBold,
-  //   Jost_700Bold,
-  //   Jost_900Black,
-  // });
-
-  // if (!fontIsLoading) return <AppLoading />;
-
   return (
-            <GestureHandlerRootView style={{ flex: 1 }}>
-    <PlayerProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PlayerProvider>
         <PlaylistProvider>
           <DownloadsProvider>
             <View

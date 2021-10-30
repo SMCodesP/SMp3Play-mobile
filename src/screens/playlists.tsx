@@ -4,13 +4,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, Keyboard, KeyboardAvoidingView, Modal, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import { SpringScrollView } from 'react-native-spring-scrollview';
 import { Jiro } from 'react-native-textinput-effects';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { CardPlaylist } from '../components/CardPlaylist';
 import GlobalContainer from '../components/GlobalContainer';
-import TouchableScalable from '../components/TouchableScalable';
+import MyScrollView from '../components/MyScrollView';
+import TouchableScalable from '../components/Buttons/TouchableScalable';
+import ModalImportPlaylist from '../components/Modals/ModalImportPlaylist';
 import { usePlaylist } from '../contexts/playlist';
 
 import colors from '../styles/colors';
@@ -19,6 +21,7 @@ import fonts from '../styles/fonts';
 export const Playlists: React.FC = () => {
   const {playlists, createPlaylist} = usePlaylist();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalImportIsOpen, setModalImportIsOpen] = useState(false);
   const [namePlaylist, setNamePlaylist] = useState("");
 
   const handleSubmit = () => {
@@ -33,7 +36,7 @@ export const Playlists: React.FC = () => {
 
   return (
     <GlobalContainer>
-      <SpringScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <MyScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Playlists</Text>
         <TouchableScalable
           buttonStyle={styles.containerButton}
@@ -48,6 +51,24 @@ export const Playlists: React.FC = () => {
           <Ionicons name="add" size={26} color={darken(0.1, colors.purple)} />
           <Animated.Text style={styles.textButton}>Criar playlist</Animated.Text>
         </TouchableScalable>
+        <TouchableScalable
+          buttonStyle={styles.containerButton}
+          rectButton={true}
+          duration={100}
+          scaleTo={0.95}
+          rippleColor={darken(0.4, colors.pink)}
+          delayPressOut={100}
+          onPressOut={() => setModalImportIsOpen(state => !state)}
+          style={[styles.button, {
+            borderColor: colors.pink,
+            backgroundColor: colors.pink
+          }]}
+        >
+          <MaterialCommunityIcons name="import" size={26} color={colors.background} />
+          <Animated.Text style={[styles.textButton, {
+            color: colors.background,
+          }]}>Importar playlist</Animated.Text>
+        </TouchableScalable>
         <FlatList
           data={playlists}
           renderItem={({ item }) => (
@@ -57,7 +78,8 @@ export const Playlists: React.FC = () => {
           )}
           keyExtractor={({ name }) => name}
         />
-      </SpringScrollView>
+      </MyScrollView>
+      <ModalImportPlaylist modalIsOpen={modalImportIsOpen} closeModal={() => setModalImportIsOpen(false)} />
       <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>
         <BlurView  style={styles.blurModal} blurAmount={2} blurRadius={10} overlayColor={transparentize(0.5, colors.background)} />
         <View style={styles.centeredView}>
@@ -88,7 +110,7 @@ export const Playlists: React.FC = () => {
                     delayPressOut={100}
                     onPressOut={handleSubmit}
                   >
-                    <Ionicons name="add" size={26} color={colors.foreground} />
+                    <Ionicons name="add" size={26} color={colors.background} />
                     <Animated.Text style={styles.textButtonModal}>Criar playlist</Animated.Text>
                   </TouchableScalable>
                   <TouchableScalable 
@@ -103,7 +125,6 @@ export const Playlists: React.FC = () => {
                     <RectButton
                       style={{
                         flex: 1,
-                        borderRadius: 50,
                       }}
                       rippleColor={colors.red}
                     >
@@ -134,7 +155,6 @@ const styles = StyleSheet.create({
     color: colors.foreground
   },
   containerButton: {
-    borderRadius: 50,
     height: 50,
     marginTop: 5,
     marginBottom: 15,
@@ -142,7 +162,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   button: {
-    borderRadius: 50,
     height: 50,
     width: "100%",
     borderWidth: 1,
@@ -188,19 +207,17 @@ const styles = StyleSheet.create({
   },
   containerButtonModal: {
     marginTop: 10,
-    borderRadius: 50,
     height: 50,
     width: "75%",
     alignSelf: "center",
   },
   textButtonModal: {
-    color: colors.foreground,
+    color: colors.background,
     marginLeft: 15,
     fontFamily: fonts.complement,
     fontSize: 18
   },
   modalButton: {
-    borderRadius: 50,
     height: 50,
     width: "100%",
     flexDirection: 'row',

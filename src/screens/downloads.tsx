@@ -1,10 +1,10 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text } from 'react-native';
-import { SpringScrollView } from 'react-native-spring-scrollview';
 
 import { CardSongDownload } from '../components/CardSongDownload';
 import { CardSongDownloaded } from '../components/CardSongDownloaded';
 import GlobalContainer from '../components/GlobalContainer';
+import MyScrollView from '../components/MyScrollView';
 import { useDownloads } from '../contexts/downloads';
 
 import colors from '../styles/colors';
@@ -15,7 +15,7 @@ export const Downloads: React.FC = () => {
 
   return (
     <GlobalContainer>
-      <SpringScrollView
+      <MyScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
       >
@@ -48,7 +48,7 @@ export const Downloads: React.FC = () => {
           )}
           nestedScrollEnabled
         />
-      </SpringScrollView>
+      </MyScrollView>
     </GlobalContainer>
   );
 }

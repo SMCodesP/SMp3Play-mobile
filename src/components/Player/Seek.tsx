@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Slider } from "@miblanchard/react-native-slider";
 import { darken, transparentize } from "polished";
 import colors from "../../styles/colors";
@@ -32,4 +32,4 @@ const Seek: React.FC<{
   );
 };
 
-export default memo(Seek);
+export default Seek;

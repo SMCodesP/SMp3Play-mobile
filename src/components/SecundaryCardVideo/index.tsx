@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -10,7 +10,7 @@ import FastImage from "react-native-fast-image";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
-import TouchableScalable from "../TouchableScalable";
+import TouchableScalable from "../Buttons/TouchableScalable";
 
 interface CardVideoProps {
   navigation?: any;
@@ -46,7 +46,7 @@ const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video 
   );
 };
 
-export default memo(SecundaryCardVideo);
+export default SecundaryCardVideo;
 
 const styles = StyleSheet.create({
   container: {

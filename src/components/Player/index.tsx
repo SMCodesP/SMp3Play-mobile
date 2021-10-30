@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Dimensions,
   FlatList,
@@ -25,7 +25,7 @@ import TrackPlayer, {
 } from "react-native-track-player";
 import Seek from "./Seek";
 import { CardVideoPlaying } from "./CardVideoPlaying";
-import TouchableScalable from "../TouchableScalable";
+import TouchableScalable from "../Buttons/TouchableScalable";
 import { msToHMS } from "../../utils/msToMHS";
 
 import { FavoriteButton  } from '../FavoriteButton'
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    //TouchableScalableBorderRadiusborderRadius: 10,
   },
   title: {
     width: ((width / 100) * 90) - 124,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   song: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontFamily: fonts.complement,
     color: colors.foreground,
     width: ((width / 100) * 90) - 30
   },

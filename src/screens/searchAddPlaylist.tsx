@@ -5,19 +5,17 @@ import {
   Platform,
   StyleSheet,
   Text,
-  FlatList
+  FlatList,
 } from "react-native";
 import { Jiro } from "react-native-textinput-effects";
 import LottieView from "lottie-react-native";
 import axios from "axios";
 
-import CardVideo from "../components/CardVideo";
-
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
-import { SpringScrollView } from "react-native-spring-scrollview";
 import CardAddSong from "../components/CardAddSong";
+import MyScrollView from "../components/MyScrollView";
 
 export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { playlist } } }: any) => {
   const [loading, setLoading] = useState(false);
@@ -49,7 +47,7 @@ export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { pla
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <SpringScrollView showsVerticalScrollIndicator={false} style={styles.inner} dragToHideKeyboard={true}>
+        <MyScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
           {/* <TouchableWithoutFeedback style={styles.inner} touchSoundDisabled={true} onPress={Keyboard.dismiss}> */}
             <View style={styles.containerInput}>
               <Jiro
@@ -69,12 +67,17 @@ export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { pla
               />
             </View>
             {loading ? (
-              <LottieView
-                source={require("../../assets/lf30_editor_kplkuq1a.json")}
-                duration={1930}
-                autoPlay
-                loop
-              />
+              <View style={{
+                width: "100%",
+                height: 400
+              }}>
+                <LottieView
+                  source={require("../../assets/lf30_editor_kplkuq1a.json")}
+                  duration={1930}
+                  autoPlay
+                  loop
+                />
+              </View>
             ) : (
               videos.length === 0 && (
                 <View style={styles.containerSongEmpty}>
@@ -92,7 +95,7 @@ export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { pla
               nestedScrollEnabled
             />
           {/* </TouchableWithoutFeedbacsk> */}
-        </SpringScrollView>
+        </MyScrollView>
       </KeyboardAvoidingView>
     </GlobalContainer>
   );

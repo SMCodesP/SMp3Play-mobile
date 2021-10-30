@@ -7,26 +7,22 @@ import {
   Text,
   FlatList,
   Keyboard,
+  ScrollView
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Feather from "react-native-vector-icons/Feather"
 import { Jiro } from "react-native-textinput-effects";
 import LottieView from "lottie-react-native";
 import axios from "axios";
-import extract from "extract-json-from-string";
 
 import CardVideo from "../components/CardVideo";
 
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
-import { SpringScrollView } from "react-native-spring-scrollview";
 import { api } from "../services/api";
-import { RectButton } from "react-native-gesture-handler";
-import { lighten } from "polished";
 import Suggestion from "../components/Suggestion";
 import { genres } from "../utils/genres";
 import CardGenre from "../components/CardGenre";
+import MyScrollView from "../components/MyScrollView";
 
 export const Search: React.FC = ({
   navigation,
@@ -83,7 +79,7 @@ export const Search: React.FC = ({
 
   return (
     <GlobalContainer>
-      <SpringScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
+      <MyScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
         <Text style={styles.title}>{queried ? `Pesquise mais músicas` : 'Pesquise por músicas!'}</Text>
         <View style={styles.containerInput}>
           <Jiro
@@ -171,7 +167,7 @@ export const Search: React.FC = ({
           numColumns={2}
           nestedScrollEnabled
         />
-      </SpringScrollView>
+      </MyScrollView>
     </GlobalContainer>
   );
 };

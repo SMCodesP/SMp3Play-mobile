@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import TouchableScalable from '../TouchableScalable';
+import TouchableScalable from '../Buttons/TouchableScalable';
 
 import { darken } from 'polished';
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     height: 132,
     marginVertical: 10,
     backgroundColor: colors.comment,
-    borderRadius: 10,
+    //TouchableScalableBorderRadiusborderRadius: 10,
     flexDirection: 'row',
   },
   image: {
