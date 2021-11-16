@@ -7,9 +7,10 @@
  * such as processing media buttons or analytics
  */
 
-import TrackPlayer, { Event } from 'react-native-track-player';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ytch from 'yt-channel-info'
+import TrackPlayer, { Event } from "react-native-track-player";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNBackgroundDownloader from "react-native-background-downloader";
+import RNFS from "react-native-fs";
 
 module.exports = async function () {
   TrackPlayer.addEventListener(Event.RemotePlay, async () => {
@@ -25,15 +26,15 @@ module.exports = async function () {
   });
 
   TrackPlayer.addEventListener(Event.RemoteNext, async () => {
-    try {
-      await TrackPlayer.skipToNext();
-    } catch (_) {}
+    // try {
+    //   await TrackPlayer.skipToNext();
+    // } catch (_) {}
   });
 
   TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
-    try {
-      await TrackPlayer.skipToPrevious();
-    } catch (_) {}
+    // try {
+    //   await TrackPlayer.skipToPrevious();
+    // } catch (_) {}
   });
 
   TrackPlayer.addEventListener(Event.RemoteStop, async (...props) => {
@@ -42,48 +43,56 @@ module.exports = async function () {
     } catch (_) {}
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async ({ nextTrack }) => {
-    if (nextTrack !== undefined && nextTrack !== null) {
-      const track = await TrackPlayer.getTrack(nextTrack);
-      const jsonValueVideos = await AsyncStorage.getItem('@videos');
-      const videos = jsonValueVideos != null ? JSON.parse(jsonValueVideos) || [] : [];
-      const jsonValueCreators = await AsyncStorage.getItem('@creators');
-      const creators = jsonValueCreators != null ? JSON.parse(jsonValueCreators) || [] : [];
-      const creator = await ytch.getChannelInfo(track.extra.authorId);
+  TrackPlayer.addEventListener(
+    Event.PlaybackTrackChanged,
+    async ({ nextTrack }) => {
+      if (nextTrack !== undefined && nextTrack !== null) {
+        let track = await TrackPlayer.getTrack(nextTrack);
 
-      const newCreators = [
-        ...new Map(
-          [
-            {
-              authorId: creator.authorId,
-              author: creator.author,
-              authorUrl: creator.authorUrl,
-              authorBanner: creator.authorBanners[creator.authorBanners.length - 1],
-              authorThumbnail: creator.authorThumbnails[creator.authorThumbnails.length - 1],
-              subscriberCount: creator.subscriberCount,
-              description: creator.description,
-              isVerified: creator.isVerified,
-            },
-            ...creators,
-          ].map((item) => [item.authorId, item]),
-        ).values(),
-      ];
+        const jsonValueVideos = await AsyncStorage.getItem("@videos");
+        const videos =
+          jsonValueVideos != null ? JSON.parse(jsonValueVideos) || [] : [];
+        const jsonValueCreators = await AsyncStorage.getItem("@creators");
+        const creators =
+          jsonValueCreators != null ? JSON.parse(jsonValueCreators) || [] : [];
+        const creator = creators.find(
+          (creator) => creator.authorId === track.extra.authorId
+        );
 
-      const newVideos = [
-        ...new Map(
-          [
-            ...videos,
-            {
-              ...track.extra,
-              videoId: track.extra.videoId,
-              updated_at: Date.now(),
-            },
-          ].map((item) => [item.videoId, item]),
-        ).values(),
-      ];
-      
-      await AsyncStorage.setItem('@creators', JSON.stringify(newCreators));
-      await AsyncStorage.setItem('@videos', JSON.stringify(newVideos));
+        const newCreators = [
+          ...new Map(
+            [
+              {
+                authorId: creator.authorId,
+                author: creator.author,
+                authorUrl: creator.authorUrl,
+                authorBanner: creator.authorBanner,
+                authorThumbnail: creator.authorThumbnail,
+                subscriberCount: creator.subscriberCount,
+                description: creator.description,
+                isVerified: creator.isVerified,
+              },
+              ...creators,
+            ].map((item) => [item.authorId, item])
+          ).values(),
+        ];
+
+        const newVideos = [
+          ...new Map(
+            [
+              ...videos,
+              {
+                ...track.extra,
+                videoId: track.extra.videoId,
+                updated_at: Date.now(),
+              },
+            ].map((item) => [item.videoId, item])
+          ).values(),
+        ];
+
+        await AsyncStorage.setItem("@creators", JSON.stringify(newCreators));
+        await AsyncStorage.setItem("@videos", JSON.stringify(newVideos));
+      }
     }
-  });
+  );
 };

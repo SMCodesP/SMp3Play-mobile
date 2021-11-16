@@ -5,12 +5,12 @@ import FastImage from "react-native-fast-image";
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
 
-import TouchableScalable from "../Buttons/TouchableScalable";
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 
 export const CardCreator: React.FC<{
-  item: TCreator
+  item: TCreator;
 }> = ({ item }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   return (
     <View style={styles.containerGeral}>
@@ -21,8 +21,8 @@ export const CardCreator: React.FC<{
         style={styles.container}
         onPress={() => {
           navigation.navigate("Creator", {
-            creatorId: item.authorId
-          })
+            creatorId: item.authorId,
+          });
         }}
       >
         <View style={styles.containerImage}>
@@ -31,14 +31,14 @@ export const CardCreator: React.FC<{
             style={styles.avatar}
             resizeMode="cover"
           />
-            {/* <View style={styles.curtain} />
+          {/* <View style={styles.curtain} />
           </FastImage> */}
         </View>
         <Text style={styles.name}>{item.author}</Text>
       </TouchableScalable>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   containerGeral: {
@@ -57,16 +57,16 @@ const styles = StyleSheet.create({
   avatar: {
     width: (Dimensions.get("screen").width - 60) / 3,
     height: (Dimensions.get("screen").width - 60) / 3,
-    borderRadius: ((Dimensions.get("screen").width - 60) / 3) / 2,
+    borderRadius: (Dimensions.get("screen").width - 60) / 3 / 2,
   },
   curtain: {
     flex: 1,
-    backgroundColor: "#00000066"
+    backgroundColor: "#00000066",
   },
   name: {
     textAlign: "center",
     fontFamily: fonts.complement,
     color: colors.foreground,
-    fontSize: 18
-  }
-})
+    fontSize: 18,
+  },
+});

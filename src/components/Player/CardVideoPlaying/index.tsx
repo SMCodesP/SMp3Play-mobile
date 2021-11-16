@@ -12,7 +12,7 @@ import { usePlayer } from "../../../contexts/player";
 
 import colors from "../../../styles/colors";
 import fonts from "../../../styles/fonts";
-import TouchableScalable from "../../Buttons/TouchableScalable";
+import { TouchableScalable } from "../../Buttons/TouchableScalable";
 
 interface CardVideoProps {
   item: Track;
@@ -24,16 +24,6 @@ export const CardVideoPlaying: React.FC<CardVideoProps> = ({
   item: track,
 }) => {
   const { track: currentTrack } = usePlayer();
-  const pressed = useSharedValue(false);
-  const progress = useDerivedValue(() =>
-    pressed.value
-      ? withTiming(0.95, { duration: 25 })
-      : withTiming(1, { duration: 25 })
-  );
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: progress.value }],
-  }));
 
   const handleSkip = () => {
     if (currentTrack?.id === track.id) return;
@@ -45,25 +35,39 @@ export const CardVideoPlaying: React.FC<CardVideoProps> = ({
     <TouchableScalable
       duration={25}
       scaleTo={0.95}
-      style={styles.containerGeral}
+      buttonStyle={styles.containerGeral}
       onPress={handleSkip}
     >
-      <FastImage
-        style={styles.thumbnail}
-        source={{ uri: String(track.artwork) }}
-      >
-        <View style={styles.container}>
-          {currentTrack?.id === track.id && (
-            <Text style={styles.playing}>Tocando</Text>
-          )}
-          <View style={styles.containerTitle}>
-            <Text style={styles.title}>
-              {String(track.title).substring(0, 50).trim() +
-                (String(track.title).length > 50 ? "..." : "")}
-            </Text>
+      {track.extra ? (
+        <FastImage
+          style={styles.thumbnail}
+          source={{ uri: String(track.artwork) }}
+        >
+          <View style={styles.container}>
+            {currentTrack?.id === track.id && (
+              <Text style={styles.playing}>Tocando</Text>
+            )}
+            <View style={styles.containerTitle}>
+              <Text style={styles.title}>
+                {String(track.title).substring(0, 50).trim() +
+                  (String(track.title).length > 50 ? "..." : "")}
+              </Text>
+            </View>
           </View>
+        </FastImage>
+      ) : (
+        <View
+          style={[
+            styles.container,
+            {
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <Text style={styles.hidden}>Supresa!</Text>
         </View>
-      </FastImage>
+      )}
     </TouchableScalable>
   );
 };
@@ -82,7 +86,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, .6)",
     justifyContent: "space-between",
-
     borderRadius: 12,
   },
   playing: {
@@ -101,5 +104,11 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     fontFamily: fonts.complement,
     padding: 8,
+  },
+  hidden: {
+    color: colors.foreground,
+    fontSize: 14,
+    textAlign: "center",
+    fontFamily: fonts.complement,
   },
 });

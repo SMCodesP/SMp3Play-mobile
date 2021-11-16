@@ -1,14 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
-import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import SkeletonContent from "react-native-skeleton-content-nonexpo";
 import { darken } from "polished";
 import Feather from "react-native-vector-icons/Feather";
 
@@ -24,10 +20,14 @@ import { getRandomInt } from "../utils/randomNumber";
 import FastImage from "react-native-fast-image";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AnimatedMyScrollView } from "../components/MyScrollView";
+import CreatorRoutes from "../components/Creator/creator.routes";
+import { AboutCreator } from "../components/Creator/about";
 
-const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
+const AnimatedImageBackground = Animated.createAnimatedComponent(
+  FastImage as any
+) as any;
 
-const IMAGE_HEIGHT = 275
+const IMAGE_HEIGHT = 275;
 
 const Creator: React.FC<{
   route: {
@@ -39,19 +39,16 @@ const Creator: React.FC<{
   navigation: any;
 }> = ({
   route: {
-    params: {
-      creatorId,
-    },
+    params: { creatorId },
   },
   navigation,
 }) => {
+  const scrollY = useValue(0);
   const creator = useCreator(creatorId);
 
-  const scrollY = useValue(0);
-
   const handleBack = async () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
 
   return (
     <GlobalContainer>
@@ -62,7 +59,7 @@ const Creator: React.FC<{
             ...StyleSheet.absoluteFillObject,
             top: 0,
             height: IMAGE_HEIGHT,
-            width: '100%',
+            width: "100%",
             transform: [
               {
                 translateY: scrollY.interpolate({
@@ -79,19 +76,19 @@ const Creator: React.FC<{
             ],
           }}
         >
-          <LinearGradient 
+          <LinearGradient
             style={{
               flex: 1,
-              top: 1
+              top: 1,
             }}
             locations={[0, 1, 0]}
-            colors={['#00000044', colors.background, '#00000000']}
+            colors={["#00000044", colors.background, "#00000000"]}
           >
             <TouchableOpacity
               style={{
                 margin: 15,
                 width: 40,
-                height: 40
+                height: 40,
               }}
               onPress={handleBack}
             >
@@ -110,7 +107,7 @@ const Creator: React.FC<{
             backgroundColor: darken(0.15, colors.comment),
             top: 0,
             height: IMAGE_HEIGHT,
-            width: '100%',
+            width: "100%",
             transform: [
               {
                 translateY: scrollY.interpolate({
@@ -127,13 +124,13 @@ const Creator: React.FC<{
             ],
           }}
         >
-          <LinearGradient 
+          <LinearGradient
             style={{
               flex: 1,
               top: 1,
             }}
             locations={[0, 1, 0]}
-            colors={['#00000000', colors.background, '#00000000']}
+            colors={["#00000000", colors.background, "#00000000"]}
           />
           <TouchableOpacity
             style={{
@@ -147,7 +144,7 @@ const Creator: React.FC<{
               style={{
                 ...StyleSheet.absoluteFillObject,
                 top: 15,
-                left: 15
+                left: 15,
               }}
               name="chevron-left"
               size={40}
@@ -173,10 +170,20 @@ const Creator: React.FC<{
               animationType="pulse"
               duration={2500}
               layout={[
-                { key: 'description1', width: 152, height: 152, borderRadius: 20, padding: 0, margin: 0 },
+                {
+                  key: "description1",
+                  width: 152,
+                  height: 152,
+                  borderRadius: 20,
+                  padding: 0,
+                  margin: 0,
+                },
               ]}
             >
-              <FastImage style={styles.authorAvatar} source={{ uri: String(creator?.authorThumbnail.url || '') }} />
+              <FastImage
+                style={styles.authorAvatar}
+                source={{ uri: String(creator?.authorThumbnail.url || "") }}
+              />
             </SkeletonContent>
             <View style={styles.containerTitle}>
               <SkeletonContent
@@ -187,32 +194,20 @@ const Creator: React.FC<{
                 animationType="pulse"
                 duration={2500}
                 layout={[
-                  { key: 'title', width: `${getRandomInt(45, 100)}%`, height: 16, margin: 15 },
+                  {
+                    key: "title",
+                    width: `${getRandomInt(45, 100)}%`,
+                    height: 16,
+                    margin: 15,
+                  },
                 ]}
               >
                 <Text style={styles.title}>{creator?.author}</Text>
               </SkeletonContent>
             </View>
           </View>
-          <SkeletonContent
-            containerStyle={{ padding: 20 }}
-            isLoading={!creator}
-            boneColor={darken(0.15, colors.comment)}
-            highlightColor={darken(0.1, colors.comment)}
-            animationType="pulse"
-            duration={2500}
-            layout={[
-              { key: 'description1', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description2', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description3', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description5', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description6', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description7', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-              { key: 'description8', width: `${getRandomInt(45, 100)}%`, height: 16, marginBottom: 6 },
-            ]}
-          >
-            <Text style={styles.description}>{creator?.description}</Text>
-          </SkeletonContent>
+          <AboutCreator creator={creator} />
+          {/* <CreatorRoutes creator={creator} /> */}
         </View>
       </AnimatedMyScrollView>
     </GlobalContainer>
@@ -244,12 +239,12 @@ const styles = StyleSheet.create({
   authorAvatar: {
     width: 152,
     height: 152,
-    borderRadius: 20
+    borderRadius: 20,
   },
   containerHeaderInfo: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    top: -64
+    flexDirection: "row",
+    alignItems: "flex-end",
+    top: -64,
   },
   containerTitle: {
     flex: 1,
@@ -258,8 +253,8 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     fontFamily: fonts.heading,
     margin: 15,
-    fontSize: 22
+    fontSize: 22,
   },
 });
 
-export default Creator;
+export default memo(Creator);

@@ -6,7 +6,7 @@ import { useSong } from "../../contexts/player";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
-import TouchableScalable from "../Buttons/TouchableScalable";
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 
 interface CardVideoProps extends TVideo {
   navigation: any;
@@ -15,7 +15,7 @@ interface CardVideoProps extends TVideo {
 const CardVideo: React.FC<CardVideoProps> = ({ navigation, ...video }) => {
   const handleNavigation = async () => {
     navigation.navigate("Details", {
-      videoId: video.videoId
+      videoId: video.videoId,
     });
   };
 

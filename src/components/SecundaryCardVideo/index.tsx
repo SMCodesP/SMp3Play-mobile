@@ -10,17 +10,20 @@ import FastImage from "react-native-fast-image";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
-import TouchableScalable from "../Buttons/TouchableScalable";
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 
 interface CardVideoProps {
   navigation?: any;
   item: TMinimalInfo;
 }
 
-const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video }) => {
+const SecundaryCardVideo: React.FC<CardVideoProps> = ({
+  navigation,
+  item: video,
+}) => {
   const handleNavigation = () => {
     navigation.navigate("Details", {
-      videoId: video.videoId
+      videoId: video.videoId,
     });
   };
 
@@ -31,10 +34,7 @@ const SecundaryCardVideo: React.FC<CardVideoProps> = ({ navigation, item: video 
       style={styles.containerGeral}
       onPress={handleNavigation}
     >
-      <FastImage
-        style={styles.thumbnail}
-        source={{ uri: video.thumbnail }}
-      >
+      <FastImage style={styles.thumbnail} source={{ uri: video.thumbnail }}>
         <View style={styles.container}>
           <Text style={styles.title}>
             {video.title.substring(0, 50).trim() +

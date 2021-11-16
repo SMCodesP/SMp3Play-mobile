@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, Dimensions, Text, FlatList } from "react-native";
 
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
@@ -15,8 +9,8 @@ import FastImage from "react-native-fast-image";
 import { useNavigation } from "@react-navigation/native";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { darken, transparentize } from 'polished'
-import DraggableFlatList from 'react-native-draggable-flatlist'
+import { darken, transparentize } from "polished";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 import GlobalContainer from "../components/GlobalContainer";
 
@@ -25,7 +19,7 @@ import fonts from "../styles/fonts";
 
 import CardSongPlaylist from "../components/CardSongPlaylist";
 import { usePlaylist, usePlaylistInfo } from "../contexts/playlist";
-import TouchableScalable from "../components/Buttons/TouchableScalable";
+import { TouchableScalable } from "../components/Buttons/TouchableScalable";
 import { useDownloads } from "../contexts/downloads";
 import { AnimatedMyScrollView } from "../components/MyScrollView";
 import ModalOptionsPlaylist from "../components/Modals/ModalOptionsPlaylist";
@@ -33,44 +27,42 @@ import DraggableList from "../components/DraggableList";
 
 const { width } = Dimensions.get("window");
 
-const IMAGE_HEIGHT = 275
+const IMAGE_HEIGHT = 275;
 
 export const Playlist: React.FC<{
   route: {
     params: {
-      playlist: TPlaylist
+      playlist: TPlaylist;
     };
   };
 }> = ({
   route: {
-    params: {
-      playlist: data
-    },
+    params: { playlist: data },
   },
 }) => {
   const [moving, setMoving] = useState(false);
   const [optionsIsOpened, setOptionsIsOpened] = useState(false);
-  const { playlist, setPlaylist } = usePlaylistInfo(data.name)
-  const { handlePlayPlaylist, deletePlaylist } = usePlaylist()
-  const { handleDownloadPlaylist } = useDownloads()
+  const { playlist, setPlaylist } = usePlaylistInfo(data.name);
+  const { handlePlayPlaylist, deletePlaylist } = usePlaylist();
+  const { handleDownloadPlaylist } = useDownloads();
 
   const navigation = useNavigation();
   const scrollY = useValue(0);
 
   const handleBack = async () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
 
   const handleSearchSong = async () => {
-    navigation.navigate("SearchAddPlaylist", {
-      playlist: playlist.name
-    })
-  }
+    (navigation as any).navigate("SearchAddPlaylist", {
+      playlist: playlist.name,
+    });
+  };
 
   const handleDownload = async () => {
     handleDownloadPlaylist(playlist.name);
-    navigation.navigate("Downloads")
-  }
+    (navigation as any).navigate("Downloads");
+  };
 
   return (
     <GlobalContainer>
@@ -79,7 +71,7 @@ export const Playlist: React.FC<{
           ...StyleSheet.absoluteFillObject,
           top: 0,
           height: IMAGE_HEIGHT,
-          width: '100%',
+          width: "100%",
           transform: [
             {
               translateY: scrollY.interpolate({
@@ -98,60 +90,67 @@ export const Playlist: React.FC<{
       >
         <View style={styles.containerThumbnail}>
           <View>
-            {playlist?.songs[0] && <FastImage style={styles.thumbnailItem} source={{ uri: playlist?.songs[0].thumbnail }} />}
-            {playlist?.songs[1] && <FastImage style={styles.thumbnailItem} source={{ uri: playlist?.songs[1].thumbnail }} />}
+            {playlist?.songs[0] && (
+              <FastImage
+                style={styles.thumbnailItem}
+                source={{ uri: playlist?.songs[0].thumbnail }}
+              />
+            )}
+            {playlist?.songs[1] && (
+              <FastImage
+                style={styles.thumbnailItem}
+                source={{ uri: playlist?.songs[1].thumbnail }}
+              />
+            )}
           </View>
           <View>
-            {playlist?.songs[2] && <FastImage style={styles.thumbnailItem} source={{ uri: playlist?.songs[2].thumbnail }} />}
-            {playlist?.songs[3] && <FastImage style={styles.thumbnailItem} source={{ uri: playlist?.songs[3].thumbnail }} />}
+            {playlist?.songs[2] && (
+              <FastImage
+                style={styles.thumbnailItem}
+                source={{ uri: playlist?.songs[2].thumbnail }}
+              />
+            )}
+            {playlist?.songs[3] && (
+              <FastImage
+                style={styles.thumbnailItem}
+                source={{ uri: playlist?.songs[3].thumbnail }}
+              />
+            )}
           </View>
         </View>
-        <LinearGradient 
+        <LinearGradient
           style={{
             ...StyleSheet.absoluteFillObject,
             flex: 1,
             flexDirection: "row",
             justifyContent: "space-between",
             zIndex: 1,
-            padding: 15
+            padding: 15,
           }}
           locations={[0, 1, 0]}
-          colors={['#00000044', colors.background, '#00000000']}
+          colors={["#00000044", colors.background, "#00000000"]}
         >
-        <View style={{
-          zIndex: 1,
-        }}>
           <TouchableScalable
             rectButton={true}
-            duration={200}
+            duration={100}
             scaleTo={0.9}
+            buttonStyle={{ width: 46, height: 46 }}
             onPress={handleBack}
+            rippleColor="transparent"
           >
-            <Feather
-              name="chevron-left"
-              size={40}
-              color={colors.foreground}
-            />
+            <Feather name="chevron-left" size={40} color={colors.foreground} />
           </TouchableScalable>
-        </View>
-        <View style={{
-          zIndex: 1,
-        }}>
           <TouchableScalable
             rectButton={true}
-            duration={200}
-            scaleTo={0.2}
+            duration={100}
+            scaleTo={0.5}
             buttonStyle={{ width: 46, height: 46 }}
-            style={{flex: 1}}
-            // onPress={() => setOptionsIsOpened(true)}
+            style={{ flex: 1 }}
+            rippleColor="transparent"
+            onPress={() => setOptionsIsOpened(true)}
           >
-            <Feather
-              name="more-vertical"
-              size={32}
-              color={colors.foreground}
-            />
+            <Feather name="more-vertical" size={32} color={colors.foreground} />
           </TouchableScalable>
-        </View>
         </LinearGradient>
       </Animated.View>
       <AnimatedMyScrollView
@@ -171,20 +170,48 @@ export const Playlist: React.FC<{
             scaleTo={0.95}
             onPressOut={() => {
               if (playlist) {
-                handlePlayPlaylist(playlist.name)
+                handlePlayPlaylist(playlist.name);
               }
             }}
             enabled={playlist?.songs.length !== 0}
             buttonStyle={styles.containerButton}
-            style={[styles.button, {
-              borderColor: playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine,
-              backgroundColor: playlist?.songs.length !== 0 ? 'transparent' : transparentize(0.65, colors.selection)
-            }]}
+            style={[
+              styles.button,
+              {
+                borderColor:
+                  playlist?.songs.length !== 0
+                    ? darken(0.1, colors.pink)
+                    : colors.currentLine,
+                backgroundColor:
+                  playlist?.songs.length !== 0
+                    ? "transparent"
+                    : transparentize(0.65, colors.selection),
+              },
+            ]}
+            borderRadius={25}
           >
-            <Ionicons name="play" size={26} color={playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine} />
-            <Text style={[styles.textButton, {
-              color: playlist?.songs.length !== 0 ? darken(0.1, colors.pink) : colors.currentLine
-            }]}>Tocar</Text>
+            <Ionicons
+              name="play"
+              size={26}
+              color={
+                playlist?.songs.length !== 0
+                  ? darken(0.1, colors.pink)
+                  : colors.currentLine
+              }
+            />
+            <Text
+              style={[
+                styles.textButton,
+                {
+                  color:
+                    playlist?.songs.length !== 0
+                      ? darken(0.1, colors.pink)
+                      : colors.currentLine,
+                },
+              ]}
+            >
+              Tocar
+            </Text>
           </TouchableScalable>
         </View>
         {/* {playlist && playlist?.songs.length !== 0 ? <DraggableFlatList
@@ -201,41 +228,71 @@ export const Playlist: React.FC<{
             setMoving(false)
           }}
         /> : ( */}
-        {playlist && playlist?.songs.length !== 0 ? <DraggableList songs={playlist.songs} setPlaylist={setPlaylist} /> : (
+        {playlist && playlist?.songs.length !== 0 ? (
+          <DraggableList songs={playlist.songs} setPlaylist={setPlaylist} />
+        ) : (
           <>
-            <Text style={styles.emptyPlaylistText}>Nenhuma música na playlist</Text>
+            <Text style={styles.emptyPlaylistText}>
+              Nenhuma música na playlist
+            </Text>
             <TouchableScalable
-              buttonStyle={[styles.containerButton, {
-                backgroundColor: darken(0.1, colors.purple),
-              }]}
+              buttonStyle={[
+                styles.containerButton,
+                {
+                  backgroundColor: darken(0.1, colors.purple),
+                },
+              ]}
               rectButton={false}
               duration={100}
               scaleTo={0.95}
               onPress={handleSearchSong}
+              borderRadius={25}
             >
-              <View style={[styles.button, {
-                borderColor: darken(0.1, colors.purple),
-                borderWidth: 0
-              }]} accessible>
+              <View
+                style={[
+                  styles.button,
+                  {
+                    borderColor: darken(0.1, colors.purple),
+                    borderWidth: 0,
+                  },
+                ]}
+                accessible
+              >
                 <Ionicons name="search" size={26} color={colors.background} />
-                <Animated.Text style={[styles.textButton, {
-                  color: colors.background
-                }]}>Adicionar música</Animated.Text>
+                <Animated.Text
+                  style={[
+                    styles.textButton,
+                    {
+                      color: colors.background,
+                    },
+                  ]}
+                >
+                  Adicionar música
+                </Animated.Text>
               </View>
             </TouchableScalable>
           </>
         )}
       </AnimatedMyScrollView>
-      <RectButton style={styles.sync} onPress={handleDownload}>
+      <TouchableScalable
+        buttonStyle={styles.sync}
+        style={styles.align}
+        // rectButton={true}
+        duration={100}
+        scaleTo={0.95}
+        borderRadius={26}
+      >
+        <Ionicons name="ios-download" size={28} color={colors.foreground} />
+      </TouchableScalable>
+      {/* <RectButton  onPress={handleDownload}>
         <View style={styles.align} accessible>
-          <Ionicons name="ios-download" size={28} color={colors.foreground} />
         </View>
-      </RectButton>
+      </RectButton> */}
       <ModalOptionsPlaylist
         handleDelete={() => {
           setOptionsIsOpened(false);
           navigation.goBack();
-          deletePlaylist(data.name)
+          deletePlaylist(data.name);
         }}
         handleDownload={handleDownload}
         handleSearchSong={handleSearchSong}
@@ -248,7 +305,7 @@ export const Playlist: React.FC<{
 
 const styles = StyleSheet.create({
   containerThumbnail: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
     top: -1,
     height: IMAGE_HEIGHT,
@@ -260,7 +317,7 @@ const styles = StyleSheet.create({
   },
   containerBody: {
     paddingTop: IMAGE_HEIGHT,
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     fontFamily: fonts.heading,
@@ -268,7 +325,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     paddingHorizontal: 10,
     textAlign: "center",
-    marginBottom: 10
+    marginBottom: 10,
   },
   containerButton: {
     //TouchableScalableBorderRadiusborderRadius: 50,
@@ -277,9 +334,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "100%",
@@ -290,7 +347,7 @@ const styles = StyleSheet.create({
     color: darken(0.1, colors.pink),
     marginLeft: 15,
     fontFamily: fonts.complement,
-    fontSize: 18
+    fontSize: 18,
   },
   sync: {
     position: "absolute",
@@ -301,12 +358,13 @@ const styles = StyleSheet.create({
     height: 52,
     backgroundColor: colors.comment,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   align: {
     flex: 1,
+    width: 52,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   emptyPlaylistText: {
     fontFamily: fonts.heading,
@@ -315,6 +373,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 20,
     textAlign: "center",
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });

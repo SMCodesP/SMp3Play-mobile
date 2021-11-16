@@ -30,7 +30,9 @@ export const Home: React.FC<{
         <Text style={styles.subTitle}>Histórico</Text>
         <View style={styles.listHistory}>
           <FlatList
-            data={videos.filter(song => song.updated_at !== undefined).sort((a: any, b: any) => b.updated_at - a.updated_at)}
+            data={videos
+              .filter((song) => song.updated_at !== undefined)
+              .sort((a: any, b: any) => b.updated_at - a.updated_at)}
             renderItem={({ item }) => (
               <SecundaryCardVideo item={item} navigation={navigation} />
             )}
@@ -46,9 +48,7 @@ export const Home: React.FC<{
         <View style={{ paddingHorizontal: 15 }}>
           <FlatList
             data={creators}
-            renderItem={({ item }) => (
-              <CardCreator item={item} />
-            )}
+            renderItem={({ item }) => <CardCreator item={item} />}
             numColumns={3}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item.authorId}
@@ -88,6 +88,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.complement,
     fontSize: 16,
     marginHorizontal: 25,
-    marginVertical: 5
+    marginVertical: 5,
   },
 });

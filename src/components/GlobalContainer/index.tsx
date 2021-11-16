@@ -6,6 +6,7 @@ import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import { usePlayer } from "../../contexts/player";
 
 import colors from "../../styles/colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const GlobalContainer: React.FC<ViewProps> = ({
   children,
@@ -25,19 +26,21 @@ const GlobalContainer: React.FC<ViewProps> = ({
   }, () => {}, 'SMp3Play')
 
   return (
-    <View
-      style={[
-        {
-          flex: 1,
-          backgroundColor: colors.background,
-          marginBottom: track ? 110 : 45,
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        style={[
+          {
+            flex: 1,
+            backgroundColor: colors.background,
+            marginBottom: track ? 110 : 45,
+          },
+          style,
+        ]}
+        {...props}
+      >
+        {children}
+      </View>
+    </SafeAreaView>
   );
 };
 

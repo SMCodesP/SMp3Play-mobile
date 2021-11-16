@@ -20,25 +20,27 @@ import { usePlayer } from "../../contexts/player";
 import fonts from "../../styles/fonts";
 import TrackPlayer, {
   State,
+  Track,
   usePlaybackState,
   useProgress,
 } from "react-native-track-player";
 import Seek from "./Seek";
 import { CardVideoPlaying } from "./CardVideoPlaying";
-import TouchableScalable from "../Buttons/TouchableScalable";
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 import { msToHMS } from "../../utils/msToMHS";
 
-import { FavoriteButton  } from '../FavoriteButton'
+import { FavoriteButton } from "../FavoriteButton";
 import { isOnPlaylist, usePlaylist } from "../../contexts/playlist";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 interface PlayerProps {
   onPress: () => void;
 }
 
 const Player = ({ onPress }: PlayerProps) => {
-  const { track, repeating, queue, toggleRepeat } = usePlayer();
+  const { track, repeating, isShuffle, queue, toggleRepeat, toggleShuffle } =
+    usePlayer();
   const { toggleSongInPlaylist } = usePlaylist();
   const isLiked = isOnPlaylist(track?.extra.videoId, "Favoritos");
   const { duration, position } = useProgress();
@@ -52,8 +54,12 @@ const Player = ({ onPress }: PlayerProps) => {
     await TrackPlayer.play();
   };
 
+  const renderItem = ({ index, item }: { index: number; item: Track }) => (
+    <CardVideoPlaying index={index} item={item} />
+  );
+
   return (
-    // <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <View style={styles.container}>
         <View style={styles.inner}>
           <View style={styles.header}>
@@ -103,7 +109,12 @@ const Player = ({ onPress }: PlayerProps) => {
               </Text>
               <Text style={styles.artist}>{track?.artist}</Text>
             </View>
-            <FavoriteButton onPress={() => toggleSongInPlaylist(track?.extra, "Favoritos")} actived={isLiked} size={30} color={colors.pink} />
+            <FavoriteButton
+              onPress={() => toggleSongInPlaylist(track?.extra, "Favoritos")}
+              actived={isLiked}
+              size={30}
+              color={colors.pink}
+            />
           </View>
           <Seek value={position} duration={duration} />
           <View style={styles.containerTime}>
@@ -111,12 +122,20 @@ const Player = ({ onPress }: PlayerProps) => {
             <Text style={styles.time}>{msToHMS(duration)}</Text>
           </View>
           <View style={styles.controls}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleShuffle}>
               <Icon
                 name="shuffle"
-                color={transparentize(0.5, colors.foreground)}
+                color={
+                  isShuffle
+                    ? colors.foreground
+                    : transparentize(0.5, colors.foreground)
+                }
                 size={24}
+                style={{
+                  alignSelf: "center",
+                }}
               />
+              {isShuffle && <View style={styles.ball} />}
             </TouchableOpacity>
             <TouchableOpacity onPress={TrackPlayer.skipToPrevious}>
               <AntDesign
@@ -130,6 +149,14 @@ const Player = ({ onPress }: PlayerProps) => {
               scaleTo={0.9}
               onPress={playbackState === State.Paused ? pause : play}
               activeOpacity={0.5}
+              buttonStyle={{
+                height: 64,
+                width: 64,
+              }}
+              style={{
+                height: 64,
+                width: 64,
+              }}
             >
               <AntDesign
                 name={playbackState === State.Paused ? "play" : "pausecircle"}
@@ -138,7 +165,11 @@ const Player = ({ onPress }: PlayerProps) => {
               />
             </TouchableScalable>
             <TouchableOpacity onPress={TrackPlayer.skipToNext}>
-              <AntDesign name="stepforward" color={colors.foreground} size={46} />
+              <AntDesign
+                name="stepforward"
+                color={colors.foreground}
+                size={46}
+              />
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleRepeat}>
               <Icon
@@ -158,9 +189,7 @@ const Player = ({ onPress }: PlayerProps) => {
           </View>
           <FlatList
             data={queue}
-            renderItem={({ index, item }) => (
-              <CardVideoPlaying index={index} item={item} />
-            )}
+            renderItem={renderItem}
             keyExtractor={(item) => item.id}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
@@ -168,7 +197,7 @@ const Player = ({ onPress }: PlayerProps) => {
           />
         </View>
       </View>
-    // </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -182,49 +211,49 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    // width: '100%',
-    alignItems: 'center',
+    alignItems: "center",
   },
   inner: {
     width: (width / 100) * 90,
+    height: height,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     width: (width / 100) * 90,
-    paddingTop: 15
+    paddingTop: 15,
   },
   button: {
     width: 52,
     height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     //TouchableScalableBorderRadiusborderRadius: 10,
   },
   title: {
-    width: ((width / 100) * 90) - 124,
+    width: (width / 100) * 90 - 124,
     color: colors.foreground,
     paddingVertical: 16,
   },
   cover: {
     marginVertical: 16,
-    width: width - ((width / 100) * 25),
-    height: width - ((width / 100) * 25),
+    width: width - (width / 100) * 25,
+    height: width - (width / 100) * 25,
     borderRadius: 25,
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   metadata: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: 10
+    paddingRight: 10,
   },
   song: {
     fontSize: 32,
     fontFamily: fonts.complement,
     color: colors.foreground,
-    width: ((width / 100) * 90) - 30
+    width: (width / 100) * 90 - 30,
   },
   artist: {
     color: colors.comment,

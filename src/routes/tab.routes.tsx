@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -26,31 +26,52 @@ export const TabRoutes: React.FC = () => {
 
   return (
     <AppTab.Navigator
-      tabBarOptions={{
-        activeTintColor: colors.pink,
-        inactiveTintColor: colors.comment,
-        labelPosition: "below-icon",
-        showLabel: false,
-        tabStyle: {
+      // tabBarOptions={{
+      //   activeTintColor: colors.pink,
+      //   inactiveTintColor: colors.comment,
+      //   labelPosition: "below-icon",
+      //   showLabel: false,
+      //   tabStyle: {
+      //     height: 45,
+      //     backgroundColor: "transparent",
+      //   },
+      //   style: {
+      //     height: 45,
+      //     backgroundColor: "transparent",
+      //     borderTopWidth: 0,
+      //     elevation: 0,
+      //   },
+      // }}
+      tabBar={(props) => <BottomTab bottomTabBarProps={props} />}
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
           height: 45,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
+          borderTopWidth: 0,
+          elevation: 0,
         },
-        style: {
+        tabBarShowLabel: false,
+      }}
+      defaultScreenOptions={{
+        tabBarStyle: {
           height: 45,
           backgroundColor: "transparent",
           borderTopWidth: 0,
           elevation: 0,
         },
       }}
-      tabBar={(props) => <BottomTab bottomTabBarProps={props} />}
-      initialRouteName="Home"
     >
       <AppTab.Screen
         name="Downloads"
         component={DownloadsStackRoutes}
         options={{
-          tabBarIcon: ({ size }) => (
+          tabBarActiveTintColor: colors.pink,
+          tabBarInactiveTintColor: colors.comment,
+          tabBarIcon: ({ size, focused }) => (
             <IconAnimated
+              focused={focused}
               IconProvider={Ionicons}
               iconName="ios-download"
               alternativeIconName="ios-download-outline"
@@ -63,8 +84,11 @@ export const TabRoutes: React.FC = () => {
         name="Playlists"
         component={PlaylistsStackRoutes}
         options={{
-          tabBarIcon: ({ size }) => (
+          tabBarActiveTintColor: colors.pink,
+          tabBarInactiveTintColor: colors.comment,
+          tabBarIcon: ({ size, focused }) => (
             <IconAnimated
+              focused={focused}
               IconProvider={MaterialCommunityIcons}
               iconName="folder-music"
               alternativeIconName="folder-music-outline"
@@ -77,8 +101,11 @@ export const TabRoutes: React.FC = () => {
         name="Home"
         component={HomeStackRoutes}
         options={{
-          tabBarIcon: ({ size }) => (
+          tabBarActiveTintColor: colors.pink,
+          tabBarInactiveTintColor: colors.comment,
+          tabBarIcon: ({ size, focused }) => (
             <IconAnimated
+              focused={focused}
               IconProvider={Ionicons}
               iconName="ios-home"
               alternativeIconName="ios-home-outline"
@@ -91,8 +118,11 @@ export const TabRoutes: React.FC = () => {
         name="Search"
         component={SearchStackRoutes}
         options={{
-          tabBarIcon: ({ size }) => (
+          tabBarActiveTintColor: colors.pink,
+          tabBarInactiveTintColor: colors.comment,
+          tabBarIcon: ({ size, focused }) => (
             <IconAnimated
+              focused={focused}
               IconProvider={MaterialIcons}
               iconName="search"
               size={size}
@@ -104,8 +134,11 @@ export const TabRoutes: React.FC = () => {
         name="Settings"
         component={SettingsStackRoutes}
         options={{
-          tabBarIcon: ({ size }) => (
+          tabBarActiveTintColor: colors.pink,
+          tabBarInactiveTintColor: colors.comment,
+          tabBarIcon: ({ size, focused }) => (
             <IconAnimated
+              focused={focused}
               IconProvider={Ionicons}
               iconName="ios-settings"
               alternativeIconName="ios-settings-outline"

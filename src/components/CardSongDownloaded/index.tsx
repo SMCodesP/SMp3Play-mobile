@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
+import FastImage from "react-native-fast-image";
+import LinearGradient from "react-native-linear-gradient";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import TouchableScalable from '../Buttons/TouchableScalable';
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 
-import { darken } from 'polished';
+import { darken } from "polished";
 
-import { useNavigation } from '@react-navigation/native';
-import { useSong } from '../../contexts/player';
+import { useNavigation } from "@react-navigation/native";
+import { useSong } from "../../contexts/player";
 
-import colors from '../../styles/colors';
-import fonts from '../../styles/fonts';
+import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
 
 export const CardSongDownloaded: React.FC<{
   id: string;
 }> = ({ id }) => {
   const navigation = useNavigation();
-  const song = useSong(id)
+  const song = useSong(id);
 
   const handleNavigationToSong = () => {
     navigation.navigate("Details", {
-      videoId: id
-    })
-  }
+      videoId: id,
+    });
+  };
 
   return (
     <TouchableScalable
@@ -37,18 +37,18 @@ export const CardSongDownloaded: React.FC<{
       onPress={handleNavigationToSong}
       style={{
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: "row",
       }}
     >
       <FastImage source={{ uri: song?.thumbnail }} style={styles.image}>
         <LinearGradient
           style={{
-            flex: 1
+            flex: 1,
           }}
           start={{ x: -1, y: 0 }}
           end={{ x: 1, y: 0 }}
           locations={[0, 1, 0]}
-          colors={['#00000000',  colors.comment, '#00000000']}
+          colors={["#00000000", colors.comment, "#00000000"]}
         />
       </FastImage>
       <View style={styles.info}>
@@ -64,7 +64,7 @@ export const CardSongDownloaded: React.FC<{
       </View>
     </TouchableScalable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: colors.comment,
     //TouchableScalableBorderRadiusborderRadius: 10,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   image: {
     width: "30%",
@@ -88,15 +88,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.foreground,
-    fontFamily: fonts.text
+    fontFamily: fonts.text,
   },
   author: {
     color: colors.purple,
-    fontFamily: fonts.complement
+    fontFamily: fonts.complement,
   },
   containerButtons: {
-    flexDirection: 'row',
-    paddingRight: 10
+    flexDirection: "row",
+    paddingRight: 10,
   },
   button: {
     width: 42,
@@ -104,5 +104,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-  }
-})
+  },
+});

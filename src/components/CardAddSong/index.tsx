@@ -11,7 +11,7 @@ import ytdl from "react-native-ytdl";
 
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
-import TouchableScalable from "../Buttons/TouchableScalable";
+import { TouchableScalable } from "../Buttons/TouchableScalable";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { isOnPlaylist, usePlaylist } from "../../contexts/playlist";
 import AsyncStorage from "@react-native-async-storage/async-storage";

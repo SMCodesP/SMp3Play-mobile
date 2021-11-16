@@ -9,11 +9,14 @@ import {
   FlatList,
 } from "react-native";
 
-import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
+import TrackPlayer, {
+  State,
+  usePlaybackState,
+} from "react-native-track-player";
 
 import Animated, { Extrapolate, useValue } from "react-native-reanimated";
 import LinearGradient from "react-native-linear-gradient";
-import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import SkeletonContent from "react-native-skeleton-content-nonexpo";
 import { darken, lighten, transparentize } from "polished";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -29,22 +32,24 @@ import GlobalContainer from "../components/GlobalContainer";
 import { formatNumber } from "../utils/formatNumber";
 import { getRandomInt } from "../utils/randomNumber";
 
-import 'sugar/locales/pt'
-import Sugar from 'sugar'
+import "sugar/locales/pt";
+import Sugar from "sugar";
 import FastImage from "react-native-fast-image";
 import { RectButton, TouchableOpacity } from "react-native-gesture-handler";
 import { isOnPlaylist, usePlaylist } from "../contexts/playlist";
 import { BlurView } from "@react-native-community/blur";
 
 import { CardPlaylistSelection } from "../components/CardPlaylistSelection";
-import TouchableScalable from "../components/Buttons/TouchableScalable";
+import { TouchableScalable } from "../components/Buttons/TouchableScalable";
 import { msToHMS } from "../utils/msToMHS";
 import ModalCustom from "../components/ModalCustom";
 import MyScrollView, { AnimatedMyScrollView } from "../components/MyScrollView";
 
-const AnimatedImageBackground = Animated.createAnimatedComponent(FastImage as any) as any;
+const AnimatedImageBackground = Animated.createAnimatedComponent(
+  FastImage as any
+) as any;
 
-const IMAGE_HEIGHT = 275
+const IMAGE_HEIGHT = 275;
 
 const Details: React.FC<{
   route: {
@@ -56,9 +61,7 @@ const Details: React.FC<{
   navigation: any;
 }> = ({
   route: {
-    params: {
-      videoId,
-    },
+    params: { videoId },
   },
   navigation,
 }) => {
@@ -78,7 +81,8 @@ const Details: React.FC<{
 
   const handlePlay = async () => {
     if (track) {
-      if (track?.extra.videoId === video?.videoId) return await TrackPlayer.play();
+      if (track?.extra.videoId === video?.videoId)
+        return await TrackPlayer.play();
     }
     setLoadingTrack(true);
     await TrackPlayer.destroy();
@@ -86,15 +90,15 @@ const Details: React.FC<{
       await handlePlaySong(video);
     }
     setLoadingTrack(false);
-  }
+  };
 
   const handlePause = async () => {
     await TrackPlayer.pause();
-  }
+  };
 
   const handleBack = async () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
 
   return (
     <GlobalContainer>
@@ -105,7 +109,7 @@ const Details: React.FC<{
             ...StyleSheet.absoluteFillObject,
             top: 0,
             height: IMAGE_HEIGHT,
-            width: '100%',
+            width: "100%",
             transform: [
               {
                 translateY: scrollY.interpolate({
@@ -122,19 +126,19 @@ const Details: React.FC<{
             ],
           }}
         >
-          <LinearGradient 
+          <LinearGradient
             style={{
               flex: 1,
-              top: 1
+              top: 1,
             }}
             locations={[0, 1, 0]}
-            colors={['#00000044', colors.background, '#00000000']}
+            colors={["#00000044", colors.background, "#00000000"]}
           >
             <TouchableOpacity
               style={{
                 margin: 15,
                 width: 40,
-                height: 40
+                height: 40,
               }}
               onPress={handleBack}
             >
@@ -153,7 +157,7 @@ const Details: React.FC<{
             backgroundColor: darken(0.15, colors.comment),
             top: 0,
             height: IMAGE_HEIGHT,
-            width: '100%',
+            width: "100%",
             transform: [
               {
                 translateY: scrollY.interpolate({
@@ -170,13 +174,13 @@ const Details: React.FC<{
             ],
           }}
         >
-          <LinearGradient 
+          <LinearGradient
             style={{
               flex: 1,
               top: 1,
             }}
             locations={[0, 1, 0]}
-            colors={['#00000000', colors.background, '#00000000']}
+            colors={["#00000000", colors.background, "#00000000"]}
           />
           <TouchableOpacity
             style={{
@@ -190,7 +194,7 @@ const Details: React.FC<{
               style={{
                 ...StyleSheet.absoluteFillObject,
                 top: 15,
-                left: 15
+                left: 15,
               }}
               name="chevron-left"
               size={40}
@@ -216,10 +220,22 @@ const Details: React.FC<{
               animationType="shiver"
               duration={2500}
               layout={[
-                { key: 'avatar', width: 152, height: 152, borderRadius: 20, padding: 0, margin: 0 },
+                {
+                  key: "avatar",
+                  width: 152,
+                  height: 152,
+                  borderRadius: 20,
+                  padding: 0,
+                  margin: 0,
+                },
               ]}
             >
-              <FastImage style={styles.authorAvatar} source={{ uri: String(video?.creator?.authorThumbnail.url || '') }} />
+              <FastImage
+                style={styles.authorAvatar}
+                source={{
+                  uri: String(video?.creator?.authorThumbnail.url || ""),
+                }}
+              />
             </SkeletonContent>
             <View style={styles.containerTitle}>
               <SkeletonContent
@@ -230,7 +246,12 @@ const Details: React.FC<{
                 animationType="shiver"
                 duration={2500}
                 layout={[
-                  { key: 'title', width: `${getRandomInt(45, 100)}%`, height: 16, margin: 15 },
+                  {
+                    key: "title",
+                    width: `${getRandomInt(45, 100)}%`,
+                    height: 16,
+                    margin: 15,
+                  },
                 ]}
               >
                 <Text style={styles.title}>{video?.title}</Text>
@@ -244,49 +265,123 @@ const Details: React.FC<{
                   animationType="shiver"
                   duration={2500}
                   layout={[
-                    { key: 'button1', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
-                    { key: 'button2', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
-                    { key: 'button3', width: 72, height: 42, marginLeft: 15, borderRadius: 10 },
+                    {
+                      key: "button1",
+                      width: 72,
+                      height: 42,
+                      marginLeft: 15,
+                      borderRadius: 10,
+                    },
+                    {
+                      key: "button2",
+                      width: 72,
+                      height: 42,
+                      marginLeft: 15,
+                      borderRadius: 10,
+                    },
+                    {
+                      key: "button3",
+                      width: 72,
+                      height: 42,
+                      marginLeft: 15,
+                      borderRadius: 10,
+                    },
                   ]}
                 >
-                  <RectButton
-                    style={[styles.button, {
-                      backgroundColor: colors.cyan
-                    }]}
-                    onPress={track?.extra.videoId === video?.videoId ? (playbackState === State.Paused ? handlePlay : handlePause) : handlePlay}
-                    enabled={!loadingTrack}
+                  <TouchableScalable
+                    duration={100}
+                    scaleTo={0.95}
+                    rectButton={true}
+                    buttonStyle={{
+                      ...styles.button,
+                      backgroundColor: colors.cyan,
+                    }}
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 72,
+                      height: 42,
+                    }}
                     rippleColor={darken(0.3, colors.cyan)}
+                    borderRadius={10}
+                    onPress={
+                      track?.extra.videoId === video?.videoId
+                        ? playbackState === State.Paused
+                          ? handlePlay
+                          : handlePause
+                        : handlePlay
+                    }
+                    enabled={!loadingTrack}
                   >
-                    <View accessible>
-                      {loadingTrack ? (
-                        <ActivityIndicator size="small" color={colors.background} />
-                      ) : (
-                        <Ionicons name={track?.extra.videoId === video?.videoId ? (playbackState === State.Paused ? "play" : "pause") : "play"} size={26} color={colors.background} />
-                      )}
-                    </View>
-                  </RectButton>
-                  <RectButton
-                    style={[styles.button, {
-                      backgroundColor: colors.pink
-                    }]}
+                    {loadingTrack ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={colors.background}
+                      />
+                    ) : (
+                      <Ionicons
+                        name={
+                          track?.extra.videoId === video?.videoId
+                            ? playbackState === State.Paused
+                              ? "play"
+                              : "pause"
+                            : "play"
+                        }
+                        size={26}
+                        color={colors.background}
+                      />
+                    )}
+                  </TouchableScalable>
+                  <TouchableScalable
+                    duration={100}
+                    scaleTo={0.95}
+                    rectButton={true}
+                    buttonStyle={{
+                      ...styles.button,
+                      backgroundColor: colors.pink,
+                    }}
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 72,
+                      height: 42,
+                    }}
                     rippleColor={darken(0.3, colors.pink)}
-                    onPress={() => video && toggleSongInPlaylist(video, "Favoritos")}
+                    borderRadius={10}
+                    onPress={() =>
+                      video && toggleSongInPlaylist(video, "Favoritos")
+                    }
                   >
-                    <View accessible>
-                      <AntDesign name={isLiked ? "heart" : "hearto"} size={26} color={colors.background} />
-                    </View>
-                  </RectButton>
-                  <RectButton
-                    style={[styles.button, {
-                      backgroundColor: colors.yellow
-                    }]}
+                    <AntDesign
+                      name={isLiked ? "heart" : "hearto"}
+                      size={26}
+                      color={colors.background}
+                    />
+                  </TouchableScalable>
+                  <TouchableScalable
+                    duration={100}
+                    scaleTo={0.95}
+                    rectButton={true}
+                    buttonStyle={{
+                      ...styles.button,
+                      backgroundColor: colors.yellow,
+                    }}
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 72,
+                      height: 42,
+                    }}
                     rippleColor={darken(0.3, colors.yellow)}
+                    borderRadius={10}
                     onPress={() => setModalIsOpen(true)}
                   >
-                    <View accessible>
-                      <Ionicons name={"add"} size={26} color={colors.background} />
-                    </View>
-                  </RectButton>
+                    <Ionicons
+                      name={"add"}
+                      size={26}
+                      color={colors.background}
+                    />
+                  </TouchableScalable>
                 </SkeletonContent>
               </View>
             </View>
@@ -299,11 +394,43 @@ const Details: React.FC<{
             animationType="shiver"
             duration={2500}
             layout={[
-              { key: 'description1', width: `100%`, height: 185, marginBottom: 6, borderRadius: 15 },
-              { key: 'channel', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6, borderRadius: 15 },
-              { key: 'views', width: `${getRandomInt(25, 45)}%`, height: 16, marginTop: 20, marginBottom: 6, borderRadius: 15 },
-              { key: 'duration', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6, borderRadius: 15 },
-              { key: 'published', width: `${getRandomInt(25, 45)}%`, height: 16, marginBottom: 6, borderRadius: 15 },
+              {
+                key: "description1",
+                width: `100%`,
+                height: 185,
+                marginBottom: 6,
+                borderRadius: 15,
+              },
+              {
+                key: "channel",
+                width: `${getRandomInt(25, 45)}%`,
+                height: 16,
+                marginTop: 20,
+                marginBottom: 6,
+                borderRadius: 15,
+              },
+              {
+                key: "views",
+                width: `${getRandomInt(25, 45)}%`,
+                height: 16,
+                marginTop: 20,
+                marginBottom: 6,
+                borderRadius: 15,
+              },
+              {
+                key: "duration",
+                width: `${getRandomInt(25, 45)}%`,
+                height: 16,
+                marginBottom: 6,
+                borderRadius: 15,
+              },
+              {
+                key: "published",
+                width: `${getRandomInt(25, 45)}%`,
+                height: 16,
+                marginBottom: 6,
+                borderRadius: 15,
+              },
             ]}
           >
             <View>
@@ -314,9 +441,13 @@ const Details: React.FC<{
               >
                 <View style={styles.containerDescription}>
                   <Text
-                    onLayout={(event) => setHeightDescription(event.nativeEvent.layout.height)}
+                    onLayout={(event) =>
+                      setHeightDescription(event.nativeEvent.layout.height)
+                    }
                     style={[styles.description, styles.descriptionText]}
-                  >{video?.description}</Text>
+                  >
+                    {video?.description}
+                  </Text>
                   {heightDescription >= 155 && (
                     <Text style={styles.readMore}>Ler mais</Text>
                   )}
@@ -325,13 +456,16 @@ const Details: React.FC<{
             </View>
             <View style={styles.containerInfo}>
               <Text style={styles.info}>
-                <Text style={styles.span}>Autor:</Text> {String(video?.creator?.author)}
+                <Text style={styles.span}>Autor:</Text>{" "}
+                {String(video?.creator?.author)}
               </Text>
               <Text style={styles.info}>
-                <Text style={styles.span}>Views:</Text> {formatNumber(Number(video?.views || '1'))}
+                <Text style={styles.span}>Views:</Text>{" "}
+                {formatNumber(Number(video?.views || "1"))}
               </Text>
               <Text style={styles.info}>
-                <Text style={styles.span}>Duração:</Text> {msToHMS(Number(video?.timestamp))}
+                <Text style={styles.span}>Duração:</Text>{" "}
+                {msToHMS(Number(video?.timestamp))}
               </Text>
               <Text style={styles.info}>
                 <Text style={styles.span}>Postado:</Text> {video?.ago}
@@ -340,29 +474,48 @@ const Details: React.FC<{
           </SkeletonContent>
         </View>
       </AnimatedMyScrollView>
-      <Modal animationType="fade" transparent={true} visible={modalIsOpen} statusBarTranslucent={true}>
-        <BlurView style={styles.blurModal} blurAmount={2} blurRadius={10} overlayColor={transparentize(0.5, colors.background)} />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalIsOpen}
+        statusBarTranslucent={true}
+      >
+        <BlurView
+          style={styles.blurModal}
+          blurAmount={2}
+          blurRadius={10}
+          overlayColor={transparentize(0.5, colors.background)}
+        />
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Adicionar às playlists:</Text>
-            {video && <FlatList
-              data={playlists}
-              keyExtractor={({ name }) => name}
-              renderItem={({ item }) => <CardPlaylistSelection item={item} video={video} />}
-            />}
+            {video && (
+              <FlatList
+                data={playlists}
+                keyExtractor={({ name }) => name}
+                renderItem={({ item }) => (
+                  <CardPlaylistSelection item={item} video={video} />
+                )}
+              />
+            )}
             <View>
               <TouchableScalable
                 buttonStyle={styles.containerButtonModal}
                 duration={100}
                 scaleTo={0.95}
-                style={[styles.modalButton, {
-                  backgroundColor: colors.comment
-                }]}
+                style={[
+                  styles.modalButton,
+                  {
+                    backgroundColor: colors.comment,
+                  },
+                ]}
                 delayPressOut={100}
                 onPressOut={() => setModalIsOpen(false)}
               >
                 <Ionicons name="ios-save" size={26} color={colors.foreground} />
-                <Animated.Text style={styles.textButtonModal}>Salvar</Animated.Text>
+                <Animated.Text style={styles.textButtonModal}>
+                  Salvar
+                </Animated.Text>
               </TouchableScalable>
               <TouchableScalable
                 duration={100}
@@ -381,9 +534,16 @@ const Details: React.FC<{
                   rippleColor={colors.red}
                 >
                   <View style={styles.modalButton} accessible>
-                    <Animated.Text style={[styles.textButtonModal, {
-                      color: colors.red
-                    }]}>Cancelar</Animated.Text>
+                    <Animated.Text
+                      style={[
+                        styles.textButtonModal,
+                        {
+                          color: colors.red,
+                        },
+                      ]}
+                    >
+                      Cancelar
+                    </Animated.Text>
                   </View>
                 </RectButton>
               </TouchableScalable>
@@ -403,22 +563,28 @@ const Details: React.FC<{
             scaleTo={0.9}
             rectButton={false}
             activeOpacity={1}
-            style={styles.containerButtonModal}
-            // buttonStyle={styles.containerButtonModal}
+            style={styles.modalButton}
+            buttonStyle={styles.containerButtonModal}
             onPressOut={() => setIsMaximized(false)}
-            rippleColor={colors.red}
+            borderRadius={25}
           >
             <RectButton
               style={{
                 flex: 1,
-                //TouchableScalableBorderRadiusborderRadius: 50,
               }}
               rippleColor={colors.red}
             >
               <View style={styles.modalButton} accessible>
-                <Text style={[styles.textButtonModal, {
-                  color: colors.red
-                }]}>Fechar</Text>
+                <Text
+                  style={[
+                    styles.textButtonModal,
+                    {
+                      color: colors.red,
+                    },
+                  ]}
+                >
+                  Fechar
+                </Text>
               </View>
             </RectButton>
           </TouchableScalable>
@@ -471,10 +637,10 @@ const styles = StyleSheet.create({
   },
   readMore: {
     color: colors.cyan,
-    fontFamily: fonts.complement
+    fontFamily: fonts.complement,
   },
   description: {
-    maxHeight: 155
+    maxHeight: 155,
   },
   descriptionText: {
     fontSize: 16,
@@ -496,11 +662,11 @@ const styles = StyleSheet.create({
   authorAvatar: {
     width: 152,
     height: 152,
-    borderRadius: 20
+    borderRadius: 20,
   },
   containerHeaderInfo: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     top: -46,
     marginTop: -46,
   },
@@ -510,14 +676,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.foreground,
     fontFamily: fonts.heading,
-    margin: 15
+    margin: 15,
   },
   containerButtons: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   button: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     width: 72,
     height: 42,
     marginLeft: 15,
@@ -543,7 +709,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     marginTop: 65,
     marginBottom: 45,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   modalTitle: {
     color: colors.foreground,
@@ -561,16 +727,16 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     marginLeft: 15,
     fontFamily: fonts.complement,
-    fontSize: 18
+    fontSize: 18,
   },
   modalButton: {
     //TouchableScalableBorderRadiusborderRadius: 50,
     height: 50,
     width: "100%",
-    flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

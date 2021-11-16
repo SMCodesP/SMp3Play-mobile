@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { BlurView } from "@react-native-community/blur";
 import { BottomTabBar, BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import {
-  PanGestureHandler,
-} from "react-native-gesture-handler";
+import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
@@ -21,7 +19,7 @@ import { usePlayer } from "../../contexts/player";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 
-const BlurViewAnimated = Animated.createAnimatedComponent(BlurView)
+const BlurViewAnimated = Animated.createAnimatedComponent(BlurView);
 
 const BottomTab: React.FC<{
   bottomTabBarProps: BottomTabBarProps;
@@ -92,7 +90,7 @@ const BottomTab: React.FC<{
   return (
     <>
       {track && (
-        <PanGestureHandler onGestureEvent={onGestureEvent}>
+        <PanGestureHandler activeOffsetY={250} onGestureEvent={onGestureEvent}>
           <Animated.View
             style={[
               {
@@ -110,14 +108,17 @@ const BottomTab: React.FC<{
         </PanGestureHandler>
       )}
       <BlurViewAnimated
-        style={[{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: track ? 110 : 45,
-          backgroundColor: transparentize(0.5, colors.background)
-        }, bottomTabPositionStyle]}
+        style={[
+          {
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: track ? 110 : 45,
+            backgroundColor: transparentize(0.5, colors.background),
+          },
+          bottomTabPositionStyle,
+        ]}
         blurType="dark"
         blurAmount={8}
         blurRadius={20}

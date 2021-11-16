@@ -3,7 +3,8 @@ import {
   TouchableOpacityProps,
   StyleProp,
   ViewStyle,
-  TouchableOpacity
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Animated, {
@@ -23,12 +24,15 @@ interface TouchableScalable extends TouchableOpacityProps {
   rectButton?: boolean;
   enabled?: boolean;
   rippleColor?: string;
+  borderRadius?: number;
+  opacity?: number;
+  opacityActived?: number;
 }
 
-const RectButtonAnimated = Animated.createAnimatedComponent(RectButton) as any
-const TouchableAnimated = Animated.createAnimatedComponent(TouchableOpacity)
+const RectButtonAnimated = Animated.createAnimatedComponent(RectButton) as any;
+const TouchableAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 
-const TouchableScalable: React.FC<TouchableScalable> = ({
+export const TouchableScalable: React.FC<TouchableScalable> = ({
   scaleTo,
   duration,
   style,
@@ -38,6 +42,9 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
   buttonStyle,
   rectButton = false,
   enabled = true,
+  borderRadius = 0,
+  opacityActived = 1,
+  opacity = 1,
   ...props
 }) => {
   const pressed = useSharedValue(false);
@@ -46,46 +53,64 @@ const TouchableScalable: React.FC<TouchableScalable> = ({
       ? withTiming(scaleTo, { duration })
       : withTiming(1, { duration })
   );
+  const progressOpacity = useDerivedValue(() =>
+    pressed.value
+      ? withTiming(opacityActived, { duration })
+      : withTiming(opacity, { duration })
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: progress.value }],
+    opacity: progressOpacity.value,
   }));
-  
+
   return rectButton ? (
-    <RectButtonAnimated
-      onBegan={() => {
-        pressed.value = true;
-        onPressIn && onPressIn();
-      }}
-      onEnded={() => {
-        pressed.value = false;
-        onPressOut && onPressOut();
-      }}
-      onCancelled={() => {
-        pressed.value = false;
-      }}
-      style={[buttonStyle, animatedStyle]}
-      enabled={enabled}
-      {...props}
+    <Animated.View
+      style={[buttonStyle, animatedStyle, { borderRadius, overflow: "hidden" }]}
     >
-      <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>
-    </RectButtonAnimated>
+      <RectButtonAnimated
+        onBegan={() => {
+          pressed.value = true;
+          onPressIn && onPressIn();
+        }}
+        onEnded={() => {
+          pressed.value = false;
+          onPressOut && onPressOut();
+        }}
+        onCancelled={() => {
+          pressed.value = false;
+        }}
+        style={[{ flex: 1 }, animatedStyle]}
+        enabled={enabled}
+        {...props}
+      >
+        <Animated.View style={[style, animatedStyle, { borderRadius }]}>
+          {children}
+        </Animated.View>
+      </RectButtonAnimated>
+    </Animated.View>
   ) : (
-    <TouchableAnimated
-      onPressIn={() => {
-        pressed.value = true;
-        onPressIn && onPressIn();
-      }}
-      onPressOut={() => {
-        pressed.value = false;
-        onPressOut && onPressOut();
-      }}
-      style={[buttonStyle, animatedStyle]}
-      {...props}
+    <Animated.View
+      style={[buttonStyle, animatedStyle, { borderRadius, overflow: "hidden" }]}
     >
-      <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>
-    </TouchableAnimated>
+      <TouchableAnimated
+        onPressIn={() => {
+          pressed.value = true;
+          onPressIn && onPressIn();
+        }}
+        onPressOut={() => {
+          pressed.value = false;
+          onPressOut && onPressOut();
+        }}
+        style={[{ flex: 1 }, animatedStyle]}
+        {...props}
+      >
+        <Animated.View
+          style={[style, animatedStyle, { borderRadius, flex: 1 }]}
+        >
+          {children}
+        </Animated.View>
+      </TouchableAnimated>
+    </Animated.View>
   );
 };
-
-export default TouchableScalable;
