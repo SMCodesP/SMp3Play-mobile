@@ -32,7 +32,7 @@ export const CardPlaylist: React.FC<{
         width: "100%",
       }}
       onPress={() => {
-        navigation.navigate("Playlist", {
+        (navigation as any).navigate("Playlist", {
           playlist,
         });
       }}

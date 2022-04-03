@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 import FastImage from "react-native-fast-image";
 import LinearGradient from "react-native-linear-gradient";
@@ -21,7 +21,7 @@ export const CardSongDownloaded: React.FC<{
   const song = useSong(id);
 
   const handleNavigationToSong = () => {
-    navigation.navigate("Details", {
+    (navigation as any).navigate("Details", {
       videoId: id,
     });
   };
@@ -39,6 +39,7 @@ export const CardSongDownloaded: React.FC<{
         flex: 1,
         flexDirection: "row",
       }}
+      borderRadius={10}
     >
       <FastImage source={{ uri: song?.thumbnail }} style={styles.image}>
         <LinearGradient
@@ -72,7 +73,6 @@ const styles = StyleSheet.create({
     height: 132,
     marginVertical: 10,
     backgroundColor: colors.comment,
-    //TouchableScalableBorderRadiusborderRadius: 10,
     flexDirection: "row",
   },
   image: {

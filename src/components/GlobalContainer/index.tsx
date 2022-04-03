@@ -1,11 +1,10 @@
 import React from "react";
-import { View, ViewProps } from "react-native";
+import { ViewProps } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+import ReceiveSharingIntent from "react-native-receive-sharing-intent";
 
 import { usePlayer } from "../../contexts/player";
 
-import colors from "../../styles/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const GlobalContainer: React.FC<ViewProps> = ({
@@ -13,33 +12,26 @@ const GlobalContainer: React.FC<ViewProps> = ({
   style,
   ...props
 }) => {
-  const { track } = usePlayer();
   const navigation = useNavigation();
 
-  ReceiveSharingIntent.getReceivedFiles((files: any) => {
-    const urlsplit = files[0].weblink.split(/^.*(youtu.be\/|v\/|embed\/|watch\?|youtube.com\/user\/[^#]*#([^\/]*?\/)*)\??v?=?([^#\&\?]*).*/);
-    if (urlsplit[3]) {
-      navigation.navigate("Details", {
-        videoId: urlsplit[3]
-      })
-    }
-  }, () => {}, 'SMp3Play')
+  ReceiveSharingIntent.getReceivedFiles(
+    (files: any) => {
+      const urlsplit = files[0].weblink.split(
+        /^.*(youtu.be\/|v\/|embed\/|watch\?|youtube.com\/user\/[^#]*#([^\/]*?\/)*)\??v?=?([^#\&\?]*).*/
+      );
+      if (urlsplit[3]) {
+        (navigation as any).navigate("Details", {
+          videoId: urlsplit[3],
+        });
+      }
+    },
+    () => {},
+    "SMp3Play"
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={[
-          {
-            flex: 1,
-            backgroundColor: colors.background,
-            marginBottom: track ? 110 : 45,
-          },
-          style,
-        ]}
-        {...props}
-      >
-        {children}
-      </View>
+    <SafeAreaView style={{ flex: 1 }} {...props}>
+      {children}
     </SafeAreaView>
   );
 };

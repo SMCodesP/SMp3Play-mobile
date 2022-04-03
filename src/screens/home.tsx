@@ -14,7 +14,7 @@ import MyScrollView from "../components/MyScrollView";
 export const Home: React.FC<{
   navigation: any;
 }> = ({ navigation }) => {
-  const { videos, creators, refreshVideos } = usePlayer();
+  const { videos, creators, refreshVideos, track } = usePlayer();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -25,39 +25,49 @@ export const Home: React.FC<{
 
   return (
     <GlobalContainer>
-      <MyScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Seja bem-vindo (a)!</Text>
-        <Text style={styles.subTitle}>Histórico</Text>
-        <View style={styles.listHistory}>
-          <FlatList
-            data={videos
-              .filter((song) => song.updated_at !== undefined)
-              .sort((a: any, b: any) => b.updated_at - a.updated_at)}
-            renderItem={({ item }) => (
-              <SecundaryCardVideo item={item} navigation={navigation} />
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.videoId}
-            ListEmptyComponent={() => (
-              <Text style={styles.empty}>Nenhuma música tocada</Text>
-            )}
-          />
-        </View>
-        <Text style={styles.subTitle}>Artístas</Text>
-        <View style={{ paddingHorizontal: 15 }}>
-          <FlatList
-            data={creators}
-            renderItem={({ item }) => <CardCreator item={item} />}
-            numColumns={3}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.authorId}
-            ListEmptyComponent={() => (
-              <Text style={styles.empty}>Nenhum artísta encontrado</Text>
-            )}
-          />
-        </View>
-      </MyScrollView>
+      {/* <MyScrollView showsVerticalScrollIndicator={false}> */}
+
+      {/* <View style={{ paddingHorizontal: 15 }}> */}
+      <FlatList
+        data={creators}
+        renderItem={({ item }) => <CardCreator item={item} />}
+        numColumns={3}
+        ListHeaderComponent={() => (
+          <>
+            <Text style={styles.title}>Seja bem-vindo (a)!</Text>
+            <Text style={styles.subTitle}>Histórico</Text>
+            <View style={styles.listHistory}>
+              <FlatList
+                data={videos
+                  .filter((song) => song.updated_at !== undefined)
+                  .sort((a: any, b: any) => b.updated_at - a.updated_at)}
+                renderItem={({ item }) => (
+                  <SecundaryCardVideo item={item} navigation={navigation} />
+                )}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item) => item.videoId}
+                ListEmptyComponent={() => (
+                  <Text style={styles.empty}>Nenhuma música tocada</Text>
+                )}
+              />
+            </View>
+            <Text style={styles.subTitle}>Artístas</Text>
+          </>
+        )}
+        contentContainerStyle={{
+          width: "100%",
+          alignItems: "center",
+          paddingBottom: track ? 110 : 45,
+        }}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.authorId}
+        ListEmptyComponent={() => (
+          <Text style={styles.empty}>Nenhum artísta encontrado</Text>
+        )}
+      />
+      {/* </View> */}
+      {/* </MyScrollView> */}
     </GlobalContainer>
   );
 };

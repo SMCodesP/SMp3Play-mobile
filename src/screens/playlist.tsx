@@ -24,6 +24,7 @@ import { useDownloads } from "../contexts/downloads";
 import { AnimatedMyScrollView } from "../components/MyScrollView";
 import ModalOptionsPlaylist from "../components/Modals/ModalOptionsPlaylist";
 import DraggableList from "../components/DraggableList";
+import { usePlayer } from "../contexts/player";
 
 const { width } = Dimensions.get("window");
 
@@ -44,6 +45,7 @@ export const Playlist: React.FC<{
   const [optionsIsOpened, setOptionsIsOpened] = useState(false);
   const { playlist, setPlaylist } = usePlaylistInfo(data.name);
   const { handlePlayPlaylist, deletePlaylist } = usePlaylist();
+  const { track } = usePlayer();
   const { handleDownloadPlaylist } = useDownloads();
 
   const navigation = useNavigation();
@@ -160,6 +162,9 @@ export const Playlist: React.FC<{
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
+        contentStyle={{
+          paddingBottom: track ? 110 : 45,
+        }}
       >
         <View style={styles.containerBody}>
           <Text style={styles.title}>{playlist?.name}</Text>
@@ -214,20 +219,6 @@ export const Playlist: React.FC<{
             </Text>
           </TouchableScalable>
         </View>
-        {/* {playlist && playlist?.songs.length !== 0 ? <DraggableFlatList
-          data={playlist.songs}
-          keyExtractor={(item) => (item as any).videoId}
-          renderItem={(props) => <CardSongPlaylist setMoving={setMoving} {...props} />}
-          // scrollEnabled={false}
-          // initialNumToRender={playlist.songs.length}
-          // activationDistance={moving ? 1 : 100000000}
-          onDragBegin={() => setMoving(true)}
-          onDragEnd={({ data: newData }) => {
-            console.log(newData.map(song => song.videoId))
-            setPlaylist(newData.map(song => song.videoId))
-            setMoving(false)
-          }}
-        /> : ( */}
         {playlist && playlist?.songs.length !== 0 ? (
           <DraggableList songs={playlist.songs} setPlaylist={setPlaylist} />
         ) : (
@@ -275,7 +266,12 @@ export const Playlist: React.FC<{
         )}
       </AnimatedMyScrollView>
       <TouchableScalable
-        buttonStyle={styles.sync}
+        buttonStyle={[
+          {
+            bottom: track ? 125 : 60,
+          },
+          styles.sync,
+        ]}
         style={styles.align}
         // rectButton={true}
         duration={100}
@@ -351,7 +347,6 @@ const styles = StyleSheet.create({
   },
   sync: {
     position: "absolute",
-    bottom: 10,
     right: 20,
     //TouchableScalableBorderRadiusborderRadius: 32,
     width: 52,

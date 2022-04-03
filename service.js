@@ -9,38 +9,36 @@
 
 import TrackPlayer, { Event } from "react-native-track-player";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNBackgroundDownloader from "react-native-background-downloader";
-import RNFS from "react-native-fs";
 
 module.exports = async function () {
   TrackPlayer.addEventListener(Event.RemotePlay, async () => {
     try {
       await TrackPlayer.play();
-    } catch (_) {}
+    } catch (_) { }
   });
 
   TrackPlayer.addEventListener(Event.RemotePause, async () => {
     try {
       await TrackPlayer.pause();
-    } catch (_) {}
+    } catch (_) { }
   });
 
   TrackPlayer.addEventListener(Event.RemoteNext, async () => {
-    // try {
-    //   await TrackPlayer.skipToNext();
-    // } catch (_) {}
+    try {
+      await TrackPlayer.skipToNext();
+    } catch (_) { }
   });
 
   TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
-    // try {
-    //   await TrackPlayer.skipToPrevious();
-    // } catch (_) {}
+    try {
+      await TrackPlayer.skipToPrevious();
+    } catch (_) { }
   });
 
   TrackPlayer.addEventListener(Event.RemoteStop, async (...props) => {
     try {
       TrackPlayer.destroy();
-    } catch (_) {}
+    } catch (_) { }
   });
 
   TrackPlayer.addEventListener(

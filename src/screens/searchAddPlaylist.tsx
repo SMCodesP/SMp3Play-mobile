@@ -16,11 +16,19 @@ import fonts from "../styles/fonts";
 import GlobalContainer from "../components/GlobalContainer";
 import CardAddSong from "../components/CardAddSong";
 import MyScrollView from "../components/MyScrollView";
+import { usePlayer } from "../contexts/player";
 
-export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { playlist } } }: any) => {
+export const SearchAddPlaylist: React.FC = ({
+  navigation,
+  route: {
+    params: { playlist },
+  },
+}: any) => {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [videos, setVideos] = useState<TVideo[]>([]);
+
+  const { track } = usePlayer();
 
   const handleQuery = async () => {
     setVideos([]);
@@ -45,57 +53,69 @@ export const SearchAddPlaylist: React.FC = ({ navigation, route: { params: { pla
     <GlobalContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
+        style={[styles.container]}
       >
-        <MyScrollView showsVerticalScrollIndicator={false} style={styles.inner}>
-          {/* <TouchableWithoutFeedback style={styles.inner} touchSoundDisabled={true} onPress={Keyboard.dismiss}> */}
-            <View style={styles.containerInput}>
-              <Jiro
-                label={"Adicione uma música"}
-                borderColor={colors.comment}
-                inputStyle={{
-                  color: colors.foreground,
-                  fontSize: 22
-                }}
-                labelStyle={{
-                  fontSize: 22
-                }}
-                returnKeyType="search"
-                onChangeText={setQuery}
-                onSubmitEditing={handleQuery}
-                value={query}
-              />
-            </View>
-            {loading ? (
-              <View style={{
-                width: "100%",
-                height: 400
-              }}>
-                <LottieView
-                  source={require("../../assets/lf30_editor_kplkuq1a.json")}
-                  duration={1930}
-                  autoPlay
-                  loop
-                />
-              </View>
-            ) : (
-              videos.length === 0 && (
-                <View style={styles.containerSongEmpty}>
-                  <Text style={styles.songEmpty}>
-                    Nenhuma música encontrada/pesquisada
-                  </Text>
-                </View>
-              )
-            )}
-            <FlatList
-              data={videos}
-              renderItem={({ item }) => <CardAddSong playlistName={playlist} item={item} navigation={navigation} />}
-              keyExtractor={(video) => video.videoId}
-              contentContainerStyle={styles.containerListSongs}
-              nestedScrollEnabled
+        {/* <MyScrollView showsVerticalScrollIndicator={false} style={styles.inner}> */}
+        {/* <TouchableWithoutFeedback style={styles.inner} touchSoundDisabled={true} onPress={Keyboard.dismiss}> */}
+        <View style={styles.containerInput}>
+          <Jiro
+            label={"Adicione uma música"}
+            borderColor={colors.comment}
+            inputStyle={{
+              color: colors.foreground,
+              fontSize: 22,
+            }}
+            labelStyle={{
+              fontSize: 22,
+            }}
+            returnKeyType="search"
+            onChangeText={setQuery}
+            onSubmitEditing={handleQuery}
+            value={query}
+          />
+        </View>
+        {loading ? (
+          <View
+            style={{
+              width: "100%",
+              height: 400,
+            }}
+          >
+            <LottieView
+              source={require("../../assets/lf30_editor_kplkuq1a.json")}
+              duration={1930}
+              autoPlay
+              loop
             />
-          {/* </TouchableWithoutFeedbacsk> */}
-        </MyScrollView>
+          </View>
+        ) : (
+          videos.length === 0 && (
+            <View style={styles.containerSongEmpty}>
+              <Text style={styles.songEmpty}>
+                Nenhuma música encontrada/pesquisada
+              </Text>
+            </View>
+          )
+        )}
+        {/* </TouchableWithoutFeedbacsk> */}
+        {/* </MyScrollView> */}
+        <FlatList
+          data={videos}
+          renderItem={({ item }) => (
+            <CardAddSong
+              playlistName={playlist}
+              item={item}
+              navigation={navigation}
+            />
+          )}
+          keyExtractor={(video) => video.videoId}
+          contentContainerStyle={styles.containerListSongs}
+          ListFooterComponent={() => <></>}
+          ListFooterComponentStyle={{
+            height: track ? 125 : 60,
+            backgroundColor: colors.background,
+          }}
+        />
       </KeyboardAvoidingView>
     </GlobalContainer>
   );
@@ -115,7 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: fonts.heading,
     paddingHorizontal: 15,
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   containerInput: {
     paddingHorizontal: 25,
@@ -136,5 +156,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.comment,
     borderRadius: 15,
     marginHorizontal: 15,
-  }
+  },
 });

@@ -96,10 +96,6 @@ const Details: React.FC<{
     await TrackPlayer.pause();
   };
 
-  const handleBack = async () => {
-    navigation.goBack();
-  };
-
   return (
     <GlobalContainer>
       {video ? (
@@ -140,7 +136,7 @@ const Details: React.FC<{
                 width: 40,
                 height: 40,
               }}
-              onPress={handleBack}
+              onPress={navigation.goBack}
             >
               <Feather
                 name="chevron-left"
@@ -188,7 +184,7 @@ const Details: React.FC<{
               top: 15,
               left: 15,
             }}
-            onPress={handleBack}
+            onPress={navigation.goBack}
           >
             <Feather
               style={{

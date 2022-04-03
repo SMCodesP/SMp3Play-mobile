@@ -14,44 +14,53 @@ import { usePlaylist } from "../contexts/playlist";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 import ModalCreatePlaylist from "../components/Modals/ModalCreatePlaylist";
+import { usePlayer } from "../contexts/player";
 
 export const Playlists: React.FC = () => {
+  const { track } = usePlayer();
   const { playlists } = usePlaylist();
   const [modalIsOpenCreate, setModalCreateIsOpen] = useState(false);
   const [modalImportIsOpen, setModalImportIsOpen] = useState(false);
 
   return (
     <GlobalContainer>
-      <MyScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.title}>Playlists</Text>
-        <TouchableScalable
-          buttonStyle={styles.containerButton}
-          rectButton={true}
-          duration={100}
-          scaleTo={0.95}
-          borderRadius={50}
-          rippleColor={colors.purple}
-          delayPressOut={100}
-          onPressOut={() => setModalCreateIsOpen((state) => !state)}
-          style={styles.button}
-        >
-          <Ionicons name="add" size={26} color={darken(0.1, colors.purple)} />
-          <Animated.Text style={styles.textButton}>
-            Criar playlist
-          </Animated.Text>
-        </TouchableScalable>
-        <FlatList
-          data={playlists}
-          renderItem={({ item }) => <CardPlaylist playlist={item} />}
-          keyExtractor={({ name }) => name}
-          ListEmptyComponent={() => (
-            <Text style={styles.empty}>Nenhuma playlist criada</Text>
-          )}
-        />
-      </MyScrollView>
+      <FlatList
+        data={playlists}
+        renderItem={({ item }) => <CardPlaylist playlist={item} />}
+        keyExtractor={({ name }) => name}
+        contentContainerStyle={{
+          paddingBottom: track ? 110 : 45,
+          marginHorizontal: 15,
+        }}
+        ListHeaderComponent={() => (
+          <>
+            <Text style={styles.title}>Playlists</Text>
+            <TouchableScalable
+              buttonStyle={styles.containerButton}
+              rectButton={true}
+              duration={100}
+              scaleTo={0.95}
+              borderRadius={50}
+              rippleColor={colors.purple}
+              delayPressOut={100}
+              onPressOut={() => setModalCreateIsOpen((state) => !state)}
+              style={styles.button}
+            >
+              <Ionicons
+                name="add"
+                size={26}
+                color={darken(0.1, colors.purple)}
+              />
+              <Animated.Text style={styles.textButton}>
+                Criar playlist
+              </Animated.Text>
+            </TouchableScalable>
+          </>
+        )}
+        ListEmptyComponent={() => (
+          <Text style={styles.empty}>Nenhuma playlist criada</Text>
+        )}
+      />
       <ModalImportPlaylist
         modalIsOpen={modalImportIsOpen}
         closeModal={() => setModalImportIsOpen(false)}
@@ -65,9 +74,6 @@ export const Playlists: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 15,
-  },
   title: {
     fontFamily: fonts.heading,
     fontSize: 32,

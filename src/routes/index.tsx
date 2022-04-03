@@ -9,9 +9,12 @@ import colors from "../styles/colors";
 const MyTheme = {
   dark: true,
   colors: {
-    ...DefaultTheme.colors,
-    background: colors.background,
-    primary: colors.background,
+    background: "transparent",
+    primary: "transparent",
+    card: "transparent",
+    text: "transparent",
+    border: "transparent",
+    notification: "transparent",
   },
 };
 
