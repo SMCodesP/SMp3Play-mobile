@@ -23,17 +23,9 @@ module.exports = async function () {
     } catch (_) { }
   });
 
-  TrackPlayer.addEventListener(Event.RemoteNext, async () => {
-    try {
-      await TrackPlayer.skipToNext();
-    } catch (_) { }
-  });
+  TrackPlayer.addEventListener('remote-next', () => TrackPlayer.skipToNext());
 
-  TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
-    try {
-      await TrackPlayer.skipToPrevious();
-    } catch (_) { }
-  });
+  TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.skipToPrevious());
 
   TrackPlayer.addEventListener(Event.RemoteStop, async (...props) => {
     try {
@@ -41,56 +33,56 @@ module.exports = async function () {
     } catch (_) { }
   });
 
-  TrackPlayer.addEventListener(
-    Event.PlaybackTrackChanged,
-    async ({ nextTrack }) => {
-      if (nextTrack !== undefined && nextTrack !== null) {
-        let track = await TrackPlayer.getTrack(nextTrack);
+  // TrackPlayer.addEventListener(
+  //   Event.PlaybackTrackChanged,
+  //   async ({ nextTrack }) => {
+  //     if (nextTrack !== undefined && nextTrack !== null) {
+  //       let track = await TrackPlayer.getTrack(nextTrack);
 
-        const jsonValueVideos = await AsyncStorage.getItem("@videos");
-        const videos =
-          jsonValueVideos != null ? JSON.parse(jsonValueVideos) || [] : [];
-        const jsonValueCreators = await AsyncStorage.getItem("@creators");
-        const creators =
-          jsonValueCreators != null ? JSON.parse(jsonValueCreators) || [] : [];
-        const creator = creators.find(
-          (creator) => creator.authorId === track.extra.authorId
-        );
+  //       const jsonValueVideos = await AsyncStorage.getItem("@videos");
+  //       const videos =
+  //         jsonValueVideos != null ? JSON.parse(jsonValueVideos) || [] : [];
+  //       const jsonValueCreators = await AsyncStorage.getItem("@creators");
+  //       const creators =
+  //         jsonValueCreators != null ? JSON.parse(jsonValueCreators) || [] : [];
+  //       const creator = creators.find(
+  //         (creator) => creator.authorId === track.extra.creator.authorId
+  //       ) || track.extra.creator;
 
-        const newCreators = [
-          ...new Map(
-            [
-              {
-                authorId: creator.authorId,
-                author: creator.author,
-                authorUrl: creator.authorUrl,
-                authorBanner: creator.authorBanner,
-                authorThumbnail: creator.authorThumbnail,
-                subscriberCount: creator.subscriberCount,
-                description: creator.description,
-                isVerified: creator.isVerified,
-              },
-              ...creators,
-            ].map((item) => [item.authorId, item])
-          ).values(),
-        ];
+  //       const newCreators = [
+  //         ...new Map(
+  //           [
+  //             {
+  //               authorId: creator.authorId,
+  //               author: creator.author,
+  //               authorUrl: creator.authorUrl,
+  //               authorBanner: creator.authorBanner,
+  //               authorThumbnail: creator.authorThumbnail,
+  //               subscriberCount: creator.subscriberCount,
+  //               description: creator.description,
+  //               isVerified: creator.isVerified,
+  //             },
+  //             ...creators,
+  //           ].map((item) => [item.authorId, item])
+  //         ).values(),
+  //       ];
 
-        const newVideos = [
-          ...new Map(
-            [
-              ...videos,
-              {
-                ...track.extra,
-                videoId: track.extra.videoId,
-                updated_at: Date.now(),
-              },
-            ].map((item) => [item.videoId, item])
-          ).values(),
-        ];
+  //       const newVideos = [
+  //         ...new Map(
+  //           [
+  //             ...videos,
+  //             {
+  //               ...track.extra,
+  //               videoId: track.extra.videoId,
+  //               updated_at: Date.now(),
+  //             },
+  //           ].map((item) => [item.videoId, item])
+  //         ).values(),
+  //       ];
 
-        await AsyncStorage.setItem("@creators", JSON.stringify(newCreators));
-        await AsyncStorage.setItem("@videos", JSON.stringify(newVideos));
-      }
-    }
-  );
+  //       await AsyncStorage.setItem("@creators", JSON.stringify(newCreators));
+  //       await AsyncStorage.setItem("@videos", JSON.stringify(newVideos));
+  //     }
+  //   }
+  // );
 };

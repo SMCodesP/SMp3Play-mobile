@@ -273,17 +273,13 @@ export const Playlist: React.FC<{
           styles.sync,
         ]}
         style={styles.align}
-        // rectButton={true}
         duration={100}
         scaleTo={0.95}
         borderRadius={26}
+        onPress={handleDownload}
       >
         <Ionicons name="ios-download" size={28} color={colors.foreground} />
       </TouchableScalable>
-      {/* <RectButton  onPress={handleDownload}>
-        <View style={styles.align} accessible>
-        </View>
-      </RectButton> */}
       <ModalOptionsPlaylist
         handleDelete={() => {
           setOptionsIsOpened(false);

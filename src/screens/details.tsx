@@ -72,7 +72,7 @@ const Details: React.FC<{
 
   const { handlePlaySong, track } = usePlayer();
   const { toggleSongInPlaylist, playlists } = usePlaylist();
-  const video = useSong(videoId);
+  const video = useSong(videoId, navigation.goBack);
 
   const playbackState = usePlaybackState();
   const scrollY = useValue(0);
@@ -507,6 +507,7 @@ const Details: React.FC<{
                 ]}
                 delayPressOut={100}
                 onPressOut={() => setModalIsOpen(false)}
+                borderRadius={10}
               >
                 <Ionicons name="ios-save" size={26} color={colors.foreground} />
                 <Animated.Text style={styles.textButtonModal}>

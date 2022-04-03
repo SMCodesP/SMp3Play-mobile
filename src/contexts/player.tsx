@@ -24,6 +24,8 @@ import ytdl from "react-native-ytdl";
 import ytch from "yt-channel-info";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import { shuffle } from "../utils/shuffle";
+import axios from "axios";
+import { ToastAndroid } from "react-native";
 
 type PlayerType = {
   toggleRepeat(): Promise<void>;
@@ -32,6 +34,7 @@ type PlayerType = {
   refreshQueue(): Promise<void>;
   refreshVideos(): Promise<void>;
   handlePlaySong(song: TMinimalInfo): Promise<void>;
+  findCreator(id: string): Promise<TCreator | null>;
   videos: TMinimalInfo[];
   queue: Track[];
   track: Track | null;
@@ -101,24 +104,10 @@ const PlayerProvider: React.FC = ({ children }) => {
     const storagedCreators = JSON.parse(
       (await AsyncStorage.getItem("@creators")) || "[]"
     );
-    const creator = await ytch.getChannelInfo(song.authorId);
+
     const newCreators = [
       ...new Map(
-        [
-          {
-            authorId: creator.authorId,
-            author: creator.author,
-            authorUrl: creator.authorUrl,
-            authorBanner:
-              creator.authorBanners[creator.authorBanners.length - 1],
-            authorThumbnail:
-              creator.authorThumbnails[creator.authorThumbnails.length - 1],
-            subscriberCount: creator.subscriberCount,
-            description: creator.description,
-            isVerified: creator.isVerified,
-          },
-          ...storagedCreators,
-        ].map((item) => [item.authorId, item])
+        [song.creator, ...storagedCreators].map((item) => [item.authorId, item])
       ).values(),
     ];
     setCreators(newCreators);
@@ -184,6 +173,22 @@ const PlayerProvider: React.FC = ({ children }) => {
     return;
   }, [isShuffle, queue]);
 
+  const findCreator: PlayerType["findCreator"] = async (id: string) => {
+    let creator = creators.find(({ authorId }) => authorId === id) || null;
+
+    if (creator === null) {
+      try {
+        const { data } = await axios.get(
+          `https://sm-p3-play-api.vercel.app/api/creator/${id}`
+        );
+        return data;
+      } catch (error) {
+        return null;
+      }
+    }
+    return creator;
+  };
+
   useTrackPlayerEvents(
     [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded],
     async (data) => {
@@ -221,6 +226,7 @@ const PlayerProvider: React.FC = ({ children }) => {
         handlePlaySong,
         addSongLocal,
         creators,
+        findCreator,
       }}
     >
       {children}
@@ -257,7 +263,7 @@ function useCreator(id: string): TCreator | null {
   return creator;
 }
 
-function useSong(id: string): TMinimalInfo | undefined {
+function useSong(id: string, callbackError?: any): TMinimalInfo | undefined {
   const { videos, creators } = usePlayer();
   const [video, setVideo] = useState<TMinimalInfo | undefined>(
     (creators.find(
@@ -277,42 +283,18 @@ function useSong(id: string): TMinimalInfo | undefined {
 
   useEffect(() => {
     (async () => {
-      const videoData: TInfo = await ytdl.getBasicInfo(id);
-      const creatorData = await ytch.getChannelInfo(
-        videoData.videoDetails.author.id
-      );
-      setVideo({
-        ago: Sugar.Date.relative(
-          new Date(videoData.videoDetails.uploadDate),
-          "pt"
-        ),
-        description: videoData.videoDetails.description,
-        thumbnail:
-          videoData.videoDetails.thumbnails[
-            videoData.videoDetails.thumbnails.length - 1
-          ].url,
-        timestamp: videoData.videoDetails.lengthSeconds,
-        title: videoData.videoDetails.title,
-        url: videoData.videoDetails.video_url,
-        videoId: videoData.videoDetails.videoId,
-        views: Number(videoData.videoDetails.viewCount),
-        is_liked: false,
-        authorId: videoData.videoDetails.author.id,
-        creator: {
-          authorId: creatorData.authorId,
-          author: creatorData.author,
-          authorUrl: creatorData.authorUrl,
-          authorBanner:
-            creatorData.authorBanners[creatorData.authorBanners.length - 1],
-          authorThumbnail:
-            creatorData.authorThumbnails[
-              creatorData.authorThumbnails.length - 1
-            ],
-          subscriberCount: creatorData.subscriberCount,
-          description: creatorData.description,
-          isVerified: creatorData.isVerified,
-        },
-      });
+      try {
+        const { data } = await axios.get(
+          `https://sm-p3-play-api.vercel.app/api/songInfo/${id}`
+        );
+        setVideo(data);
+      } catch (error) {
+        ToastAndroid.show(
+          "Houve um erro ao adicionar a música, ela pode ser privada ou contém restrição de idade.",
+          ToastAndroid.LONG
+        );
+        if (callbackError) callbackError();
+      }
     })();
   }, []);
 

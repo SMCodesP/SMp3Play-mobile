@@ -45,7 +45,7 @@ const PlaylistContext = createContext<PlaylistType>({} as PlaylistType);
 
 const PlaylistProvider: React.FC = ({ children }) => {
   const [state, setState] = useState(getDefaultState());
-  const { videos, creators, addSongLocal, setIsShuffle } = usePlayer();
+  const { videos, findCreator, addSongLocal, setIsShuffle } = usePlayer();
 
   useEffect(() => {
     (async () => {
@@ -80,7 +80,6 @@ const PlaylistProvider: React.FC = ({ children }) => {
   };
 
   const deletePlaylist: PlaylistType["deletePlaylist"] = (playlist) => {
-    console.log(state.playlists.filter((value) => value.name !== playlist));
     setContext({
       playlists: state.playlists.filter((value) => value.name !== playlist),
     });
@@ -176,9 +175,11 @@ const PlaylistProvider: React.FC = ({ children }) => {
     if (playlist) {
       const songs: Promise<Track>[] = playlist.songs.map(async (songId) => {
         const song = videos.find(({ videoId }) => videoId === songId);
-        const creator = creators.find(
-          ({ authorId }) => authorId === song?.authorId
-        );
+
+        const creator = song?.authorId
+          ? await findCreator(song?.authorId)
+          : null;
+
         const fileExists = await RNFS.exists(
           `${RNBackgroundDownloader.directories.documents}/${songId}.mp3`
         );
@@ -191,7 +192,10 @@ const PlaylistProvider: React.FC = ({ children }) => {
           artwork: song!.thumbnail,
           description: song!.description,
           date: song!.timestamp,
-          extra: song,
+          extra: {
+            ...song,
+            creator: creator,
+          },
           id: `${Math.floor(Math.random() * 100000000000)}`,
         };
       });
@@ -201,10 +205,8 @@ const PlaylistProvider: React.FC = ({ children }) => {
       var stateShuffle = null;
       setIsShuffle((state) => {
         stateShuffle = state;
-        console.log(`state ${state}`);
         return state;
       });
-      console.log(`stateShuffle ${stateShuffle}`);
       await TrackPlayer.add(
         stateShuffle ? shuffle(resolvedSongs) : resolvedSongs
       );

@@ -25,9 +25,6 @@ export const Home: React.FC<{
 
   return (
     <GlobalContainer>
-      {/* <MyScrollView showsVerticalScrollIndicator={false}> */}
-
-      {/* <View style={{ paddingHorizontal: 15 }}> */}
       <FlatList
         data={creators}
         renderItem={({ item }) => <CardCreator item={item} />}
@@ -57,8 +54,11 @@ export const Home: React.FC<{
         )}
         contentContainerStyle={{
           width: "100%",
-          alignItems: "center",
           paddingBottom: track ? 110 : 45,
+          alignItems: "center",
+        }}
+        ListHeaderComponentStyle={{
+          alignSelf: "flex-start",
         }}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.authorId}
@@ -66,8 +66,6 @@ export const Home: React.FC<{
           <Text style={styles.empty}>Nenhum artísta encontrado</Text>
         )}
       />
-      {/* </View> */}
-      {/* </MyScrollView> */}
     </GlobalContainer>
   );
 };
@@ -99,5 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginHorizontal: 25,
     marginVertical: 5,
+    alignSelf: "flex-start",
   },
 });

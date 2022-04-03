@@ -4,8 +4,10 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
+  Alert,
+  ToastAndroid,
 } from "react-native";
-import Sugar from 'sugar'
+import Sugar from "sugar";
 import FastImage from "react-native-fast-image";
 import ytdl from "react-native-ytdl";
 
@@ -15,6 +17,7 @@ import { TouchableScalable } from "../Buttons/TouchableScalable";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { isOnPlaylist, usePlaylist } from "../../contexts/playlist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 interface CardAddSongProps {
   navigation?: any;
@@ -22,47 +25,39 @@ interface CardAddSongProps {
   playlistName: string;
 }
 
-const CardAddSong: React.FC<CardAddSongProps> = ({ item: video, playlistName }) => {
+const CardAddSong: React.FC<CardAddSongProps> = ({
+  item: video,
+  playlistName,
+}) => {
   const [loading, setLoading] = useState(false);
   const [videoInfo, setVideoInfo] = useState<TMinimalInfo | null>(null);
-  const { toggleSongInPlaylist } = usePlaylist()
-  const isInPlaylist = isOnPlaylist(video.videoId, playlistName)
+  const { toggleSongInPlaylist } = usePlaylist();
+  const isInPlaylist = isOnPlaylist(video.videoId, playlistName);
 
   const handleAddSongInPlaylist = async () => {
-    setLoading(true)
+    setLoading(true);
     if (!videoInfo) {
-      const videoData: TInfo = await ytdl.getBasicInfo(video.videoId);
-      const newVideoInfo = {
-        ago: Sugar.Date.relative(
-          new Date(videoData.videoDetails.uploadDate),
-          'pt'
-        ),
-        authorId: videoData.videoDetails.author.id,
-        description: videoData.videoDetails.description,
-        thumbnail: videoData.videoDetails.thumbnails[videoData.videoDetails.thumbnails.length-1].url,
-        timestamp: videoData.videoDetails.lengthSeconds,
-        title: videoData.videoDetails.title,
-        url: videoData.videoDetails.video_url,
-        videoId: videoData.videoDetails.videoId,
-        views: Number(videoData.videoDetails.viewCount),
-        is_liked: false,
+      try {
+        const { data: newVideoInfo } = await axios.get(
+          `https://sm-p3-play-api.vercel.app/api/songInfo/${video.videoId}`
+        );
+        await toggleSongInPlaylist(newVideoInfo, playlistName);
+        setVideoInfo(newVideoInfo);
+      } catch (error) {
+        ToastAndroid.show(
+          "Houve um erro ao adicionar a música, ela pode ser privada ou contém restrição de idade.",
+          ToastAndroid.LONG
+        );
       }
-      await toggleSongInPlaylist(newVideoInfo, playlistName);
-      setVideoInfo(newVideoInfo)
     } else {
       await toggleSongInPlaylist(videoInfo, playlistName);
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   return (
-    <View
-      style={styles.containerGeral}
-    >
-      <FastImage
-        style={styles.thumbnail}
-        source={{ uri: video.thumbnail }}
-      />
+    <View style={styles.containerGeral}>
+      <FastImage style={styles.thumbnail} source={{ uri: video.thumbnail }} />
       <View style={styles.containerInfo}>
         <Text style={styles.title}>
           {video.title.substring(0, 50).trim() +
@@ -81,10 +76,15 @@ const CardAddSong: React.FC<CardAddSongProps> = ({ item: video, playlistName }) 
       >
         {loading ? (
           <ActivityIndicator color={colors.purple} size="large" />
-        ) : isInPlaylist
-          ? <Ionicons name="remove-circle-outline" size={32} color={colors.purple} />
-          : <Ionicons name="add-circle-outline" size={32} color={colors.purple} />
-        }
+        ) : isInPlaylist ? (
+          <Ionicons
+            name="remove-circle-outline"
+            size={32}
+            color={colors.purple}
+          />
+        ) : (
+          <Ionicons name="add-circle-outline" size={32} color={colors.purple} />
+        )}
       </TouchableScalable>
     </View>
   );
@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
   containerGeral: {
     flex: 1,
     flexDirection: "row",
-    padding: 10
+    padding: 10,
   },
   thumbnail: {
     width: 92,
     height: 92,
-    borderRadius: 5
+    borderRadius: 5,
   },
   title: {
     fontSize: 14,
@@ -122,6 +122,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginHorizontal: 5,
     width: 32,
-    height: 32
-  }
+    height: 32,
+  },
 });
