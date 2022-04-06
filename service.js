@@ -23,9 +23,9 @@ module.exports = async function () {
     } catch (_) { }
   });
 
-  TrackPlayer.addEventListener('remote-next', () => TrackPlayer.skipToNext());
+  TrackPlayer.addEventListener(Event.RemoteNext, () => TrackPlayer.skipToNext());
 
-  TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.skipToPrevious());
+  TrackPlayer.addEventListener(Event.RemotePrevious, () => TrackPlayer.skipToPrevious());
 
   TrackPlayer.addEventListener(Event.RemoteStop, async (...props) => {
     try {

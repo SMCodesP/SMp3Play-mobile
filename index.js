@@ -8,19 +8,28 @@ import App from './App';
 AppRegistry.registerComponent(appName, () => App);
 
 TrackPlayer.setupPlayer().then(async () => {
-  const isServiceRunningPlayback = await TrackPlayer.isServiceRunning();
-  if (isServiceRunningPlayback === false) {
-    TrackPlayer.registerPlaybackService(() => require('./service'));
-  }
+  TrackPlayer.destroy();
+  TrackPlayer.registerPlaybackService(() => require('./service'));
   await TrackPlayer.updateOptions({
     stopWithApp: true,
     capabilities: [
+      Capability.SkipToPrevious,
       Capability.Play,
       Capability.Pause,
+      Capability.Stop,
       Capability.SkipToNext,
-      Capability.SkipToPrevious,
+    ],
+    compactCapabilities: [
+      Capability.Play,
+      Capability.Pause,
       Capability.Stop,
     ],
-    compactCapabilities: [Capability.Play, Capability.Pause, Capability.Stop],
+    notificationCapabilities: [
+      Capability.SkipToPrevious,
+      Capability.Play,
+      Capability.Pause,
+      Capability.Stop,
+      Capability.SkipToNext,
+    ],
   });
 });
