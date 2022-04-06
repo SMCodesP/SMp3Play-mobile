@@ -25,10 +25,8 @@ const ModalOptionsPlaylist: React.FC<any> = ({
   modalIsOpen,
   closeModal,
   handleDelete,
+  handleExport,
 }) => {
-  const navigation = useNavigation();
-  const { exportPlaylist } = usePlaylist();
-
   return (
     <ModalCustom modalIsOpen={modalIsOpen}>
       <Shadow
@@ -65,6 +63,16 @@ const ModalOptionsPlaylist: React.FC<any> = ({
               }}
             >
               <Text style={styles.buttonText}>Adicionar músicas</Text>
+            </TouchableWithoutFeedback>
+          </ButtonOption>
+          <ButtonOption style={styles.button} rippleColor={colors.comment}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                closeModal();
+                handleExport();
+              }}
+            >
+              <Text style={styles.buttonText}>Exportar playlist</Text>
             </TouchableWithoutFeedback>
           </ButtonOption>
           <View style={styles.separator} />

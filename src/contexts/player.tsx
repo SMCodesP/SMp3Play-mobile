@@ -263,7 +263,11 @@ function useCreator(id: string): TCreator | null {
   return creator;
 }
 
-function useSong(id: string, callbackError?: any): TMinimalInfo | undefined {
+function useSong(
+  id: string,
+  callbackError?: any,
+  refresh?: boolean
+): TMinimalInfo | undefined {
   const { videos, creators } = usePlayer();
   const [video, setVideo] = useState<TMinimalInfo | undefined>(
     (creators.find(
@@ -282,20 +286,22 @@ function useSong(id: string, callbackError?: any): TMinimalInfo | undefined {
   );
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get(
-          `https://sm-p3-play-api.vercel.app/api/songInfo/${id}`
-        );
-        setVideo(data);
-      } catch (error) {
-        ToastAndroid.show(
-          "Houve um erro ao adicionar a música, ela pode ser privada ou contém restrição de idade.",
-          ToastAndroid.LONG
-        );
-        if (callbackError) callbackError();
-      }
-    })();
+    if (refresh === true) {
+      (async () => {
+        try {
+          const { data } = await axios.get(
+            `https://sm-p3-play-api.vercel.app/api/songInfo/${id}`
+          );
+          setVideo(data);
+        } catch (error) {
+          ToastAndroid.show(
+            "Houve um erro ao adicionar a música, ela pode ser privada ou contém restrição de idade.",
+            ToastAndroid.LONG
+          );
+          if (callbackError) callbackError();
+        }
+      })();
+    }
   }, []);
 
   return video;

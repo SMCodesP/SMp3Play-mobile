@@ -72,7 +72,7 @@ const Details: React.FC<{
 
   const { handlePlaySong, track } = usePlayer();
   const { toggleSongInPlaylist, playlists } = usePlaylist();
-  const video = useSong(videoId, navigation.goBack);
+  const video = useSong(videoId, navigation.goBack, true);
 
   const playbackState = usePlaybackState();
   const scrollY = useValue(0);

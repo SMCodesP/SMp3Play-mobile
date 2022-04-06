@@ -1,78 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
+import FastImage from "react-native-fast-image";
+import LinearGradient from "react-native-linear-gradient";
 
-import colors from '../../styles/colors';
-import fonts from '../../styles/fonts';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { transparentize } from 'polished'
-import RNBackgroundDownloader, { DownloadTask, DownloadTaskState } from 'react-native-background-downloader';
-import { useSong } from '../../contexts/player';
-import { useDownloads } from '../../contexts/downloads';
+import { transparentize } from "polished";
+import { DownloadTask } from "react-native-background-downloader";
+import { useSong } from "../../contexts/player";
+import { useDownloads } from "../../contexts/downloads";
 
 export const CardSongDownload: React.FC<{
   downloadItem: DownloadTask;
 }> = ({ downloadItem }) => {
   const [progress, setProgress] = useState(0);
-  const [paused, setPaused] = useState(downloadItem.state === 'PAUSED');
+  const [paused, setPaused] = useState(downloadItem.state === "PAUSED");
   const { handleCompleteDownload } = useDownloads();
-  const song = useSong(downloadItem.id)
+  const song = useSong(downloadItem.id);
 
   useEffect(() => {
-    downloadItem.progress((percent) => {
-      setProgress(percent * 100)
-      if (Math.floor(percent * 100) === 100) {
-        handleCompleteDownload(downloadItem.id)
-      }
-    }).done(() => {
-      handleCompleteDownload(downloadItem.id)
-      setProgress(100)
-    })
-  }, [downloadItem])
+    downloadItem
+      .progress((percent) => {
+        setProgress(percent * 100);
+        if (Math.floor(percent * 100) === 100) {
+          handleCompleteDownload(downloadItem.id);
+        }
+      })
+      .done(() => {
+        handleCompleteDownload(downloadItem.id);
+        setProgress(100);
+      });
+  }, [downloadItem]);
 
   return (
     <View style={styles.container}>
       <FastImage source={{ uri: song?.thumbnail }} style={styles.image}>
         <LinearGradient
           style={{
-            flex: 1
+            flex: 1,
           }}
           start={{ x: -1, y: 0 }}
           end={{ x: 1, y: 0 }}
           locations={[0, 1, 0]}
-          colors={['#00000000',  colors.comment, '#00000000']}
+          colors={["#00000000", colors.comment, "#00000000"]}
         />
       </FastImage>
       <View style={styles.info}>
         <Text style={styles.title}>{song?.title}</Text>
       </View>
       <View style={styles.containerButtons}>
-        {(downloadItem.state === "DONE" || progress === 100) ? (
+        {downloadItem.state === "DONE" || progress === 100 ? (
           <MaterialCommunityIcons
             size={32}
             color={colors.foreground}
             name="check"
             style={styles.button}
             onPress={() => {
-              setPaused(false)
-              downloadItem.resume()
+              setPaused(false);
+              downloadItem.resume();
             }}
           />
         ) : (
           <TouchableOpacity
             style={styles.button}
-            onPress={paused ? () => {
-              setPaused(false)
-              downloadItem.resume()
-            } : () => {
-              setPaused(true)
-              downloadItem.pause()
-            }}
+            onPress={
+              paused
+                ? () => {
+                    setPaused(false);
+                    downloadItem.resume();
+                  }
+                : () => {
+                    setPaused(true);
+                    downloadItem.pause();
+                  }
+            }
           >
             <AnimatedCircularProgress
               size={42}
@@ -81,18 +87,20 @@ export const CardSongDownload: React.FC<{
               rotation={0}
               tintColor={colors.purple}
               backgroundColor={transparentize(0.75, colors.purple)}
-              children={() => <MaterialCommunityIcons
-                size={32}
-                color={colors.foreground}
-                name={paused ? "play" : "pause"}
-              />}
+              children={() => (
+                <MaterialCommunityIcons
+                  size={32}
+                  color={colors.foreground}
+                  name={paused ? "play" : "pause"}
+                />
+              )}
             />
           </TouchableOpacity>
         )}
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: colors.comment,
     borderRadius: 10,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   image: {
     width: "30%",
@@ -116,15 +124,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.foreground,
-    fontFamily: fonts.text
+    fontFamily: fonts.text,
   },
   author: {
     color: colors.purple,
-    fontFamily: fonts.complement
+    fontFamily: fonts.complement,
   },
   containerButtons: {
-    flexDirection: 'row',
-    paddingRight: 10
+    flexDirection: "row",
+    paddingRight: 10,
   },
   button: {
     width: 42,
@@ -132,5 +140,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-  }
-})
+  },
+});

@@ -44,7 +44,7 @@ export const Playlist: React.FC<{
   const [moving, setMoving] = useState(false);
   const [optionsIsOpened, setOptionsIsOpened] = useState(false);
   const { playlist, setPlaylist } = usePlaylistInfo(data.name);
-  const { handlePlayPlaylist, deletePlaylist } = usePlaylist();
+  const { handlePlayPlaylist, deletePlaylist, exportPlaylist } = usePlaylist();
   const { track } = usePlayer();
   const { handleDownloadPlaylist } = useDownloads();
 
@@ -64,6 +64,10 @@ export const Playlist: React.FC<{
   const handleDownload = async () => {
     handleDownloadPlaylist(playlist.name);
     (navigation as any).navigate("Downloads");
+  };
+
+  const handleExport = async () => {
+    exportPlaylist(playlist.name);
   };
 
   return (
@@ -287,6 +291,7 @@ export const Playlist: React.FC<{
           deletePlaylist(data.name);
         }}
         handleDownload={handleDownload}
+        handleExport={handleExport}
         handleSearchSong={handleSearchSong}
         closeModal={() => setOptionsIsOpened(false)}
         modalIsOpen={optionsIsOpened}

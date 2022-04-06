@@ -8,7 +8,10 @@ import App from './App';
 AppRegistry.registerComponent(appName, () => App);
 
 TrackPlayer.setupPlayer().then(async () => {
-  TrackPlayer.registerPlaybackService(() => require('./service'));
+  const isServiceRunningPlayback = await TrackPlayer.isServiceRunning();
+  if (isServiceRunningPlayback === false) {
+    TrackPlayer.registerPlaybackService(() => require('./service'));
+  }
   await TrackPlayer.updateOptions({
     stopWithApp: true,
     capabilities: [

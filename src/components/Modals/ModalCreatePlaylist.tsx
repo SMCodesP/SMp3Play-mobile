@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { lighten } from "polished";
 import {
   Keyboard,
@@ -31,6 +31,14 @@ const ModalCreatePlaylist: React.FC<ModalCreatePlaylistProps> = ({
 }) => {
   const { createPlaylist } = usePlaylist();
   const [namePlaylist, setNamePlaylist] = useState("");
+  const [isInitialData, setIsInitialData] = useState(false);
+  const [initialData, setInitialData] = useState("[]");
+
+  useEffect(() => {
+    setNamePlaylist("");
+    setIsInitialData(false);
+    setInitialData("[]");
+  }, [modalIsOpen]);
 
   const handleSubmit = () => {
     if (!namePlaylist) {
@@ -41,7 +49,7 @@ const ModalCreatePlaylist: React.FC<ModalCreatePlaylistProps> = ({
       handleClose();
       return;
     }
-    createPlaylist(namePlaylist);
+    createPlaylist(namePlaylist, JSON.parse(initialData));
     handleClose();
   };
 
@@ -69,6 +77,18 @@ const ModalCreatePlaylist: React.FC<ModalCreatePlaylistProps> = ({
               onSubmitEditing={handleSubmit}
               value={namePlaylist}
             />
+            {isInitialData && (
+              <Jiro
+                label={"Cole aqui as músicas da playlist"}
+                borderColor={colors.comment}
+                inputPadding={15}
+                inputStyle={{ color: colors.foreground }}
+                returnKeyType="done"
+                onChangeText={setInitialData}
+                onSubmitEditing={handleSubmit}
+                value={initialData}
+              />
+            )}
           </View>
           <View>
             <TouchableScalable
@@ -121,6 +141,42 @@ const ModalCreatePlaylist: React.FC<ModalCreatePlaylistProps> = ({
                 </View>
               </RectButton>
             </TouchableScalable>
+            <TouchableScalable
+              duration={100}
+              scaleTo={0.95}
+              rectButton={false}
+              activeOpacity={1}
+              buttonStyle={styles.containerButtonModal}
+              style={styles.modalButton}
+              delayPressOut={100}
+              borderRadius={25}
+              onPressOut={() => setIsInitialData((state) => !state)}
+            >
+              <RectButton
+                style={{
+                  flex: 1,
+                }}
+                rippleColor={colors.foreground}
+              >
+                <View style={styles.modalButton} accessible>
+                  <Animated.Text
+                    style={[
+                      styles.textButtonModal,
+                      {
+                        color: colors.foreground,
+                      },
+                    ]}
+                  >
+                    Mais{" "}
+                    <Ionicons
+                      name={isInitialData ? "chevron-up" : "chevron-down"}
+                      size={18}
+                      color={colors.foreground}
+                    />
+                  </Animated.Text>
+                </View>
+              </RectButton>
+            </TouchableScalable>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -157,6 +213,8 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontFamily: fonts.complement,
     fontSize: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalButton: {
     height: 50,

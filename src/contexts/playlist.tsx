@@ -5,7 +5,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Clipboard, ToastAndroid } from "react-native";
+import { ToastAndroid } from "react-native";
+import Clipboard from "@react-native-community/clipboard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrackPlayer, { Track } from "react-native-track-player";
 import RNFS from "react-native-fs";
@@ -14,10 +15,11 @@ import DocumentPicker from "react-native-document-picker";
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { usePlayer } from "./player";
 import { shuffle } from "../utils/shuffle";
+import axios from "axios";
 
 type PlaylistType = {
   toggleSongInPlaylist(song: TMinimalInfo, playlist: string): Promise<void>;
-  createPlaylist(playlist: string): void;
+  createPlaylist(playlist: string, initialData?: string[]): void;
   deletePlaylist(playlist: string): void;
   getPlaylist(playlist: string): TPlaylist | undefined;
   exportPlaylist(playlist: string): Promise<void>;
@@ -63,7 +65,10 @@ const PlaylistProvider: React.FC = ({ children }) => {
     })();
   }, [state]);
 
-  const createPlaylist: PlaylistType["createPlaylist"] = async (playlist) => {
+  const createPlaylist: PlaylistType["createPlaylist"] = async (
+    playlist,
+    initialData: []
+  ) => {
     const cloneState = JSON.parse(
       (await AsyncStorage.getItem("@playlists")) || "[]"
     );
@@ -71,11 +76,24 @@ const PlaylistProvider: React.FC = ({ children }) => {
       (value: any) => value.name === playlist
     );
     if (playlistIndex === -1) {
+      ToastAndroid.show(
+        "Adicionando as músicas iniciais. Isso pode levar um tempo...",
+        ToastAndroid.LONG
+      );
       cloneState.push({
         name: playlist,
-        songs: [],
+        songs: initialData,
       });
       setContext({ playlists: cloneState });
+      for (const videoId of initialData) {
+        if (videos.find((video) => video.videoId === videoId) === undefined) {
+          const { data } = await axios.get(
+            `https://sm-p3-play-api.vercel.app/api/songInfo/${videoId}`
+          );
+          await addSongLocal(data);
+        }
+      }
+      ToastAndroid.show("Músicas carregadas com sucesso!", ToastAndroid.LONG);
     }
   };
 
@@ -91,7 +109,11 @@ const PlaylistProvider: React.FC = ({ children }) => {
 
   const exportPlaylist: PlaylistType["exportPlaylist"] = async (playlist) => {
     const playlistInfo = getPlaylist(playlist);
-    Clipboard.setString(JSON.stringify(playlistInfo));
+    Clipboard.setString(JSON.stringify(playlistInfo?.songs));
+    ToastAndroid.show(
+      "Você copiou as músicas, da playlist, você pode colar quando for criar a playlist",
+      ToastAndroid.LONG
+    );
   };
 
   const importPlaylist: PlaylistType["importPlaylist"] = async (data) => {
